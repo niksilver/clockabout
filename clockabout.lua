@@ -5,18 +5,21 @@
 
 function init()
   g = {
-    midi_device = {}, -- container for connected midi devices
-    midi_device_names = {},
+    devices = {}, -- Container for connected midi devices and their data
+                  -- A table with keys: connection, name
+    vport = 1,  -- MIDI clock out
     key3_hold = false,
     random_note = math.random(48,72),
   }
 
-  for i = 1,#midi.vports do -- query all ports
-    g.midi_device[i] = midi.connect(i) -- connect each device
-    table.insert( -- register its name:
-      g.midi_device_names, -- table to insert to
-      "port "..i..": "..util.trim_string_to_width(g.midi_device[i].name,80) -- value to insert
-    )
+  -- Query MIDI vports, connect and collect info
+
+  for i = 1,#midi.vports do
+    local conn = midi.connect(i)
+    g.devices[i] = {
+      connection = conn,
+      name = "port "..i..": "..util.trim_string_to_width(conn.name,80),
+    }
   end
 
 end
@@ -48,12 +51,12 @@ function key(n,z)
   if n == 3 then
     if z == 1 then
       local vport = target_vport()
-      g.midi_device[vport]:note_on(g.random_note) -- defaults to velocity 100 on ch 1
+      g.devices[vport].connection:note_on(g.random_note) -- defaults to velocity 100 on ch 1
       g.key3_hold = true
       redraw()
     elseif z == 0 then
       local vport = target_vport()
-      g.midi_device[vport]:note_off(g.random_note)
+      g.devices[vport].connection:note_off(g.random_note)
       g.random_note = math.random(50,70)
       g.key3_hold = false
       redraw()
@@ -65,7 +68,7 @@ function redraw()
   screen.clear()
 
   local vport = target_vport()
-  local name = vport and g.midi_device_names[vport] or "none"
+  local name = vport and g.devices[vport].name or "none"
   screen.move(0,10)
   screen.text(name)
 
