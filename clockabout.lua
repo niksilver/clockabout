@@ -1,4 +1,7 @@
 -- Clockabout
+--
+-- Why should shuffle be the
+-- only irregular clock pattern?
 
 function init()
   g = {
@@ -17,18 +20,25 @@ function init()
     )
   end
 
-  params:add_option("midi target", "midi target", g.midi_device_names,1)
-  params:set_action("midi target", function(x) g.target = x end)
+end
+
+-- The vport for MIDI clock out.
+-- Defaults to null if no clock out, so watch out.
+--
+function target_vport()
+  local vport = null
+  for i = 1, 16 do
+    local id = "clock_midi_out_" .. i
+    if params:get(id) == 1 then
+      vport = i
+    end
+  end
+
+  return vport
 end
 
 function enc(n,d)
-  if n == 2 then
-    -- Change MIDI target device
-    if #g.midi_device > 0 then
-      params:delta("midi target",d)
-      redraw()
-    end
-  elseif n == 3 then
+  if n == 3 then
     -- Change MIDI tempo
     params:delta("clock_tempo", d)
     redraw()
@@ -38,11 +48,13 @@ end
 function key(n,z)
   if n == 3 then
     if z == 1 then
-      g.midi_device[g.target]:note_on(g.random_note) -- defaults to velocity 100 on ch 1
+      local vport = target_vport()
+      g.midi_device[vport]:note_on(g.random_note) -- defaults to velocity 100 on ch 1
       g.key3_hold = true
       redraw()
     elseif z == 0 then
-      g.midi_device[g.target]:note_off(g.random_note)
+      local vport = target_vport()
+      g.midi_device[vport]:note_off(g.random_note)
       g.random_note = math.random(50,70)
       g.key3_hold = false
       redraw()
@@ -53,8 +65,10 @@ end
 function redraw()
   screen.clear()
 
+  local vport = target_vport()
+  local name = vport and g.midi_device_names[vport] or "none"
   screen.move(0,10)
-  screen.text(params:string("midi target"))
+  screen.text(name)
 
   screen.move(0,20)
   screen.text("bpm (E3): " .. params:string("clock_tempo"))
