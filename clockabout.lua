@@ -7,7 +7,6 @@ function init()
   g = {
     midi_device = {}, -- container for connected midi devices
     midi_device_names = {},
-    target = 1,
     key3_hold = false,
     random_note = math.random(48,72),
   }
