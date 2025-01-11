@@ -3,6 +3,7 @@
 -- Why should shuffle be the
 -- only irregular clock pattern?
 
+
 function init()
   g = {
     devices = {}, -- Container for connected midi devices and their data.
@@ -16,16 +17,17 @@ function init()
   -- Query MIDI vports, connect, collect info, switch off norns's own clock out.
   -- Also add a device 0, which is "none".
 
-  local names = {}
-  for i = 1,#midi.vports do
+  local short_names = {}
+  for i = 1, #midi.vports do
     local conn = midi.connect(i)
-    local name = "port "..i..": "..util.trim_string_to_width(conn.name,80)
+    local name = "Port " ..i.. ": " .. util.trim_string_to_width(conn.name, 80)
+    local short_name = i.. ": " .. util.trim_string_to_width(conn.name, 100)
 
     g.devices[i] = {
       connection = conn,
       name = name,
     }
-    table.insert(names, name)
+    table.insert(short_names, short_name)
 
     params:set("clock_midi_out_"..i, 0)
   end
@@ -33,13 +35,14 @@ function init()
   g.devices[0] = {
     connection = null,
     name = "none",
+    short_name = "none",
   }
-  names[0] = "none"
+  short_names[0] = "none"
 
   -- Define a parameter for the out vport. Make it 1 if possible, but
   -- beware there may be no devices available.
 
-  params:add_option("clockabout_vport", "Port", names, g.vport)
+  params:add_option("clockabout_vport", "Port", short_names, g.vport)
   params:set_action("clockabout_vport", function(i)
     g.vport = i
     -- Temporarily use norns's own MIDI clock
@@ -50,6 +53,7 @@ function init()
   end
 
 end
+
 
 -- The vport for MIDI clock out.
 -- Defaults to null if no clock out, so watch out.
@@ -66,6 +70,7 @@ function target_vport()
   return vport
 end
 
+
 function enc(n,d)
   if n == 3 then
     -- Change MIDI tempo
@@ -73,6 +78,7 @@ function enc(n,d)
     redraw()
   end
 end
+
 
 function key(n,z)
   if n == 3 then
@@ -88,6 +94,7 @@ function key(n,z)
     end
   end
 end
+
 
 function redraw()
   screen.clear()
