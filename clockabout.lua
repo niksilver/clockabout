@@ -21,11 +21,15 @@ function init()
 end
 
 function enc(n,d)
+  -- Change MIDI target device
   if n == 2 then
     if #midi_device > 0 then
       params:delta("midi target",d)
       redraw()
     end
+  elseif n == 3 then
+    params:delta("clock_tempo", d)
+    redraw()
   end
 end
 
