@@ -12,6 +12,11 @@ function init()
     vport = 0,       -- MIDI clock out vport (int >= 1), or 0
     key3_hold = false,
     random_note = math.random(48,72),
+    metro = metro.init(
+      send_tick,  -- This function
+      1/24,       -- Called on this interval (seconds)
+      -1          -- Forever
+      )
   }
 
   -- Query MIDI vports, connect, collect info, switch off norns's own clock out.
@@ -44,9 +49,11 @@ function init()
 
   params:add_option("clockabout_vport", "Port", short_names, g.vport)
   params:set_action("clockabout_vport", function(i)
+    g.metro:stop()
     g.vport = i
+    g.metro:start()
     -- Temporarily use norns's own MIDI clock
-    params:set("clock_midi_out_"..i, 1)
+    -- params:set("clock_midi_out_"..i, 1)
   end)
   if g.devices[1] then
     params:set("clockabout_vport", 1)
@@ -55,21 +62,11 @@ function init()
 end
 
 
--- The vport for MIDI clock out.
--- Defaults to null if no clock out, so watch out.
+-- Send a MIDI clock tick
 --
-function target_vport()
-  local vport = null
-  for i = 1, 16 do
-    local id = "clock_midi_out_" .. i
-    if params:get(id) == 1 then
-      vport = i
-    end
-  end
-
-  return vport
+function send_tick()
+  g.devices[g.vport].connection:clock()
 end
-
 
 function enc(n,d)
   if n == 3 then
