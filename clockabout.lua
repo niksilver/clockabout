@@ -5,6 +5,7 @@ function init()
   midi_device_names = {}
   target = 1
   key3_hold = false
+  bpm = params:get("clock_tempo")
   random_note = math.random(48,72)
 
   for i = 1,#midi.vports do -- query all ports
@@ -45,8 +46,13 @@ end
 
 function redraw()
   screen.clear()
+
   screen.move(0,10)
   screen.text(params:string("midi target"))
+
+  screen.move(0,20)
+  screen.text("bpm (E3): " .. params:string("clock_tempo"))
+
   screen.move(0,30)
   if not key3_hold then
     screen.text("press K3 to send note "..random_note)
