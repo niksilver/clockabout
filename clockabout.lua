@@ -108,7 +108,7 @@ end
 function enc(n,d)
   if n == 3 then
     -- Change MIDI tempo
-    params:delta("clock_tempo", d)
+    params:delta("clockabout_bpm", d)
     redraw()
   end
 end
@@ -137,7 +137,7 @@ function redraw()
   screen.text(g.devices[g.vport].name)
 
   screen.move(0,20)
-  screen.text("bpm (E3): " .. params:string("clock_tempo"))
+  screen.text("bpm (E3): " .. params:string("clockabout_bpm"))
 
   screen.move(0,30)
   if not g.key3_hold then
