@@ -4,14 +4,16 @@
 -- only irregular clock pattern?
 
 
-local PARTS_PQN = 4    -- This many parts per quarter note before we set another metro
-local PULSES_PP = 24 / PARTS_PQN    -- This many pulses per part before we set another metro
-local BEATS_PB = 4     -- This many beats per bar
-local PULSES_PB = 24 * BEATS_PB    -- Pulses per bar
-local TMP_START_TIME = nil
+PARTS_PQN = 4    -- This many parts per quarter note before we set another metro
+PULSES_PP = 24 / PARTS_PQN    -- This many pulses per part before we set another metro
+BEATS_PB = 4     -- This many beats per bar
+PULSES_PB = 24 * BEATS_PB    -- Pulses per bar
+TMP_START_TIME = nil
 
 
-function init()
+-- Set global vars. In their own function so we can set them up them in unit tests.
+--
+function init_globals()
   g = {
     devices = {}, -- Container for connected midi devices and their data.
                   -- A table with keys: connection, name
@@ -26,6 +28,11 @@ function init()
 
     metro = null,    -- To be set up further down
   }
+end
+
+function init()
+
+  init_globals()
 
   -- Query MIDI vports, connect, collect info, switch off norns's own clock out.
 
@@ -79,8 +86,8 @@ end
 function init_metro()
   g.metro = metro.init(
     send_pulse,  -- Function to call
-    (60 / g.bpm) / 24,       -- 24 ppqm called on this interval (seconds)
-    PULSES_PP          -- Number of pulses to send before we recalculate
+    calc_interval(),
+    PULSES_PP    -- Number of pulses to send before we recalculate
   )
   g.metro:start()
   send_pulse(0)
@@ -115,6 +122,30 @@ function send_pulse(stage)
 end
 
 
+-- Calculate the interval between pulses for the current part.
+-- @treturn number  Seconds duration oft interval.
+--
+function calc_interval()
+  local curr_pulse = g.pulse_num - 1
+  local end_pulse = curr_pulse + PULSES_PP
+
+  -- Get current and end time in the bar, scaled to bar length 1.0
+
+  local curr_scaled_time = curr_pulse / PULSES_PB
+  local end_scaled_time = end_pulse / PULSES_PB
+
+  -- Duration of the part, scaled to bar length 1.0, and then in actual time
+
+  local scaled_part_duration =
+    g.shape.out_time(end_scaled_time) - g.shape.out_time(curr_scaled_time)
+  local actual_bar_duration = (60 / g.bpm) * BEATS_PB
+  local actual_pulse_duration = scaled_part_duration * actual_bar_duration / PULSES_PP
+
+  return actual_pulse_duration
+
+end
+
+
 -- Time shapes ----------------------------------------------------------
 
 -- Functions are:
@@ -123,6 +154,7 @@ end
 -- Given a time point in the beat, say how that is transformed.
 -- Must be strictly monotonically increasing. That is, if
 -- b > a then out_time(b) > out_time(a).
+-- Also we must have out_time(0.0) == 0.0 and out_time(1.0) == 1.0.
 --
 -- @tparam number  0.0 to 1.0
 -- @treturn number  0.0 to 1.0
