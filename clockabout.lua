@@ -19,7 +19,6 @@ function init()
     vport = 2,       -- MIDI clock out vport (int >= 1)
 
     bpm = 60,
-    bpm_changed = false,
 
     shape = linear_shape,    -- The shape of our pulses
     pulse_num = 1,    -- Number of next pulse in the bar, from 1, looping at end of bar
@@ -64,9 +63,8 @@ function init()
     g.bpm     -- Default
   )
   params:set_action("clockabout_bpm", function(x)
-    -- The metro will update at the next pulse
+    -- The metro will update at the next part
     g.bpm = x
-    g.bpm_changed = true
   end)
 
   -- Set the metronome going
