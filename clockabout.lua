@@ -9,32 +9,18 @@ function init()
     devices = {}, -- Container for connected midi devices and their data.
                   -- A table with keys: connection, name
                   -- Also allows a 0-indexed "none" device
-    vport = 0,       -- MIDI clock out vport (int >= 1), or 0
+    vport = 1,       -- MIDI clock out vport (int >= 1)
 
     bpm = 60,
     bpm_changed = false,
+
+    shape = linear_shape,    -- The shape of our ticks
 
     key3_hold = false,
     random_note = math.random(48,72),
 
     metro = null,    -- To be set up further down
   }
-
-  -- Our own parameter for the bpm
-
-  params:add_number(
-    "clockabout_bpm",
-    "BPM",
-    30, 300,  -- Min and  max
-    g.bpm     -- Default
-  )
-  params:set_action("clockabout_bpm", function(x)
-    -- The metro will update at the next tick
-    g.bpm = x
-    g.bpm_changed = true
-  end)
-
-  init_metro()
 
   -- Query MIDI vports, connect, collect info, switch off norns's own clock out.
   -- Also add a device 0, which is "none".
@@ -54,32 +40,37 @@ function init()
     params:set("clock_midi_out_"..i, 0)
   end
 
-  g.devices[0] = {
-    connection = null,
-    name = "none",
-    short_name = "none",
-  }
-  short_names[0] = "none"
-
-  -- Define a parameter for the out vport. Make it 1 if possible, but
-  -- beware there may be no devices available.
+  -- Define a parameter for the out vport.
 
   params:add_option("clockabout_vport", "Port", short_names, g.vport)
   params:set_action("clockabout_vport", function(i)
-    g.metro:stop()
     g.vport = i
-    g.metro:start()
-    -- Temporarily use norns's own MIDI clock
-    -- params:set("clock_midi_out_"..i, 1)
   end)
-  if g.devices[1] then
-    params:set("clockabout_vport", 1)
-  end
+
+  -- Our own parameter for the bpm
+
+  params:add_number(
+    "clockabout_bpm",
+    "BPM",
+    30, 300,  -- Min and  max
+    g.bpm     -- Default
+  )
+  params:set_action("clockabout_bpm", function(x)
+    -- The metro will update at the next tick
+    g.bpm = x
+    g.bpm_changed = true
+  end)
+
+  -- Set the metronome going
+
+  init_metro()
 
 end
 
 
 -- Set up the metronome according to the bpm and set it going.
+-- Inconveniently, the first tick does not occur immediately -
+-- it seems to wait until the first time period has passed.
 --
 function init_metro()
   g.metro = metro.init(
@@ -88,22 +79,57 @@ function init_metro()
     -1          -- Forever
   )
   g.metro:start()
+  send_tick(0)
 end
 
 
 -- Send a MIDI clock tick, and respond to any bpm change.
+-- @tparam int stage  The stage of this tick. Normally counts
+--    from 1, but we insert our own 0.
 --
-function send_tick()
+function send_tick(stage)
   if g.bpm_changed then
+
     g.bpm_changed = false
     g.metro:stop()
     metro.free(g.metro.id)
     init_metro()
+
   else
-    g.devices[g.vport].connection:clock()
+
+    if g.devices[g.vport].connection then
+      g.devices[g.vport].connection:clock()
+    end
+
   end
 
 end
+
+
+-- Time shapes ----------------------------------------------------------
+
+-- Functions are:
+--
+-- out_time(in_time)
+-- Given a time point in the beat, say how that is transformed.
+-- Must be strictly monotonically increasing. That is, if
+-- b > a then out_time(b) > out_time(a).
+--
+-- @tparam number  0.0 to 1.0
+-- @treturn number  0.0 to 1.0
+
+
+-- A normal linear clock - one beat
+
+linear_shape = {
+  out_time = function(in_time)
+    return in_time
+  end,
+}
+
+
+-- Basic norns functions ------------------------------------------------
+
 
 function enc(n,d)
   if n == 3 then
