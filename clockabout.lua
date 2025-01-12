@@ -24,9 +24,6 @@ function init()
     pulse_num = 1,    -- Number of next pulse in the bar, from 1, looping at end of bar
     pulse_total = 0,  -- Total pulses we've sent
 
-    key3_hold = false,
-    random_note = math.random(48,72),
-
     metro = null,    -- To be set up further down
   }
 
@@ -143,7 +140,7 @@ linear_shape = {
 -- Basic norns functions ------------------------------------------------
 
 
-function enc(n,d)
+function enc(n, d)
   if n == 3 then
     -- Change MIDI tempo
     params:delta("clockabout_bpm", d)
@@ -152,19 +149,7 @@ function enc(n,d)
 end
 
 
-function key(n,z)
-  if n == 3 then
-    if z == 1 then
-      g.devices[g.vport].connection:note_on(g.random_note) -- defaults to velocity 100 on ch 1
-      g.key3_hold = true
-      redraw()
-    elseif z == 0 then
-      g.devices[g.vport].connection:note_off(g.random_note)
-      g.random_note = math.random(50,70)
-      g.key3_hold = false
-      redraw()
-    end
-  end
+function key(n, z)
 end
 
 
@@ -177,12 +162,6 @@ function redraw()
   screen.move(0,20)
   screen.text("bpm (E3): " .. params:string("clockabout_bpm"))
 
-  screen.move(0,30)
-  if not g.key3_hold then
-    screen.text("press K3 to send note " .. g.random_note)
-  else
-    screen.text("release K3 to end note " .. g.random_note)
-  end
   screen.update()
 end
 
