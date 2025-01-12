@@ -1,3 +1,6 @@
+-- To run these tests just run
+-- lua test_clockabout.lua
+
 lu = require('luaunit')
 require('clockabout')
 
