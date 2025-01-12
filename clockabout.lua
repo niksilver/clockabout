@@ -14,7 +14,7 @@ function init()
     bpm = 60,
     bpm_changed = false,
 
-    shape = linear_shape,    -- The shape of our ticks
+    shape = linear_shape,    -- The shape of our pulses
 
     key3_hold = false,
     random_note = math.random(48,72),
@@ -56,7 +56,7 @@ function init()
     g.bpm     -- Default
   )
   params:set_action("clockabout_bpm", function(x)
-    -- The metro will update at the next tick
+    -- The metro will update at the next pulse
     g.bpm = x
     g.bpm_changed = true
   end)
@@ -69,25 +69,25 @@ end
 
 
 -- Set up the metronome according to the bpm and set it going.
--- Inconveniently, the first tick does not occur immediately -
--- it seems to wait until the first time period has passed.
+-- Inconveniently, the first pulse does not occur immediately -
+-- so we add it ourselves.
 --
 function init_metro()
   g.metro = metro.init(
-    send_tick,  -- Function to call
+    send_pulse,  -- Function to call
     (60 / g.bpm) / 24,       -- 24 ppqm called on this interval (seconds)
     -1          -- Forever
   )
   g.metro:start()
-  send_tick(0)
+  send_pulse(0)
 end
 
 
--- Send a MIDI clock tick, and respond to any bpm change.
--- @tparam int stage  The stage of this tick. Normally counts
+-- Send a MIDI clock pulse, and respond to any bpm change.
+-- @tparam int stage  The stage of this pulse. Normally counts
 --    from 1, but we insert our own 0.
 --
-function send_tick(stage)
+function send_pulse(stage)
   if g.bpm_changed then
 
     g.bpm_changed = false
