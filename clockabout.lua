@@ -97,9 +97,7 @@ function send_tick(stage)
 
   else
 
-    if g.devices[g.vport].connection then
-      g.devices[g.vport].connection:clock()
-    end
+    g.devices[g.vport].connection:clock()
 
   end
 
