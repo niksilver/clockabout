@@ -10,14 +10,31 @@ function init()
                   -- A table with keys: connection, name
                   -- Also allows a 0-indexed "none" device
     vport = 0,       -- MIDI clock out vport (int >= 1), or 0
+
+    bpm = 60,
+    bpm_changed = false,
+
     key3_hold = false,
     random_note = math.random(48,72),
-    metro = metro.init(
-      send_tick,  -- This function
-      1/24,       -- Called on this interval (seconds)
-      -1          -- Forever
-      )
+
+    metro = null,    -- To be set up further down
   }
+
+  -- Our own parameter for the bpm
+
+  params:add_number(
+    "clockabout_bpm",
+    "BPM",
+    30, 300,  -- Min and  max
+    g.bpm     -- Default
+  )
+  params:set_action("clockabout_bpm", function(x)
+    -- The metro will update at the next tick
+    g.bpm = x
+    g.bpm_changed = true
+  end)
+
+  init_metro()
 
   -- Query MIDI vports, connect, collect info, switch off norns's own clock out.
   -- Also add a device 0, which is "none".
@@ -62,10 +79,30 @@ function init()
 end
 
 
--- Send a MIDI clock tick
+-- Set up the metronome according to the bpm and set it going.
+--
+function init_metro()
+  g.metro = metro.init(
+    send_tick,  -- Function to call
+    (60 / g.bpm) / 24,       -- 24 ppqm called on this interval (seconds)
+    -1          -- Forever
+  )
+  g.metro:start()
+end
+
+
+-- Send a MIDI clock tick, and respond to any bpm change.
 --
 function send_tick()
-  g.devices[g.vport].connection:clock()
+  if g.bpm_changed then
+    g.bpm_changed = false
+    g.metro:stop()
+    metro.free(g.metro.id)
+    init_metro()
+  else
+    g.devices[g.vport].connection:clock()
+  end
+
 end
 
 function enc(n,d)
