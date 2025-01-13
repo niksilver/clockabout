@@ -20,11 +20,11 @@ function init_globals(vars)
 
   g.PARTS_PQN = 4    -- This many parts per quarter note before we set another metro
   g.PULSES_PP = 24 / g.PARTS_PQN    -- This many pulses per part before we set another metro
-  g.BEATS_PB = 4     -- This many beats per bar
-  g.PULSES_PB = 24 * g.BEATS_PB    -- Pulses per bar
   g.TMP_START_TIME = nil
 
   -- Variables
+
+  set_beats_per_bar(4)
 
   g.devices = {}  -- Container for connected midi devices and their data.
                   -- A table with keys: connection, name
@@ -49,6 +49,16 @@ function init_globals(vars)
 
   return g
 end
+
+
+-- Set number of beats per bar, which also tells us how many
+-- pulses per bar we should have.
+--
+function set_beats_per_bar(b)
+  g.beats_pb = 4
+  g.pulses_pb = 24 * g.beats_pb
+end
+
 
 function init()
 
@@ -135,7 +145,7 @@ function send_pulse(stage)
   g.pulse_total = g.pulse_total + 1
   --print(g.pulse_total .. "," .. (util.time() - g.TMP_START_TIME) .. "," .. g.pulse_num .. "," .. stage)
   g.pulse_num = g.pulse_num + 1
-  if (g.pulse_num > g.PULSES_PB) then
+  if (g.pulse_num > g.pulses_pb) then
     g.pulse_num = 1
   end
 
@@ -151,14 +161,14 @@ function calc_interval()
 
   -- Get current and end time in the bar, scaled to bar length 1.0
 
-  local curr_scaled_time = curr_pulse / g.PULSES_PB
-  local end_scaled_time = end_pulse / g.PULSES_PB
+  local curr_scaled_time = curr_pulse / g.pulses_pb
+  local end_scaled_time = end_pulse / g.pulses_pb
 
   -- Duration of the part, scaled to bar length 1.0, and then in actual time
 
   local scaled_part_duration =
     g.shape.transform(end_scaled_time) - g.shape.transform(curr_scaled_time)
-  local actual_bar_duration = (60 / g.bpm) * g.BEATS_PB
+  local actual_bar_duration = (60 / g.bpm) * g.beats_pb
   local actual_pulse_duration = scaled_part_duration * actual_bar_duration / g.PULSES_PP
 
   return actual_pulse_duration
