@@ -24,8 +24,6 @@ function init_globals(vars)
 
   -- Variables
 
-  set_beats_per_bar(4)
-
   g.devices = {}  -- Container for connected midi devices and their data.
                   -- A table with keys: connection, name
                   -- Also allows a 0-indexed "none" device
@@ -48,15 +46,6 @@ function init_globals(vars)
   end
 
   return g
-end
-
-
--- Set number of beats per bar, which also tells us how many
--- pulses per bar we should have.
---
-function set_beats_per_bar(b)
-  g.beats_pb = 4
-  g.pulses_pb = 24 * g.beats_pb
 end
 
 
@@ -145,7 +134,7 @@ function send_pulse(stage)
   g.pulse_total = g.pulse_total + 1
   --print(g.pulse_total .. "," .. (util.time() - g.TMP_START_TIME) .. "," .. g.pulse_num .. "," .. stage)
   g.pulse_num = g.pulse_num + 1
-  if (g.pulse_num > g.pulses_pb) then
+  if (g.pulse_num > 24) then
     g.pulse_num = 1
   end
 
@@ -161,8 +150,8 @@ function calc_interval()
 
   -- Get current and end time in the bar, scaled to bar length 1.0
 
-  local curr_scaled_time = curr_pulse / g.pulses_pb
-  local end_scaled_time = end_pulse / g.pulses_pb
+  local curr_scaled_time = curr_pulse / 24
+  local end_scaled_time = end_pulse / 24
 
   -- Duration of the part, scaled to bar length 1.0, and then in actual time
 
@@ -213,8 +202,7 @@ linear_shape = {
 
 -- Swing. Input is swing, where 0.5 is 50%.
 --[[
-    For 75% swing over one beat per bar it looks like this.
-    It repeats per beat.
+    For 75% swing it looks like this. It repeats per beat.
 
     1.00 +                  ,o
          |               ,-'
@@ -235,8 +223,6 @@ linear_shape = {
 
 swing_shape = {
 
-  -- Currently only working for 1 beat per bar and 75% swing.
-  --
   transform = function(x)
     if x < 0.5 then
       local gradient = 0.75 / 0.5
@@ -250,34 +236,17 @@ swing_shape = {
 
 -- @tparam number swing  Amount of swing, 0.01 to 0.99.
 --
-swing_shape.set_transform = function(beats, swing)
-  local scale = 1/beats
+swing_shape.set_transform = function(swing)
 
   swing_shape.transform = function(x)
-    -- print("transform:            x = " .. x)
 
-    local offset = math.floor(x / scale) * scale
-    local scaled_up_x = (x - offset) * beats
-    -- print("transform: offset      = " .. offset)
-    -- print("transform: scaled_up_x = " .. scaled_up_x)
-
-    if scaled_up_x < 0.5 then
+    if x < 0.5 then
       local gradient = swing / 0.5
-      local scaled_up_y = scaled_up_x * gradient
-      local y = scaled_up_y / beats + offset
-      -- print("transform: scaled_up_x < 0.5")
-      -- print("transform: gradient    = " .. gradient)
-      -- print("transform: scaled_up_y = " .. scaled_up_y)
-      -- print("transform: y           = " .. y)
+      local y = x * gradient
       return y
     else
       local gradient = (1-swing) / 0.5
-      local scaled_up_y = (scaled_up_x - 0.5) * gradient + swing
-      local y = scaled_up_y / beats + offset
-      -- print("transform: scaled_up_x >= 0.5")
-      -- print("transform: gradient    = " .. gradient)
-      -- print("transform: scaled_up_y = " .. scaled_up_y)
-      -- print("transform: y           = " .. y)
+      local y = (x - 0.5) * gradient + swing
       return y
     end
 
