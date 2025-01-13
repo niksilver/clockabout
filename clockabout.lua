@@ -18,7 +18,7 @@ function init_globals(vars)
 
   -- Constants
 
-  g.PARTS_PQN = 4    -- This many parts per quarter note before we set another metro
+  g.PARTS_PQN = 4    -- This many parts per quarter note - number of regular metros in a quarter note
   g.PULSES_PP = 24 / g.PARTS_PQN    -- This many pulses per part before we set another metro
   g.TMP_START_TIME = nil
 
@@ -166,10 +166,12 @@ function calc_interval()
 
   -- Duration of the part, scaled to bar length 1.0, and then in actual time
 
-  local scaled_part_duration =
+  local proportional_part_duration =
     g.shape.transform(end_scaled_time) - g.shape.transform(curr_scaled_time)
-  local actual_bar_duration = (60 / g.bpm) * g.beats_pb
-  local actual_pulse_duration = scaled_part_duration * actual_bar_duration / g.PULSES_PP
+  local scale = proportional_part_duration / (end_scaled_time - curr_scaled_time)
+  local std_beat_duration = 60 / g.bpm
+  local std_pulse_duration = std_beat_duration / 24
+  local actual_pulse_duration = std_pulse_duration * scale
 
   return actual_pulse_duration
 
@@ -252,30 +254,30 @@ swing_shape.set_transform = function(beats, swing)
   local scale = 1/beats
 
   swing_shape.transform = function(x)
-    print("transform:            x = " .. x)
+    -- print("transform:            x = " .. x)
 
     local offset = math.floor(x / scale) * scale
     local scaled_up_x = (x - offset) * beats
-    print("transform: offset      = " .. offset)
-    print("transform: scaled_up_x = " .. scaled_up_x)
+    -- print("transform: offset      = " .. offset)
+    -- print("transform: scaled_up_x = " .. scaled_up_x)
 
     if scaled_up_x < 0.5 then
       local gradient = swing / 0.5
       local scaled_up_y = scaled_up_x * gradient
       local y = scaled_up_y / beats + offset
-      print("transform: scaled_up_x < 0.5")
-      print("transform: gradient    = " .. gradient)
-      print("transform: scaled_up_y = " .. scaled_up_y)
-      print("transform: y           = " .. y)
+      -- print("transform: scaled_up_x < 0.5")
+      -- print("transform: gradient    = " .. gradient)
+      -- print("transform: scaled_up_y = " .. scaled_up_y)
+      -- print("transform: y           = " .. y)
       return y
     else
       local gradient = (1-swing) / 0.5
       local scaled_up_y = (scaled_up_x - 0.5) * gradient + swing
       local y = scaled_up_y / beats + offset
-      print("transform: scaled_up_x >= 0.5")
-      print("transform: gradient    = " .. gradient)
-      print("transform: scaled_up_y = " .. scaled_up_y)
-      print("transform: y           = " .. y)
+      -- print("transform: scaled_up_x >= 0.5")
+      -- print("transform: gradient    = " .. gradient)
+      -- print("transform: scaled_up_y = " .. scaled_up_y)
+      -- print("transform: y           = " .. y)
       return y
     end
 

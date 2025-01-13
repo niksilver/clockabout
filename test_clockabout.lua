@@ -14,11 +14,12 @@ function test_calc_interval_60_bpm()
     pulse_num = 1,
     pulse_total = 0,
   })
-  set_beats_per_bar(1)
+  set_beats_per_bar(4)
 
-  local pulses_per_beat = (60 / g.bpm) / 24 * g.beats_pb
+  local beat_dur_sec = 60 / g.bpm
+  local expected_interval = beat_dur_sec / 24
 
-  lu.assertAlmostEquals( calc_interval(), pulses_per_beat / g.PARTS_PQN, 0.01 )
+  lu.assertAlmostEquals( calc_interval(), expected_interval, 0.01 )
 end
 
 function test_calc_interval_60_bpm_in_middle_of_bar()
@@ -29,9 +30,10 @@ function test_calc_interval_60_bpm_in_middle_of_bar()
   })
   set_beats_per_bar(4)
 
-  local pulses_per_beat = (60 / g.bpm) / 24 * g.beats_pb
+  local beat_dur_sec = 60 / g.bpm
+  local expected_interval = beat_dur_sec / 24
 
-  lu.assertAlmostEquals( calc_interval(), pulses_per_beat / g.PARTS_PQN, 0.01 )
+  lu.assertAlmostEquals( calc_interval(), expected_interval, 0.01 )
 end
 
 function test_calc_interval_60_bpm_in_middle_of_bar_3_beats_per_bar()
@@ -194,17 +196,19 @@ end
 
   local pulses_per_beat = (60 / g.bpm) / 24 * g.beats_pb
 
-  -- we'll go from the 60% point and rely on the transform() function, as we've
-  -- tested that above.
 
-  -- assume we're on the fifth bar
+  -- Assume we're 70% into the fifth bar.
+  -- We rely on the transform() function, as we've tested that above.
 
-  g.pulse_num = math.floor(0.6 * 96)
-  g.pulse_total = 5 * 96 + g.pulse_num -1
+  g.pulse_num = math.floor(0.70 * 96) + 1
+  g.pulse_total = 5 * 96 + g.pulse_num - 1
 
   swing_shape.set_transform(4, 0.10)
 
-  lu.assertalmostequals( calc_interval(), pulses_per_beat / g.parts_pqn, 0.01 )
+  y_start = swing_shape.transform((g.pulse_num-1) / 96)
+  y_end = swing_shape.transform((g.pulse_num-1 + g.PULSES_PP) / 96)
+
+  lu.assertAlmostEquals( calc_interval(), y_end - y_start, 0.01 )
 end--]]
 
 os.exit( lu.LuaUnit.run() )
