@@ -262,7 +262,7 @@ swing_shape.set_transform = function(beats, swing)
       local gradient = (1-swing) / 0.5
       local scaled_up_y = (scaled_up_x - 0.5) * gradient + swing
       local y = scaled_up_y / beats + offset
-      print("transform: scaled_up_x < 0.5")
+      print("transform: scaled_up_x >= 0.5")
       print("transform: gradient    = " .. gradient)
       print("transform: scaled_up_y = " .. scaled_up_y)
       print("transform: y           = " .. y)
