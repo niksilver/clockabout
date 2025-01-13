@@ -171,21 +171,58 @@ end
 -- Functions are:
 --
 -- out_time(in_time)
--- Given a time point in the beat, say how that is transformed.
+-- Given a time point in the bar, say how that is transformed.
 -- Must be strictly monotonically increasing. That is, if
 -- b > a then out_time(b) > out_time(a).
 -- Also we must have out_time(0.0) == 0.0 and out_time(1.0) == 1.0.
 --
--- @tparam number  0.0 to 1.0
--- @treturn number  0.0 to 1.0
+-- @tparam number in_time  The original point in the bar, 0.0 to 1.0.
+-- @treturn number  Which point in the bar it should be occur, 0.0 to 1.0.
 
 
--- A normal linear clock - one beat
+-- A normal linear clock. Number of beats per bar doesn't matter.
 
 linear_shape = {
   out_time = function(in_time)
     return in_time
   end,
+}
+
+
+-- Swing. Input is swing, where 0.5 is 50%.
+--[[
+    For 75% swing over one beat per bar it looks like this.
+    It repeats per beat.
+
+    1.00 +                  ,o
+         |               ,-'
+         |            ,-'
+    0.75 +         o-'
+         |        /
+         |       /
+    0.50 +      /
+         |     /
+         |   /
+    0.25 +  /
+         | /
+         |/
+    0.00 +----+----+----+----+
+         0  0.25 0.50 0.75 1.00
+
+--]]
+
+swing_shape = {
+  -- Currently only working for 1 beat per bar and 75% swing.
+  --
+  out_time = function(in_time)
+    if in_time < 0.5 then
+      local gradient = 0.75 / 0.5
+      return in_time * gradient
+    else
+      local gradient = 0.25 / 0.5
+      return (in_time - 0.5) * gradient + 0.75
+    end
+  end
 }
 
 
