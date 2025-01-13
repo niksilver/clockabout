@@ -57,14 +57,14 @@ function test_calc_interval_120_bpm()
   lu.assertAlmostEquals( calc_interval(), pulses_per_beat / g.PARTS_PQN, 0.01 )
 end
 
--- out_time for swing shape -------------------------------------
+-- transform for swing shape -------------------------------------
 
-function test_out_time_for_swing_shape()
-  lu.assertAlmostEquals( swing_shape.out_time(0.00), 0,     0.001 )
-  lu.assertAlmostEquals( swing_shape.out_time(0.25), 0.375, 0.001 )
-  lu.assertAlmostEquals( swing_shape.out_time(0.50), 0.75,  0.001 )
-  lu.assertAlmostEquals( swing_shape.out_time(0.75), 0.875, 0.001 )
-  lu.assertAlmostEquals( swing_shape.out_time(1.00), 1.0,   0.001 )
+function test_transform_for_swing_shape()
+  lu.assertAlmostEquals( swing_shape.transform(0.00), 0,     0.001 )
+  lu.assertAlmostEquals( swing_shape.transform(0.25), 0.375, 0.001 )
+  lu.assertAlmostEquals( swing_shape.transform(0.50), 0.75,  0.001 )
+  lu.assertAlmostEquals( swing_shape.transform(0.75), 0.875, 0.001 )
+  lu.assertAlmostEquals( swing_shape.transform(1.00), 1.0,   0.001 )
 end
 
 os.exit( lu.LuaUnit.run() )

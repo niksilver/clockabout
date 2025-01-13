@@ -157,7 +157,7 @@ function calc_interval()
   -- Duration of the part, scaled to bar length 1.0, and then in actual time
 
   local scaled_part_duration =
-    g.shape.out_time(end_scaled_time) - g.shape.out_time(curr_scaled_time)
+    g.shape.transform(end_scaled_time) - g.shape.transform(curr_scaled_time)
   local actual_bar_duration = (60 / g.bpm) * g.BEATS_PB
   local actual_pulse_duration = scaled_part_duration * actual_bar_duration / g.PULSES_PP
 
@@ -170,21 +170,22 @@ end
 
 -- Functions are:
 --
--- out_time(in_time)
--- Given a time point in the bar, say how that is transformed.
--- Must be strictly monotonically increasing. That is, if
--- b > a then out_time(b) > out_time(a).
--- Also we must have out_time(0.0) == 0.0 and out_time(1.0) == 1.0.
+-- transform(x)
 --
--- @tparam number in_time  The original point in the bar, 0.0 to 1.0.
+-- Given a time point in the bar, say when that should actually occur.
+-- Must be strictly monotonically increasing. That is, if
+-- b > a then transform(b) > transform(a).
+-- Also we must have transform(0.0) == 0.0 and transform(1.0) == 1.0.
+--
+-- @tparam number x  The original point in the bar, 0.0 to 1.0.
 -- @treturn number  Which point in the bar it should be occur, 0.0 to 1.0.
 
 
 -- A normal linear clock. Number of beats per bar doesn't matter.
 
 linear_shape = {
-  out_time = function(in_time)
-    return in_time
+  transform = function(x)
+    return x
   end,
 }
 
@@ -214,13 +215,13 @@ linear_shape = {
 swing_shape = {
   -- Currently only working for 1 beat per bar and 75% swing.
   --
-  out_time = function(in_time)
-    if in_time < 0.5 then
+  transform = function(x)
+    if x < 0.5 then
       local gradient = 0.75 / 0.5
-      return in_time * gradient
+      return x * gradient
     else
       local gradient = 0.25 / 0.5
-      return (in_time - 0.5) * gradient + 0.75
+      return (x - 0.5) * gradient + 0.75
     end
   end
 }
