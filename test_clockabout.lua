@@ -59,12 +59,58 @@ end
 
 -- transform for swing shape -------------------------------------
 
-function test_transform_for_swing_shape()
+function test_transform_for_swing_shape_1_beat_per_bar()
+  swing_shape.set_transform(1)
+
   lu.assertAlmostEquals( swing_shape.transform(0.00), 0,     0.001 )
   lu.assertAlmostEquals( swing_shape.transform(0.25), 0.375, 0.001 )
   lu.assertAlmostEquals( swing_shape.transform(0.50), 0.75,  0.001 )
   lu.assertAlmostEquals( swing_shape.transform(0.75), 0.875, 0.001 )
   lu.assertAlmostEquals( swing_shape.transform(1.00), 1.0,   0.001 )
+end
+
+function test_transform_for_swing_shape_3_beats_per_bar()
+  swing_shape.set_transform(3)
+
+  -- The swing across the whole bar with 3 beats per bar is just
+  -- like the swing when it's 1 beat per bar except that it's
+  -- scaled down and repeated, and each repeat is offset.
+  -- So we'll repeat the tests above (3 times), but with some translation.
+
+  local scale = 1/3
+
+  local x_offset = 0
+  local y_offset = 0
+
+  print("1-----------")
+  lu.assertAlmostEquals( swing_shape.transform(0.00 * scale + x_offset), 0     * scale + y_offset, 0.001 )
+  print("2-----------")
+  lu.assertAlmostEquals( swing_shape.transform(0.25 * scale + x_offset), 0.375 * scale + y_offset, 0.001 )
+  print("3-----------")
+  lu.assertAlmostEquals( swing_shape.transform(0.50 * scale + x_offset), 0.75  * scale + y_offset, 0.001 )
+  print("4-----------")
+  lu.assertAlmostEquals( swing_shape.transform(0.75 * scale + x_offset), 0.875 * scale + y_offset, 0.001 )
+  print("5-----------")
+  lu.assertAlmostEquals( swing_shape.transform(1.00 * scale + x_offset), 1.0   * scale + y_offset, 0.001 )
+
+  local x_offset = 1/3
+  local y_offset = 1/3
+
+  lu.assertAlmostEquals( swing_shape.transform(0.00 * scale + x_offset), 0     * scale + y_offset, 0.001 )
+  lu.assertAlmostEquals( swing_shape.transform(0.25 * scale + x_offset), 0.375 * scale + y_offset, 0.001 )
+  lu.assertAlmostEquals( swing_shape.transform(0.50 * scale + x_offset), 0.75  * scale + y_offset, 0.001 )
+  lu.assertAlmostEquals( swing_shape.transform(0.75 * scale + x_offset), 0.875 * scale + y_offset, 0.001 )
+  lu.assertAlmostEquals( swing_shape.transform(1.00 * scale + x_offset), 1.0   * scale + y_offset, 0.001 )
+
+  local x_offset = 2/3
+  local y_offset = 2/3
+
+  lu.assertAlmostEquals( swing_shape.transform(0.00 * scale + x_offset), 0     * scale + y_offset, 0.001 )
+  lu.assertAlmostEquals( swing_shape.transform(0.25 * scale + x_offset), 0.375 * scale + y_offset, 0.001 )
+  lu.assertAlmostEquals( swing_shape.transform(0.50 * scale + x_offset), 0.75  * scale + y_offset, 0.001 )
+  lu.assertAlmostEquals( swing_shape.transform(0.75 * scale + x_offset), 0.875 * scale + y_offset, 0.001 )
+  lu.assertAlmostEquals( swing_shape.transform(1.00 * scale + x_offset), 1.0   * scale + y_offset, 0.001 )
+
 end
 
 os.exit( lu.LuaUnit.run() )

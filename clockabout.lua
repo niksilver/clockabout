@@ -179,6 +179,12 @@ end
 --
 -- @tparam number x  The original point in the bar, 0.0 to 1.0.
 -- @treturn number  Which point in the bar it should be occur, 0.0 to 1.0.
+--
+-- set_transform(beats)
+--
+-- Set the transform() function, given there are `beats` beats per bar.
+--
+-- @tparam int beats  Number of beats per bar.
 
 
 -- A normal linear clock. Number of beats per bar doesn't matter.
@@ -213,6 +219,7 @@ linear_shape = {
 --]]
 
 swing_shape = {
+
   -- Currently only working for 1 beat per bar and 75% swing.
   --
   transform = function(x)
@@ -225,6 +232,40 @@ swing_shape = {
     end
   end
 }
+
+swing_shape.set_transform = function(beats)
+  local scale = 1/beats
+
+  swing_shape.transform = function(x)
+    print("transform:            x = " .. x)
+
+    local offset = math.floor(x / scale) * scale
+    local scaled_up_x = (x - offset) * beats
+    print("transform: offset      = " .. offset)
+    print("transform: scaled_up_x = " .. scaled_up_x)
+
+    if scaled_up_x < 0.5 then
+      local gradient = 0.75 / 0.5
+      local scaled_up_y = scaled_up_x * gradient
+      local y = scaled_up_y / beats + offset
+      print("transform: scaled_up_x < 0.5")
+      print("transform: gradient    = " .. gradient)
+      print("transform: scaled_up_y = " .. scaled_up_y)
+      print("transform: y           = " .. y)
+      return y
+    else
+      local gradient = 0.25 / 0.5
+      local scaled_up_y = (scaled_up_x - 0.5) * gradient + 0.75
+      local y = scaled_up_y / beats + offset
+      print("transform: scaled_up_x < 0.5")
+      print("transform: gradient    = " .. gradient)
+      print("transform: scaled_up_y = " .. scaled_up_y)
+      print("transform: y           = " .. y)
+      return y
+    end
+
+  end
+end
 
 
 -- Basic norns functions ------------------------------------------------
