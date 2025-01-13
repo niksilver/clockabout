@@ -59,8 +59,18 @@ end
 
 -- transform for swing shape -------------------------------------
 
-function test_transform_for_swing_shape_1_beat_per_bar()
-  swing_shape.set_transform(1)
+function test_transform_for_swing_shape_1_beat_per_bar_50pc_swing()
+  swing_shape.set_transform(1, 0.50)
+
+  lu.assertAlmostEquals( swing_shape.transform(0.00), 0,    0.001 )
+  lu.assertAlmostEquals( swing_shape.transform(0.25), 0.25, 0.001 )
+  lu.assertAlmostEquals( swing_shape.transform(0.50), 0.50, 0.001 )
+  lu.assertAlmostEquals( swing_shape.transform(0.75), 0.75, 0.001 )
+  lu.assertAlmostEquals( swing_shape.transform(1.00), 1.0,  0.001 )
+end
+
+function test_transform_for_swing_shape_1_beat_per_bar_75pc_swing()
+  swing_shape.set_transform(1, 0.75)
 
   lu.assertAlmostEquals( swing_shape.transform(0.00), 0,     0.001 )
   lu.assertAlmostEquals( swing_shape.transform(0.25), 0.375, 0.001 )
@@ -69,8 +79,8 @@ function test_transform_for_swing_shape_1_beat_per_bar()
   lu.assertAlmostEquals( swing_shape.transform(1.00), 1.0,   0.001 )
 end
 
-function test_transform_for_swing_shape_3_beats_per_bar()
-  swing_shape.set_transform(3)
+function test_transform_for_swing_shape_3_beats_per_bar_75pc_swing()
+  swing_shape.set_transform(3, 0.75)
 
   -- The swing across the whole bar with 3 beats per bar is just
   -- like the swing when it's 1 beat per bar except that it's
@@ -82,15 +92,10 @@ function test_transform_for_swing_shape_3_beats_per_bar()
   local x_offset = 0
   local y_offset = 0
 
-  print("1-----------")
   lu.assertAlmostEquals( swing_shape.transform(0.00 * scale + x_offset), 0     * scale + y_offset, 0.001 )
-  print("2-----------")
   lu.assertAlmostEquals( swing_shape.transform(0.25 * scale + x_offset), 0.375 * scale + y_offset, 0.001 )
-  print("3-----------")
   lu.assertAlmostEquals( swing_shape.transform(0.50 * scale + x_offset), 0.75  * scale + y_offset, 0.001 )
-  print("4-----------")
   lu.assertAlmostEquals( swing_shape.transform(0.75 * scale + x_offset), 0.875 * scale + y_offset, 0.001 )
-  print("5-----------")
   lu.assertAlmostEquals( swing_shape.transform(1.00 * scale + x_offset), 1.0   * scale + y_offset, 0.001 )
 
   local x_offset = 1/3

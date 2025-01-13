@@ -180,17 +180,20 @@ end
 -- @tparam number x  The original point in the bar, 0.0 to 1.0.
 -- @treturn number  Which point in the bar it should be occur, 0.0 to 1.0.
 --
--- set_transform(beats)
 --
--- Set the transform() function, given there are `beats` beats per bar.
+-- set_transform(beats, v)
+--
+-- Set the transform() function, given there are `beats` beats per bar and
+-- some pattern-specific value `v` (e.g. amount of swing in a swing pattern).
 --
 -- @tparam int beats  Number of beats per bar.
+-- @tparam int v      Parameter value.
 
 
--- A normal linear clock. Number of beats per bar doesn't matter.
+-- A normal linear clock. Number of beats per bar and param value don't matter.
 
 linear_shape = {
-  transform = function(x)
+  transform = function(x, v)
     return x
   end,
 }
@@ -233,7 +236,9 @@ swing_shape = {
   end
 }
 
-swing_shape.set_transform = function(beats)
+-- @tparam number swing  Amount of swing, 0.01 to 0.99.
+--
+swing_shape.set_transform = function(beats, swing)
   local scale = 1/beats
 
   swing_shape.transform = function(x)
@@ -245,7 +250,7 @@ swing_shape.set_transform = function(beats)
     print("transform: scaled_up_x = " .. scaled_up_x)
 
     if scaled_up_x < 0.5 then
-      local gradient = 0.75 / 0.5
+      local gradient = swing / 0.5
       local scaled_up_y = scaled_up_x * gradient
       local y = scaled_up_y / beats + offset
       print("transform: scaled_up_x < 0.5")
@@ -254,8 +259,8 @@ swing_shape.set_transform = function(beats)
       print("transform: y           = " .. y)
       return y
     else
-      local gradient = 0.25 / 0.5
-      local scaled_up_y = (scaled_up_x - 0.5) * gradient + 0.75
+      local gradient = (1-swing) / 0.5
+      local scaled_up_y = (scaled_up_x - 0.5) * gradient + swing
       local y = scaled_up_y / beats + offset
       print("transform: scaled_up_x < 0.5")
       print("transform: gradient    = " .. gradient)
