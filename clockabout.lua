@@ -4,35 +4,55 @@
 -- only irregular clock pattern?
 
 
-PARTS_PQN = 4    -- This many parts per quarter note before we set another metro
-PULSES_PP = 24 / PARTS_PQN    -- This many pulses per part before we set another metro
-BEATS_PB = 4     -- This many beats per bar
-PULSES_PB = 24 * BEATS_PB    -- Pulses per bar
-TMP_START_TIME = nil
+g = {}    -- Global values
 
 
--- Set global vars. In their own function so we can set them up them in unit tests.
+-- Set global values and return them as a table.
+-- These are in their own function so we can set them up and reset them in unit tests.
 --
-function init_globals()
-  g = {
-    devices = {}, -- Container for connected midi devices and their data.
+-- @tparam table vars  Optional table of names/values to set, if not the defaults.
+-- @treturn table  Names and values.
+--
+function init_globals(vars)
+  local g = {}
+
+  -- Constants
+
+  g.PARTS_PQN = 4    -- This many parts per quarter note before we set another metro
+  g.PULSES_PP = 24 / g.PARTS_PQN    -- This many pulses per part before we set another metro
+  g.BEATS_PB = 4     -- This many beats per bar
+  g.PULSES_PB = 24 * g.BEATS_PB    -- Pulses per bar
+  g.TMP_START_TIME = nil
+
+  -- Variables
+
+  g.devices = {}  -- Container for connected midi devices and their data.
                   -- A table with keys: connection, name
                   -- Also allows a 0-indexed "none" device
-    vport = 2,       -- MIDI clock out vport (int >= 1)
+  g.vport = 2       -- MIDI clock out vport (int >= 1)
 
-    bpm = 60,
+  g.bpm = 60
 
-    shape = linear_shape,    -- The shape of our pulses
-    pulse_num = 1,    -- Number of next pulse in the bar, from 1, looping at end of bar
-    pulse_total = 0,  -- Total pulses we've sent
+  g.shape = linear_shape     -- The shape of our pulses
+  g.pulse_num = 1    -- Number of next pulse in the bar, from 1, looping at end of bar
+  g.pulse_total = 0  -- Total pulses we've sent
 
-    metro = null,    -- To be set up further down
-  }
+  g.metro = null    -- To be set up further down
+
+  -- Insert any overrides
+
+  if vars then
+    for key, val in pairs(vars) do
+      g.key = val
+    end
+  end
+
+  return g
 end
 
 function init()
 
-  init_globals()
+  g = init_globals()
 
   -- Query MIDI vports, connect, collect info, switch off norns's own clock out.
 
@@ -73,7 +93,7 @@ function init()
 
   -- Set the metronome going
 
-  TMP_START_TIME = util.time()
+  g.TMP_START_TIME = util.time()
   init_metro()
 
 end
@@ -87,7 +107,7 @@ function init_metro()
   g.metro = metro.init(
     send_pulse,  -- Function to call
     calc_interval(),
-    PULSES_PP    -- Number of pulses to send before we recalculate
+    g.PULSES_PP    -- Number of pulses to send before we recalculate
   )
   g.metro:start()
   send_pulse(0)
@@ -100,7 +120,7 @@ end
 --    from 1, but we insert our own 0.
 --
 function send_pulse(stage)
-  local is_last_pulse = (stage == PULSES_PP)
+  local is_last_pulse = (stage == g.PULSES_PP)
   if is_last_pulse then
 
     -- print("Resetting")
@@ -113,9 +133,9 @@ function send_pulse(stage)
 
   g.devices[g.vport].connection:clock()
   g.pulse_total = g.pulse_total + 1
-  --print(g.pulse_total .. "," .. (util.time() - TMP_START_TIME) .. "," .. g.pulse_num .. "," .. stage)
+  --print(g.pulse_total .. "," .. (util.time() - g.TMP_START_TIME) .. "," .. g.pulse_num .. "," .. stage)
   g.pulse_num = g.pulse_num + 1
-  if (g.pulse_num > PULSES_PB) then
+  if (g.pulse_num > g.PULSES_PB) then
     g.pulse_num = 1
   end
 
@@ -127,19 +147,19 @@ end
 --
 function calc_interval()
   local curr_pulse = g.pulse_num - 1
-  local end_pulse = curr_pulse + PULSES_PP
+  local end_pulse = curr_pulse + g.PULSES_PP
 
   -- Get current and end time in the bar, scaled to bar length 1.0
 
-  local curr_scaled_time = curr_pulse / PULSES_PB
-  local end_scaled_time = end_pulse / PULSES_PB
+  local curr_scaled_time = curr_pulse / g.PULSES_PB
+  local end_scaled_time = end_pulse / g.PULSES_PB
 
   -- Duration of the part, scaled to bar length 1.0, and then in actual time
 
   local scaled_part_duration =
     g.shape.out_time(end_scaled_time) - g.shape.out_time(curr_scaled_time)
-  local actual_bar_duration = (60 / g.bpm) * BEATS_PB
-  local actual_pulse_duration = scaled_part_duration * actual_bar_duration / PULSES_PP
+  local actual_bar_duration = (60 / g.bpm) * g.BEATS_PB
+  local actual_pulse_duration = scaled_part_duration * actual_bar_duration / g.PULSES_PP
 
   return actual_pulse_duration
 
