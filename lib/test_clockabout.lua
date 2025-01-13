@@ -1,5 +1,12 @@
--- To run these tests just run
+-- To run these tests just go to this directory and run
 -- lua test_clockabout.lua
+-- or from the parent directory run
+-- lua lib/test_clockabout.lua
+
+-- Allow packages to be picked up from both this directory
+-- and its parent directory
+
+package.path = package.path .. ";../?.lua;lib/?.lua"
 
 lu = require('luaunit')
 require('clockabout')
