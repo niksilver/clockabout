@@ -13,7 +13,7 @@ require('clockabout')
 
 g = {}
 
--- calc_interval for linear shape -------------------------------------
+-- calc_interval for linear pattern -------------------------------------
 
 function test_calc_interval_60_bpm()
   g = init_globals({
@@ -67,45 +67,45 @@ function test_calc_interval_120_bpm()
   lu.assertAlmostEquals( calc_interval(), expected_interval, 0.01 )
 end
 
--- transform for swing shape -------------------------------------
+-- transform for swing pattern -------------------------------------
 
-function test_transform_for_swing_shape_50pc_swing()
-  swing_shape.set_transform(0.50)
+function test_transform_for_swing_pattern_50pc_swing()
+  swing_pattern.set_transform(0.50)
 
-  lu.assertAlmostEquals( swing_shape.transform(0.00), 0,    0.001 )
-  lu.assertAlmostEquals( swing_shape.transform(0.25), 0.25, 0.001 )
-  lu.assertAlmostEquals( swing_shape.transform(0.50), 0.50, 0.001 )
-  lu.assertAlmostEquals( swing_shape.transform(0.75), 0.75, 0.001 )
-  lu.assertAlmostEquals( swing_shape.transform(1.00), 1.0,  0.001 )
+  lu.assertAlmostEquals( swing_pattern.transform(0.00), 0,    0.001 )
+  lu.assertAlmostEquals( swing_pattern.transform(0.25), 0.25, 0.001 )
+  lu.assertAlmostEquals( swing_pattern.transform(0.50), 0.50, 0.001 )
+  lu.assertAlmostEquals( swing_pattern.transform(0.75), 0.75, 0.001 )
+  lu.assertAlmostEquals( swing_pattern.transform(1.00), 1.0,  0.001 )
 end
 
-function test_transform_for_swing_shape_75pc_swing()
-  swing_shape.set_transform(0.75)
+function test_transform_for_swing_pattern_75pc_swing()
+  swing_pattern.set_transform(0.75)
 
-  lu.assertAlmostEquals( swing_shape.transform(0.00), 0,     0.001 )
-  lu.assertAlmostEquals( swing_shape.transform(0.25), 0.375, 0.001 )
-  lu.assertAlmostEquals( swing_shape.transform(0.50), 0.75,  0.001 )
-  lu.assertAlmostEquals( swing_shape.transform(0.75), 0.875, 0.001 )
-  lu.assertAlmostEquals( swing_shape.transform(1.00), 1.0,   0.001 )
+  lu.assertAlmostEquals( swing_pattern.transform(0.00), 0,     0.001 )
+  lu.assertAlmostEquals( swing_pattern.transform(0.25), 0.375, 0.001 )
+  lu.assertAlmostEquals( swing_pattern.transform(0.50), 0.75,  0.001 )
+  lu.assertAlmostEquals( swing_pattern.transform(0.75), 0.875, 0.001 )
+  lu.assertAlmostEquals( swing_pattern.transform(1.00), 1.0,   0.001 )
 end
 
-function test_transform_for_swing_shape_10pc_swing()
-  swing_shape.set_transform(0.10)
+function test_transform_for_swing_pattern_10pc_swing()
+  swing_pattern.set_transform(0.10)
 
-  lu.assertAlmostEquals( swing_shape.transform(0.00), 0,    0.001 )
-  lu.assertAlmostEquals( swing_shape.transform(0.25), 0.05, 0.001 )
-  lu.assertAlmostEquals( swing_shape.transform(0.50), 0.10, 0.001 )
+  lu.assertAlmostEquals( swing_pattern.transform(0.00), 0,    0.001 )
+  lu.assertAlmostEquals( swing_pattern.transform(0.25), 0.05, 0.001 )
+  lu.assertAlmostEquals( swing_pattern.transform(0.50), 0.10, 0.001 )
   local y = (0.9/0.5) * 0.25 + 0.1
-  lu.assertAlmostEquals( swing_shape.transform(0.75), y,    0.001 )
-  lu.assertAlmostEquals( swing_shape.transform(1.00), 1.0,  0.001 )
+  lu.assertAlmostEquals( swing_pattern.transform(0.75), y,    0.001 )
+  lu.assertAlmostEquals( swing_pattern.transform(1.00), 1.0,  0.001 )
 end
 
--- calc_interval for swing shape -------------------------------------
+-- calc_interval for swing pattern -------------------------------------
 
 function test_calc_interval_swing_60_bpm_in_middle_of_bar()
   g = init_globals({
     bpm = 60,
-    shape = swing_shape,
+    pattern = swing_pattern,
   })
 
   -- Assume we're on pulse 14 of 24 (so over halfway) on the 5th beat.
@@ -115,10 +115,10 @@ function test_calc_interval_swing_60_bpm_in_middle_of_bar()
   g.pulse_num = 15
   g.pulse_total = 5 * 24 - 1
 
-  swing_shape.set_transform(0.10)
+  swing_pattern.set_transform(0.10)
 
-  local y_start = swing_shape.transform((g.pulse_num-1) / 24)
-  local y_end = swing_shape.transform((g.pulse_num - 1 + g.PULSES_PP) / 24)
+  local y_start = swing_pattern.transform((g.pulse_num-1) / 24)
+  local y_end = swing_pattern.transform((g.pulse_num - 1 + g.PULSES_PP) / 24)
 
   local beat_duration = 60 / g.bpm  -- Also the scale for calculating duration
 

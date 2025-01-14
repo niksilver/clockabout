@@ -31,7 +31,7 @@ function init_globals(vars)
 
   g.bpm = 60
 
-  g.shape = linear_shape     -- The shape of our pulses
+  g.pattern = linear_pattern     -- The pattern of our pulses
   g.pulse_num = 1    -- Number of next pulse in the bar, from 1, looping at end of bar
   g.pulse_total = 0  -- Total pulses we've sent
 
@@ -156,7 +156,7 @@ function calc_interval()
   -- Duration of the part, scaled to bar length 1.0, and then in actual time
 
   local proportional_part_duration =
-    g.shape.transform(end_scaled_time) - g.shape.transform(curr_scaled_time)
+    g.pattern.transform(end_scaled_time) - g.pattern.transform(curr_scaled_time)
   local scale = proportional_part_duration / (end_scaled_time - curr_scaled_time)
   local std_beat_duration = 60 / g.bpm
   local std_pulse_duration = std_beat_duration / 24
@@ -167,13 +167,13 @@ function calc_interval()
 end
 
 
--- Time shapes ----------------------------------------------------------
+-- Time patterns ----------------------------------------------------------
 
 -- Fields and functions are:
 --
 -- name
 --
--- @field name  Short string name of the shape.
+-- @field name  Short string name of the pattern.
 --
 --
 -- transform(x)
@@ -198,7 +198,7 @@ end
 
 -- A normal linear clock. Number of beats per bar and param value don't matter.
 
-linear_shape = {
+linear_pattern = {
   name = "Linear",
 
   transform = function(x, v)
@@ -228,7 +228,7 @@ linear_shape = {
 
 --]]
 
-swing_shape = {
+swing_pattern = {
   name = "Swing",
 
   transform = nil,
@@ -236,9 +236,9 @@ swing_shape = {
 
 -- @tparam number swing  Amount of swing, 0.01 to 0.99.
 --
-swing_shape.set_transform = function(swing)
+swing_pattern.set_transform = function(swing)
 
-  swing_shape.transform = function(x)
+  swing_pattern.transform = function(x)
 
     if x < 0.5 then
       local gradient = swing / 0.5
