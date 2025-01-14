@@ -42,25 +42,12 @@ function init_globals(vars)
   if vars then
     for key, val in pairs(vars) do
       g[key] = val
-      print("Inserting g." ..key.. " = " ..tostring(val))
-      if type(val) == 'table' then
-        print_table("(a) g."..key, g[key])
-      end
     end
-    print_table("(b) g.shape", g.shape)
   end
-
-  print_table("(c) g.shape", g.shape)
 
   return g
 end
 
-
-function print_table(name, t)
-  for k,v in pairs(t) do
-    print("  " ..name.. "." ..k.. " = " ..tostring(v))
-  end
-end
 
 function init()
 
@@ -158,7 +145,6 @@ end
 -- @treturn number  Seconds duration oft interval.
 --
 function calc_interval()
-  print("--- In calc_interval()")
   local curr_pulse = g.pulse_num - 1
   local end_pulse = curr_pulse + g.PULSES_PP
 
@@ -175,10 +161,6 @@ function calc_interval()
   local std_beat_duration = 60 / g.bpm
   local std_pulse_duration = std_beat_duration / 24
   local actual_pulse_duration = std_pulse_duration * scale
-  print("scale = " ..  scale)
-  print("std_pulse_duration = " ..  std_pulse_duration)
-  print("actual_pulse_duration = " ..  actual_pulse_duration)
-  print("--- End of calc_interval()")
 
   return actual_pulse_duration
 
@@ -220,7 +202,6 @@ linear_shape = {
   name = "Linear",
 
   transform = function(x, v)
-    print("-- In linear_shape.transform()")
     return x
   end,
 }
@@ -258,7 +239,6 @@ swing_shape = {
 swing_shape.set_transform = function(swing)
 
   swing_shape.transform = function(x)
-    print("-- In swing_shape.transform()")
 
     if x < 0.5 then
       local gradient = swing / 0.5

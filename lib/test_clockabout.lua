@@ -103,12 +103,10 @@ end
 -- calc_interval for swing shape -------------------------------------
 
 function test_calc_interval_swing_60_bpm_in_middle_of_bar()
-  print("------------ test_calc_interval_swing_60_bpm_in_middle_of_bar():")
   g = init_globals({
     bpm = 60,
     shape = swing_shape,
   })
-  print_table("(d) g.shape", g.shape)
 
   -- Assume we're on pulse 14 of 24 (so over halfway) on the 5th beat.
   -- So pulse 15 is the next one.
@@ -125,11 +123,6 @@ function test_calc_interval_swing_60_bpm_in_middle_of_bar()
   local beat_duration = 60 / g.bpm  -- Also the scale for calculating duration
 
   local expected_pulse_duration = (y_end - y_start) / g.PULSES_PP * beat_duration
-  print("g.shape.name = " ..  g.shape.name)
-  print("y_start = " ..  y_start)
-  print("y_end = " ..  y_end)
-  print("beat_duration = " ..  beat_duration)
-  print("expected_pulse_duration = " ..  expected_pulse_duration)
 
   lu.assertAlmostEquals( calc_interval(), expected_pulse_duration, 0.001 )
 end
