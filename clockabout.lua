@@ -41,13 +41,26 @@ function init_globals(vars)
 
   if vars then
     for key, val in pairs(vars) do
-      g.key = val
+      g[key] = val
+      print("Inserting g." ..key.. " = " ..tostring(val))
+      if type(val) == 'table' then
+        print_table("(a) g."..key, g[key])
+      end
     end
+    print_table("(b) g.shape", g.shape)
   end
+
+  print_table("(c) g.shape", g.shape)
 
   return g
 end
 
+
+function print_table(name, t)
+  for k,v in pairs(t) do
+    print("  " ..name.. "." ..k.. " = " ..tostring(v))
+  end
+end
 
 function init()
 
@@ -145,10 +158,11 @@ end
 -- @treturn number  Seconds duration oft interval.
 --
 function calc_interval()
+  print("--- In calc_interval()")
   local curr_pulse = g.pulse_num - 1
   local end_pulse = curr_pulse + g.PULSES_PP
 
-  -- Get current and end time in the bar, scaled to bar length 1.0
+  -- Get current and end time in the bar, scaled to beat length 1.0
 
   local curr_scaled_time = curr_pulse / 24
   local end_scaled_time = end_pulse / 24
@@ -161,6 +175,10 @@ function calc_interval()
   local std_beat_duration = 60 / g.bpm
   local std_pulse_duration = std_beat_duration / 24
   local actual_pulse_duration = std_pulse_duration * scale
+  print("scale = " ..  scale)
+  print("std_pulse_duration = " ..  std_pulse_duration)
+  print("actual_pulse_duration = " ..  actual_pulse_duration)
+  print("--- End of calc_interval()")
 
   return actual_pulse_duration
 
@@ -169,7 +187,12 @@ end
 
 -- Time shapes ----------------------------------------------------------
 
--- Functions are:
+-- Fields and functions are:
+--
+-- name
+--
+-- @field name  Short string name of the shape.
+--
 --
 -- transform(x)
 --
@@ -194,7 +217,10 @@ end
 -- A normal linear clock. Number of beats per bar and param value don't matter.
 
 linear_shape = {
+  name = "Linear",
+
   transform = function(x, v)
+    print("-- In linear_shape.transform()")
     return x
   end,
 }
@@ -222,16 +248,9 @@ linear_shape = {
 --]]
 
 swing_shape = {
+  name = "Swing",
 
-  transform = function(x)
-    if x < 0.5 then
-      local gradient = 0.75 / 0.5
-      return x * gradient
-    else
-      local gradient = 0.25 / 0.5
-      return (x - 0.5) * gradient + 0.75
-    end
-  end
+  transform = nil,
 }
 
 -- @tparam number swing  Amount of swing, 0.01 to 0.99.
@@ -239,6 +258,7 @@ swing_shape = {
 swing_shape.set_transform = function(swing)
 
   swing_shape.transform = function(x)
+    print("-- In swing_shape.transform()")
 
     if x < 0.5 then
       local gradient = swing / 0.5

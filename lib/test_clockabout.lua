@@ -102,26 +102,36 @@ end
 
 -- calc_interval for swing shape -------------------------------------
 
---[[function test_calc_interval_swing_60_bpm_in_middle_of_bar_4_beats_per_bar()
+function test_calc_interval_swing_60_bpm_in_middle_of_bar()
+  print("------------ test_calc_interval_swing_60_bpm_in_middle_of_bar():")
   g = init_globals({
     bpm = 60,
+    shape = swing_shape,
   })
+  print_table("(d) g.shape", g.shape)
 
-  local pulses_per_beat = (60 / g.bpm) / 24 * g.beats_pb
-
-
-  -- Assume we're 70% into the fifth bar.
+  -- Assume we're on pulse 14 of 24 (so over halfway) on the 5th beat.
+  -- So pulse 15 is the next one.
   -- We rely on the transform() function, as we've tested that above.
 
-  g.pulse_num = math.floor(0.70 * 96) + 1
-  g.pulse_total = 5 * 96 + g.pulse_num - 1
+  g.pulse_num = 15
+  g.pulse_total = 5 * 24 - 1
 
-  swing_shape.set_transform(4, 0.10)
+  swing_shape.set_transform(0.10)
 
-  y_start = swing_shape.transform((g.pulse_num-1) / 96)
-  y_end = swing_shape.transform((g.pulse_num-1 + g.PULSES_PP) / 96)
+  local y_start = swing_shape.transform((g.pulse_num-1) / 24)
+  local y_end = swing_shape.transform((g.pulse_num - 1 + g.PULSES_PP) / 24)
 
-  lu.assertAlmostEquals( calc_interval(), y_end - y_start, 0.01 )
-end--]]
+  local beat_duration = 60 / g.bpm  -- Also the scale for calculating duration
+
+  local expected_pulse_duration = (y_end - y_start) / g.PULSES_PP * beat_duration
+  print("g.shape.name = " ..  g.shape.name)
+  print("y_start = " ..  y_start)
+  print("y_end = " ..  y_end)
+  print("beat_duration = " ..  beat_duration)
+  print("expected_pulse_duration = " ..  expected_pulse_duration)
+
+  lu.assertAlmostEquals( calc_interval(), expected_pulse_duration, 0.001 )
+end
 
 os.exit( lu.LuaUnit.run() )
