@@ -279,6 +279,23 @@ function redraw()
   screen.move(0,20)
   screen.text("bpm (E3): " .. params:string("clockabout_bpm"))
 
+  draw_pattern()
+
   screen.update()
+end
+
+-- Draw the pattern on the screen
+--
+function draw_pattern()
+  screen.move(0, 63)
+  screen.line_width(1)
+
+  for x = 0.0, 1.0, 0.025 do
+    screen_x = x * 127
+    screen_y = 63 - (g.pattern.transform(x) * 48)
+    screen.line(screen_x, screen_y)
+  end
+
+  screen.stroke()
 end
 
