@@ -36,6 +36,8 @@ function init_globals(vars)
     linear_pattern,
     swing_pattern,
   }
+  g.pattern_params = {}  --  Map from pattern number to its params. Set up later.
+
   g.pulse_num = 1    -- Number of next pulse in the bar, from 1, looping at end of bar
   g.pulse_total = 0  -- Total pulses we've sent
 
@@ -74,6 +76,10 @@ function init()
     params:set("clock_midi_out_"..i, 0)
   end
 
+  -- Parameter menu separator
+
+  params:add_separator("clockabout", "Clockabout")
+
   -- Parameter for the out vport.
 
   params:add_option("clockabout_vport", "Port", short_names, g.vport)
@@ -81,11 +87,11 @@ function init()
     g.vport = i
   end)
 
-  -- Parameter for pattern
+  -- Parameter for the selected pattern
 
   local pats = {}
-  for k,v in pairs(g.patterns) do
-    table.insert(pats, v.name)
+  for i, pattern in pairs(g.patterns) do
+    table.insert(pats, pattern.name)
   end
 
   params:add_option("clockabout_pattern", "Pattern", pats, 1)
@@ -95,6 +101,14 @@ function init()
       g.pattern.set_transform(0.10)
     end
   end)
+
+  -- Parameters for the each of the patterns
+
+  for i, pattern in pairs(g.patterns) do
+    table.insert(g.pattern_params, pattern.init_params())
+  end
+
+  show_hide_pattern_params(params:get("clockabout_pattern"))
 
   -- Our own parameter for the bpm
 
@@ -114,6 +128,25 @@ function init()
   g.TMP_START_TIME = util.time()
   init_metro()
 
+end
+
+
+-- Show the parameters for a given pattern, and hide the rest.
+-- @tparam int show_pat  Pattern number whose params we want to show.
+--
+function show_hide_pattern_params(show_pat)
+
+  for pat = 1, #g.patterns do
+    for param, name in pairs(g.pattern_params[pat]) do
+      if pat == show_pat then
+        params:show(name)
+      else
+        params:hide(name)
+      end
+    end
+  end
+
+  _menu.rebuild_params()
 end
 
 
@@ -195,6 +228,13 @@ end
 -- @field name  Short string name of the pattern.
 --
 --
+-- init_params()
+--
+-- Create and initialise menu parameters specific to this pattern..
+--
+-- @treturn table  A list of the parameter names added.
+--
+--
 -- transform(x)
 --
 -- Given a time point in the bar, say when that should actually occur.
@@ -223,6 +263,10 @@ linear_pattern = {
   transform = function(x, v)
     return x
   end,
+
+  init_params= function()
+    return {}
+  end
 }
 
 
@@ -270,6 +314,24 @@ swing_pattern.set_transform = function(swing)
     end
 
   end
+end
+
+
+swing_pattern.init_params = function()
+  params:add_number("clockabout_swing_swing",
+    "Swing",    -- Name
+    1, 99, 50,  -- Min, max, default
+    function(param)    -- Formatter
+      return param:get() .. "%"
+    end,
+    false  -- Wrap?
+  )
+  params:set_action("clockabout_swing_swing", function(x)
+    swing_pattern.set_transform(x / 100)
+    redraw()
+  end)
+
+  return { "clockabout_swing_swing" }
 end
 
 
