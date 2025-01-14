@@ -70,7 +70,8 @@ end
 -- transform for swing pattern -------------------------------------
 
 function test_transform_for_swing_pattern_50pc_swing()
-  swing_pattern.set_transform(0.50)
+  swing_pattern.swing = 0.50
+  swing_pattern.init_pattern()
 
   lu.assertAlmostEquals( swing_pattern.transform(0.00), 0,    0.001 )
   lu.assertAlmostEquals( swing_pattern.transform(0.25), 0.25, 0.001 )
@@ -80,7 +81,8 @@ function test_transform_for_swing_pattern_50pc_swing()
 end
 
 function test_transform_for_swing_pattern_75pc_swing()
-  swing_pattern.set_transform(0.75)
+  swing_pattern.swing = 0.75
+  swing_pattern.init_pattern()
 
   lu.assertAlmostEquals( swing_pattern.transform(0.00), 0,     0.001 )
   lu.assertAlmostEquals( swing_pattern.transform(0.25), 0.375, 0.001 )
@@ -90,7 +92,8 @@ function test_transform_for_swing_pattern_75pc_swing()
 end
 
 function test_transform_for_swing_pattern_10pc_swing()
-  swing_pattern.set_transform(0.10)
+  swing_pattern.swing = 0.10
+  swing_pattern.init_pattern()
 
   lu.assertAlmostEquals( swing_pattern.transform(0.00), 0,    0.001 )
   lu.assertAlmostEquals( swing_pattern.transform(0.25), 0.05, 0.001 )
@@ -115,7 +118,8 @@ function test_calc_interval_swing_60_bpm_in_middle_of_bar()
   g.pulse_num = 15
   g.pulse_total = 5 * 24 - 1
 
-  swing_pattern.set_transform(0.10)
+  swing_pattern.swing = 0.10
+  swing_pattern.init_pattern()
 
   local y_start = swing_pattern.transform((g.pulse_num-1) / 24)
   local y_end = swing_pattern.transform((g.pulse_num - 1 + g.PULSES_PP) / 24)

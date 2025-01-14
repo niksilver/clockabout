@@ -97,9 +97,8 @@ function init()
   params:add_option("clockabout_pattern", "Pattern", pats, 1)
   params:set_action("clockabout_pattern", function(i)
     g.pattern = g.patterns[i]
-    if i == 2 then
-      g.pattern.set_transform(0.10)
-    end
+    show_hide_pattern_params(i)
+    g.pattern.init_pattern()
   end)
 
   -- Parameters for the each of the patterns
@@ -122,6 +121,10 @@ function init()
     -- The metro will update at the next part
     g.bpm = x
   end)
+
+  -- Initialise the current pattern
+
+  g.pattern.init_pattern()
 
   -- Set the metronome going
 
@@ -246,13 +249,10 @@ end
 -- @treturn number  Which point in the bar it should be occur, 0.0 to 1.0.
 --
 --
--- set_transform(beats, v)
+-- init_pattern()
 --
--- Set the transform() function, given there are `beats` beats per bar and
--- some pattern-specific value `v` (e.g. amount of swing in a swing pattern).
---
--- @tparam int beats  Number of beats per bar.
--- @tparam int v      Parameter value.
+-- Do anything needed whenever the pattern becomes the current one. This may
+-- mean setting the transform() function.
 
 
 -- A normal linear clock. Number of beats per bar and param value don't matter.
@@ -264,14 +264,18 @@ linear_pattern = {
     return x
   end,
 
-  init_params= function()
+  init_params = function()
     return {}
-  end
+  end,
+
+  init_pattern = function()
+  end,
 }
 
 
--- Swing. Input is swing, where 0.5 is 50%.
 --[[
+    Swing. Input is swing, where 0.5 is 50%, etc.
+
     For 75% swing it looks like this. It repeats per beat.
 
     1.00 +                  ,o
@@ -294,12 +298,18 @@ linear_pattern = {
 swing_pattern = {
   name = "Swing",
 
-  transform = nil,
+  -- Specific to this pattern
+
+  swing = 0.60,  -- Default
+
+  transform = nil,  -- Set by init_pattern()
 }
 
 -- @tparam number swing  Amount of swing, 0.01 to 0.99.
 --
-swing_pattern.set_transform = function(swing)
+swing_pattern.init_pattern = function()
+
+  local swing = swing_pattern.swing
 
   swing_pattern.transform = function(x)
 
@@ -320,14 +330,16 @@ end
 swing_pattern.init_params = function()
   params:add_number("clockabout_swing_swing",
     "Swing",    -- Name
-    1, 99, 50,  -- Min, max, default
-    function(param)    -- Formatter
-      return param:get() .. "%"
+    1, 99,      -- Min, max
+    swing_pattern.swing * 100,  -- Default
+    function(param)             -- Formatter
+      return string.format('%d%%', param:get())
     end,
     false  -- Wrap?
   )
   params:set_action("clockabout_swing_swing", function(x)
-    swing_pattern.set_transform(x / 100)
+    swing_pattern.swing = x / 100
+    swing_pattern.init_pattern()
     redraw()
   end)
 
