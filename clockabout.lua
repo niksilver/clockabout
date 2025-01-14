@@ -31,7 +31,11 @@ function init_globals(vars)
 
   g.bpm = 60
 
-  g.pattern = linear_pattern     -- The pattern of our pulses
+  g.pattern = linear_pattern    -- The pattern of our pulses
+  g.patterns = {                -- All the patterns
+    linear_pattern,
+    swing_pattern,
+  }
   g.pulse_num = 1    -- Number of next pulse in the bar, from 1, looping at end of bar
   g.pulse_total = 0  -- Total pulses we've sent
 
@@ -70,11 +74,26 @@ function init()
     params:set("clock_midi_out_"..i, 0)
   end
 
-  -- Define a parameter for the out vport.
+  -- Parameter for the out vport.
 
   params:add_option("clockabout_vport", "Port", short_names, g.vport)
   params:set_action("clockabout_vport", function(i)
     g.vport = i
+  end)
+
+  -- Parameter for pattern
+
+  local pats = {}
+  for k,v in pairs(g.patterns) do
+    table.insert(pats, v.name)
+  end
+
+  params:add_option("clockabout_pattern", "Pattern", pats, 1)
+  params:set_action("clockabout_pattern", function(i)
+    g.pattern = g.patterns[i]
+    if i == 2 then
+      g.pattern.set_transform(0.10)
+    end
   end)
 
   -- Our own parameter for the bpm
