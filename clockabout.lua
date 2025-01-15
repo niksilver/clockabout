@@ -382,6 +382,7 @@ end
 
 function redraw()
   screen.clear()
+  screen.level(15)
 
   screen.move(0,10)
   screen.text(params:string("clockabout_pattern"))
@@ -397,6 +398,7 @@ function redraw()
     screen.text(param.name .. ": " .. params:string(param_name))
   end
 
+  screen.level(2)
   draw_pattern()
 
   screen.update()
