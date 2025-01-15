@@ -355,7 +355,21 @@ function enc(n, d)
     -- Change MIDI tempo
     params:delta("clockabout_bpm", d)
     redraw()
+  elseif n==3 and #current_params() >= 1 then
+    -- Change pattern-specific value
+    local param_name = current_params()[1]
+    local param = params:lookup_param(param_name)
+    param:delta(d)
   end
+end
+
+
+-- Params for the current pattern.
+-- @treturn table  Table of param names.
+--
+function current_params()
+  local pattern_idx = params:get("clockabout_pattern")
+  return g.pattern_params[pattern_idx]
 end
 
 
@@ -371,6 +385,14 @@ function redraw()
 
   screen.move(0,20)
   screen.text("BPM: " .. params:string("clockabout_bpm"))
+
+  if #current_params() >= 1 then
+    -- Pattern-specific value
+    screen.move(0,30)
+    local param_name = current_params()[1]
+    local param = params:lookup_param(param_name)
+    screen.text(param.name .. ": " .. params:string(param_name))
+  end
 
   draw_pattern()
 
