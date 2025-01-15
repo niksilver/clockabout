@@ -92,7 +92,7 @@ function init()
   params:add_number(
     "clockabout_bpm",
     "BPM",
-    30, 300,  -- Min and  max
+    10, 300,  -- Min and  max
     g.bpm     -- Default
   )
   params:set_action("clockabout_bpm", function(x)
@@ -351,7 +351,7 @@ end
 
 
 function enc(n, d)
-  if n == 3 then
+  if n == 2 then
     -- Change MIDI tempo
     params:delta("clockabout_bpm", d)
     redraw()
@@ -367,10 +367,10 @@ function redraw()
   screen.clear()
 
   screen.move(0,10)
-  screen.text(g.devices[g.vport].name)
+  screen.text(params:string("clockabout_pattern"))
 
   screen.move(0,20)
-  screen.text("bpm (E3): " .. params:string("clockabout_bpm"))
+  screen.text("BPM: " .. params:string("clockabout_bpm"))
 
   draw_pattern()
 
