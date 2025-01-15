@@ -87,6 +87,19 @@ function init()
     g.vport = i
   end)
 
+  -- Our own parameter for the bpm
+
+  params:add_number(
+    "clockabout_bpm",
+    "BPM",
+    30, 300,  -- Min and  max
+    g.bpm     -- Default
+  )
+  params:set_action("clockabout_bpm", function(x)
+    -- The metro will update at the next part
+    g.bpm = x
+  end)
+
   -- Parameter for the selected pattern
 
   local pats = {}
@@ -108,19 +121,6 @@ function init()
   end
 
   show_hide_pattern_params(params:get("clockabout_pattern"))
-
-  -- Our own parameter for the bpm
-
-  params:add_number(
-    "clockabout_bpm",
-    "BPM",
-    30, 300,  -- Min and  max
-    g.bpm     -- Default
-  )
-  params:set_action("clockabout_bpm", function(x)
-    -- The metro will update at the next part
-    g.bpm = x
-  end)
 
   -- Initialise the current pattern
 
