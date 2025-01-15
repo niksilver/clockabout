@@ -340,7 +340,6 @@ swing_pattern.init_params = function()
   params:set_action("clockabout_swing_swing", function(x)
     swing_pattern.swing = x / 100
     swing_pattern.init_pattern()
-    redraw()
   end)
 
   return { "clockabout_swing_swing" }
@@ -360,6 +359,7 @@ function enc(n, d)
     local param_name = current_params()[1]
     local param = params:lookup_param(param_name)
     param:delta(d)
+    redraw()
   end
 end
 
