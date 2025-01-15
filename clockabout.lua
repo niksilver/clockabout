@@ -350,7 +350,10 @@ end
 
 
 function enc(n, d)
-  if n == 2 then
+  if n == 1 then
+    params:delta("clockabout_pattern", d)
+    redraw()
+  elseif n == 2 then
     -- Change MIDI tempo
     params:delta("clockabout_bpm", d)
     redraw()
