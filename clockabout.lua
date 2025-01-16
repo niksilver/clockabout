@@ -2,6 +2,11 @@
 --
 -- Why should shuffle be the
 -- only irregular clock pattern?
+--
+-- E1: Select pattern
+-- E2: Change BPM
+-- E3: Pattern-specific param
+-- K3: Start/stop metro
 
 
 g = {}    -- Global values
@@ -29,7 +34,7 @@ function init_globals(vars)
                   -- Also allows a 0-indexed "none" device
   g.vport = 2       -- MIDI clock out vport (int >= 1)
 
-  g.bpm = 60
+  g.bpm = 60  -- Also a menu parameter
 
   g.pattern = linear_pattern    -- The pattern of our pulses
   g.patterns = {                -- All the patterns
@@ -42,6 +47,7 @@ function init_globals(vars)
   g.pulse_total = 0  -- Total pulses we've sent
 
   g.metro = null    -- To be set up further down
+  g.metro_running = 0  -- Note: 0 or 1. Also a menu parameter
 
   -- Insert any overrides
 
@@ -100,6 +106,18 @@ function init()
     g.bpm = x
   end)
 
+  -- Our own parameter for whether the metro is running
+
+  params:add_binary("clockabout_metro_running", "Metro running?", "toggle", g.metro_running)
+  params:set_action("clockabout_metro_running", function(x)
+    g.metro_running = x
+    if g.metro_running == 1 then
+      init_metro()
+    else
+      cancel_metro()
+    end
+  end)
+
   -- Parameter for the selected pattern
 
   local pats = {}
@@ -129,6 +147,8 @@ function init()
   -- Set the metronome going
 
   g.TMP_START_TIME = util.time()
+  g.metro_running = 1
+  params:set("clockabout_metro_running", 1)
   init_metro()
 
 end
@@ -153,7 +173,8 @@ function show_hide_pattern_params(show_pat)
 end
 
 
--- Set up the metronome according to the bpm and set it going.
+-- Set up the metronome according to the bpm and set it going;
+-- doesn't set the metro param or the global variable.
 -- Inconveniently, the first pulse does not occur immediately -
 -- so we add it ourselves.
 --
@@ -164,7 +185,16 @@ function init_metro()
     g.PULSES_PP    -- Number of pulses to send before we recalculate
   )
   g.metro:start()
+  g.pulse_num = 0
   send_pulse(0)
+end
+
+
+-- Cancel the metronome; doesn't set the metro param or the global variable.
+--
+function cancel_metro()
+  g.metro:stop()
+  metro.free(g.metro.id)
 end
 
 
@@ -367,6 +397,14 @@ function enc(n, d)
 end
 
 
+function key(n, z)
+  if n == 3 and z == 1 then
+    params:set("clockabout_metro_running", 1 - g.metro_running)
+    redraw()
+  end
+end
+
+
 -- Params for the current pattern.
 -- @treturn table  Table of param names.
 --
@@ -376,12 +414,12 @@ function current_params()
 end
 
 
-function key(n, z)
-end
-
-
 function redraw()
   screen.clear()
+
+  screen.level(2)
+  draw_pattern()
+
   screen.level(15)
 
   screen.move(0,10)
@@ -398,8 +436,10 @@ function redraw()
     screen.text(param.name .. ": " .. params:string(param_name))
   end
 
-  screen.level(2)
-  draw_pattern()
+  if g.metro_running == 0 then
+      screen.move(64, 48)
+      screen.text_center("STOPPED")
+  end
 
   screen.update()
 end
