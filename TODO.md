@@ -1,6 +1,5 @@
 To do
 
-- Fix bpm bug with swing pattern.
 - Remove TMP clock code.
 - Check whether we don't need to stop and start the current metro
   each time it reaches the end of its run.
@@ -11,3 +10,4 @@ To do
 Done
 
 - Add stop/start on K2.
+- Fix bpm bug with swing pattern.

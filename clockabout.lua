@@ -115,6 +115,7 @@ function init()
       init_metro()
     else
       cancel_metro()
+      g.pulse_num = 0
     end
   end)
 
@@ -185,7 +186,6 @@ function init_metro()
     g.PULSES_PP    -- Number of pulses to send before we recalculate
   )
   g.metro:start()
-  g.pulse_num = 0
   send_pulse(0)
 end
 
