@@ -212,7 +212,7 @@ function send_pulse(stage)
 
     -- print("Resetting")
     g.metro:stop()
-    metro.free(g.metro.id)
+    -- metro.free(g.metro.id)
     init_metro()
     return
 
