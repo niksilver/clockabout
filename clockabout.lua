@@ -180,12 +180,16 @@ end
 -- so we add it ourselves.
 --
 function init_metro()
-  g.metro = metro.init(
-    send_pulse,  -- Function to call
-    calc_interval(),
-    g.PULSES_PP    -- Number of pulses to send before we recalculate
+  if g.metro == null then
+    g.metro = metro.init(
+      send_pulse  -- Function to call
+    )
+  end
+  g.metro:start(
+    calc_interval(),  -- Time between pulses
+    g.PULSES_PP,      -- Number of pulses to send before we recalculate
+    1
   )
-  g.metro:start()
   send_pulse(0)
 end
 
@@ -194,7 +198,6 @@ end
 --
 function cancel_metro()
   g.metro:stop()
-  metro.free(g.metro.id)
 end
 
 

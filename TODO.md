@@ -1,8 +1,8 @@
 To do
 
-- Remove TMP clock code.
-- Check whether we don't need to stop and start the current metro
+- Check whether we don't need to stop, free and re-init the current metro
   each time it reaches the end of its run.
+- Remove TMP clock code.
 - Allow patterns to run over several bars.
 - Add a random pattern.
 - Add a superellipse pattern.
