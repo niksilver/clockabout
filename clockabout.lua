@@ -150,7 +150,6 @@ function init()
   g.TMP_START_TIME = util.time()
   g.metro_running = 1
   params:set("clockabout_metro_running", 1)
-  init_metro()
 
 end
 
