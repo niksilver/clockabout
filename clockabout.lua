@@ -48,6 +48,7 @@ function init_globals(vars)
 
   g.metro = null    -- To be set up further down
   g.metro_running = 0  -- Note: 0 or 1. Also a menu parameter
+  g.tmp = ""  --  Tmp commentary
 
   -- Insert any overrides
 
@@ -110,6 +111,7 @@ function init()
 
   params:add_binary("clockabout_metro_running", "Metro running?", "toggle", g.metro_running)
   params:set_action("clockabout_metro_running", function(x)
+    g.tmp = g.tmp .. "action: running,"
     g.metro_running = x
     if g.metro_running == 1 then
       init_metro()
@@ -179,14 +181,17 @@ end
 -- so we add it ourselves.
 --
 function init_metro()
+  g.tmp = g.tmp .. "init_metro enter,"
   if g.metro == null then
+    g.tmp = g.tmp .. "init_metro null,"
     g.metro = metro.init(
       send_pulse  -- Function to call
     )
   end
+  g.tmp = g.tmp .. "init_metro start,"
   g.metro:start(
     calc_interval(),  -- Time between pulses
-    g.PULSES_PP,      -- Number of pulses to send before we recalculate
+    PULSES_PP,      -- Number of pulses to send before we recalculate
     1
   )
   send_pulse(0)
@@ -196,6 +201,7 @@ end
 -- Cancel the metronome; doesn't set the metro param or the global variable.
 --
 function cancel_metro()
+  g.tmp = g.tmp .. "cancel_metro enter,"
   g.metro:stop()
 end
 
@@ -206,8 +212,10 @@ end
 --    from 1, but we insert our own 0.
 --
 function send_pulse(stage)
+  g.tmp = g.tmp .. "send_pulse enter,"
   local is_last_pulse = (stage == g.PULSES_PP)
   if is_last_pulse then
+    g.tmp = g.tmp .. "send_pulse is_last_pulse,"
 
     -- print("Resetting")
     g.metro:stop()
@@ -219,7 +227,8 @@ function send_pulse(stage)
 
   g.devices[g.vport].connection:clock()
   g.pulse_total = g.pulse_total + 1
-  --print(g.pulse_total .. "," .. (util.time() - g.TMP_START_TIME) .. "," .. g.pulse_num .. "," .. stage)
+  print(g.pulse_total .. "," .. (util.time() - g.TMP_START_TIME) .. "," .. g.pulse_num .. "," .. stage .. "," .. g.tmp)
+  g.tmp = ""
   g.pulse_num = g.pulse_num + 1
   if (g.pulse_num > 24) then
     g.pulse_num = 1
