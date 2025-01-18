@@ -194,7 +194,6 @@ function init_metro()
     PULSES_PP,      -- Number of pulses to send before we recalculate
     1
   )
-  send_pulse(0)
 end
 
 
@@ -213,17 +212,6 @@ end
 --
 function send_pulse(stage)
   g.tmp = g.tmp .. "send_pulse enter,"
-  local is_last_pulse = (stage == g.PULSES_PP)
-  if is_last_pulse then
-    g.tmp = g.tmp .. "send_pulse is_last_pulse,"
-
-    -- print("Resetting")
-    g.metro:stop()
-    -- metro.free(g.metro.id)
-    init_metro()
-    return
-
-  end
 
   g.devices[g.vport].connection:clock()
   g.pulse_total = g.pulse_total + 1
@@ -232,6 +220,16 @@ function send_pulse(stage)
   g.pulse_num = g.pulse_num + 1
   if (g.pulse_num > 24) then
     g.pulse_num = 1
+  end
+
+  local is_last_pulse = (stage == g.PULSES_PP)
+  if is_last_pulse then
+    g.tmp = g.tmp .. "send_pulse is_last_pulse,"
+
+    -- print("Resetting")
+    g.metro:stop()
+    -- metro.free(g.metro.id)
+    init_metro()
   end
 
 end
