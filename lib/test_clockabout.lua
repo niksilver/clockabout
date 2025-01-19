@@ -25,7 +25,7 @@ function test_calc_interval_60_bpm()
   local beat_dur_sec = 60 / g.bpm
   local expected_interval = beat_dur_sec / 24
 
-  lu.assertAlmostEquals( calc_interval(), expected_interval, 0.01 )
+  lu.assertAlmostEquals( calc_interval(g.pulse_num), expected_interval, 0.01 )
 end
 
 function test_calc_interval_60_bpm_in_middle_of_bar()
@@ -38,7 +38,7 @@ function test_calc_interval_60_bpm_in_middle_of_bar()
   local beat_dur_sec = 60 / g.bpm
   local expected_interval = beat_dur_sec / 24
 
-  lu.assertAlmostEquals( calc_interval(), expected_interval, 0.01 )
+  lu.assertAlmostEquals( calc_interval(g.pulse_num), expected_interval, 0.01 )
 end
 
 function test_calc_interval_60_bpm_in_middle_of_bar_3_beats_per_bar()
@@ -51,7 +51,7 @@ function test_calc_interval_60_bpm_in_middle_of_bar_3_beats_per_bar()
   local beat_dur_sec = 60 / g.bpm
   local expected_interval = beat_dur_sec / 24
 
-  lu.assertAlmostEquals( calc_interval(), expected_interval, 0.01 )
+  lu.assertAlmostEquals( calc_interval(g.pulse_num), expected_interval, 0.01 )
 end
 
 function test_calc_interval_120_bpm()
@@ -64,7 +64,7 @@ function test_calc_interval_120_bpm()
   local beat_dur_sec = 60 / g.bpm
   local expected_interval = beat_dur_sec / 24
 
-  lu.assertAlmostEquals( calc_interval(), expected_interval, 0.01 )
+  lu.assertAlmostEquals( calc_interval(g.pulse_num), expected_interval, 0.01 )
 end
 
 -- transform for swing pattern -------------------------------------
@@ -128,7 +128,7 @@ function test_calc_interval_swing_60_bpm_in_middle_of_bar()
 
   local expected_pulse_duration = (y_end - y_start) / g.PULSES_PP * beat_duration
 
-  lu.assertAlmostEquals( calc_interval(), expected_pulse_duration, 0.001 )
+  lu.assertAlmostEquals( calc_interval(g.pulse_num), expected_pulse_duration, 0.001 )
 end
 
 os.exit( lu.LuaUnit.run() )

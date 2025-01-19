@@ -46,7 +46,9 @@ function init_globals(vars)
   g.pulse_num = 1    -- Number of next pulse in the bar, from 1, looping at end of bar
   g.pulse_total = 0  -- Total pulses we've sent
 
-  g.metro = null    -- To be set up further down
+  g.metro = null     -- Current metro
+  g.metros = {}      -- We'll swap between metros 1 and 2
+  g.metro_id = null  -- Current metro id - 1 or 2
   g.metro_running = 0  -- Note: 0 or 1. Also a menu parameter
   g.tmp = ""  --  Tmp commentary
 
@@ -111,12 +113,13 @@ function init()
 
   params:add_binary("clockabout_metro_running", "Metro running?", "toggle", g.metro_running)
   params:set_action("clockabout_metro_running", function(x)
-    g.tmp = g.tmp .. "action: running,"
+    debug("action: running,")
     g.metro_running = x
     if g.metro_running == 1 then
-      init_metro()
+      init_first_metro()
+      start_metro()
     else
-      cancel_metro()
+      cancel_both_metros()
       g.pulse_num = 0
     end
   end)
@@ -150,9 +153,14 @@ function init()
   -- Set the metronome going
 
   g.TMP_START_TIME = util.time()
-  g.metro_running = 1
   params:set("clockabout_metro_running", 1)
 
+end
+
+
+function debug(s)
+  g.tmp = g.tmp .. s
+  -- print(s)
 end
 
 
@@ -175,33 +183,48 @@ function show_hide_pattern_params(show_pat)
 end
 
 
--- Set up the metronome according to the bpm and set it going;
--- doesn't set the metro param or the global variable.
--- Inconveniently, the first pulse does not occur immediately -
--- so we add it ourselves.
+-- Set up the the first metro only. Doesn't start it.
 --
-function init_metro()
-  g.tmp = g.tmp .. "init_metro enter,"
+function init_first_metro()
+  debug("init_first_metro enter,")
   if g.metro == null then
-    g.tmp = g.tmp .. "init_metro null,"
-    g.metro = metro.init(
-      send_pulse  -- Function to call
+    debug("init_first_metro null,")
+
+    -- Metro 1 starts at the current pulse num
+    g.metros[1] = metro.init(
+      send_pulse,  -- Function to call
+      calc_interval(g.pulse_num),  -- Time between pulses
+      PULSES_PP      -- Number of pulses to send before we recalculate
     )
+
+    -- Identify current metro
+
+    g.metro = g.metros[1]
+    g.metro_id = 1
+
+  else
+    error("Attempt to init already-init'ed metro")
   end
-  g.tmp = g.tmp .. "init_metro start,"
-  g.metro:start(
-    calc_interval(),  -- Time between pulses
-    PULSES_PP,      -- Number of pulses to send before we recalculate
-    1
-  )
+  debug("init_first_metro exit,")
 end
 
 
--- Cancel the metronome; doesn't set the metro param or the global variable.
+-- Start the current metro running.
 --
-function cancel_metro()
-  g.tmp = g.tmp .. "cancel_metro enter,"
-  g.metro:stop()
+function start_metro()
+  g.metro:start()
+end
+
+
+-- Cancel the metronomes.
+--
+function cancel_both_metros()
+  debug("cancel_both_metros enter,")
+  g.metros[1]:free()
+  g.metros[2]:free()
+  g.metro = null
+  g.metro_id = null
+  g.metro_running = 0
 end
 
 
@@ -211,35 +234,54 @@ end
 --    from 1, but we insert our own 0.
 --
 function send_pulse(stage)
-  g.tmp = g.tmp .. "send_pulse enter,"
+  debug("send_pulse enter,")
 
   g.devices[g.vport].connection:clock()
   g.pulse_total = g.pulse_total + 1
-  print(g.pulse_total .. "," .. (util.time() - g.TMP_START_TIME) .. "," .. g.pulse_num .. "," .. stage .. "," .. g.tmp)
+  print(g.pulse_total .. "," .. (util.time() - g.TMP_START_TIME) .. "," .. g.pulse_num .. "," .. g.metro_id .. "," .. stage .. "," .. g.tmp)
   g.tmp = ""
   g.pulse_num = g.pulse_num + 1
+
+  if stage == 1 then
+
+    -- Prepare next metro
+    debug("send_pulse prepare next,")
+    local next_metro_id = 3 - g.metro_id
+    metro.free(next_metro_id)
+
+    -- Next metro will follow on from the first
+    local follow_on_pulse_num = g.pulse_num + g.PULSES_PP
+    if follow_on_pulse_num > 24 then
+      follow_on_pulse_num = 1
+    end
+    g.metros[next_metro_id] = metro.init(
+      send_pulse,
+      calc_interval(follow_on_pulse_num),
+      PULSES_PP
+    )
+
+  elseif stage == g.PULSES_PP then
+    -- Switch metro
+    debug("send_pulse switch,")
+    g.metro_id = 3 - g.metro_id
+    g.metro = g.metros[g.metro_id]
+    g.metro:start()
+  end
+
   if (g.pulse_num > 24) then
     g.pulse_num = 1
   end
 
-  local is_last_pulse = (stage == g.PULSES_PP)
-  if is_last_pulse then
-    g.tmp = g.tmp .. "send_pulse is_last_pulse,"
-
-    -- print("Resetting")
-    g.metro:stop()
-    -- metro.free(g.metro.id)
-    init_metro()
-  end
-
+  debug("send_pulse exit,")
 end
 
 
 -- Calculate the interval between pulses for the current part.
+-- @tparam pulse_num  The next pulse number.
 -- @treturn number  Seconds duration oft interval.
 --
-function calc_interval()
-  local curr_pulse = g.pulse_num - 1
+function calc_interval(pulse_num)
+  local curr_pulse = pulse_num - 1
   local end_pulse = curr_pulse + g.PULSES_PP
 
   -- Get current and end time in the bar, scaled to beat length 1.0
