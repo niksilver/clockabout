@@ -194,7 +194,7 @@ function init_first_metro()
     g.metros[1] = metro.init(
       wrapped_pulse(1),  -- Function to call
       calc_interval(g.pulse_num),  -- Time between pulses
-      PULSES_PP      -- Number of pulses to send before we recalculate
+      g.PULSES_PP      -- Number of pulses to send before we recalculate
     )
 
     -- Identify current metro
@@ -264,7 +264,7 @@ function send_pulse(stage)
 --[[    g.metros[next_metro_id] = metro.init(
       wrapped_pulse(next_metro_id),
       calc_interval(follow_on_pulse_num),
-      PULSES_PP
+      g.PULSES_PP
     )--]]
 
   elseif stage == g.PULSES_PP then
