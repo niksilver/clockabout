@@ -23,8 +23,7 @@ function init_globals(vars)
 
   -- Constants
 
-  g.PARTS_PQN = 4    -- This many parts per quarter note - number of regular metros in a quarter note
-  g.PULSES_PP = 24 / g.PARTS_PQN    -- This many pulses per part before we set another metro
+  g.PULSES_PP = 6    -- This many pulses per part before we set another metro
   g.TMP_START_TIME = nil
 
   -- Variables
