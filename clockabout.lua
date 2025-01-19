@@ -120,7 +120,7 @@ function init()
       start_metro()
     else
       cancel_both_metros()
-      g.pulse_num = 0
+      g.pulse_num = 1
     end
   end)
 
@@ -160,7 +160,7 @@ end
 
 function debug(s)
   g.tmp = g.tmp .. s
-  print(s)
+  --print(s)
 end
 
 
@@ -225,6 +225,8 @@ function cancel_both_metros()
   g.metro = null
   g.metro_id = null
   g.metro_running = 0
+
+  g.pulse_num = 1
 end
 
 
@@ -252,7 +254,7 @@ function send_pulse(stage)
   if stage == 1 then
 
     -- Prepare next metro
---[[    debug("send_pulse prepare next,")
+    debug("send_pulse prepare next,")
     local next_metro_id = 3 - g.metro_id
     metro.free(next_metro_id)
 
@@ -260,19 +262,19 @@ function send_pulse(stage)
     local follow_on_pulse_num = g.pulse_num + g.PULSES_PP
     if follow_on_pulse_num > 24 then
       follow_on_pulse_num = 1
-    end--]]
---[[    g.metros[next_metro_id] = metro.init(
+    end
+    g.metros[next_metro_id] = metro.init(
       wrapped_pulse(next_metro_id),
       calc_interval(follow_on_pulse_num),
       g.PULSES_PP
-    )--]]
+    )
 
   elseif stage == g.PULSES_PP then
---[[    -- Switch metro
+    -- Switch metro
     debug("send_pulse switch,")
     g.metro_id = 3 - g.metro_id
     g.metro = g.metros[g.metro_id]
-    g.metro:start()--]]
+    g.metro:start()
   end
 
   if (g.pulse_num > 24) then
