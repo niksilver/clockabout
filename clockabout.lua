@@ -46,9 +46,9 @@ function init_globals(vars)
   g.pulse_num = 1    -- Number of next pulse in the bar, from 1, looping at end of bar
   g.pulse_total = 0  -- Total pulses we've sent
 
-  g.metro = null     -- Current metro
+  g.metro = nil      -- Current metro
   g.metros = {}      -- We'll swap between metros 1 and 2
-  g.metro_id = null  -- Current metro id - 1 or 2
+  g.metro_id = nil   -- Current metro id - 1 or 2
   g.metro_running = 0  -- Note: 0 or 1. Also a menu parameter
   g.tmp = ""  --  Tmp commentary
 
@@ -187,8 +187,8 @@ end
 --
 function init_first_metro()
   debug("init_first_metro enter,")
-  if g.metro == null then
-    debug("init_first_metro null,")
+  if g.metro == nil then
+    debug("init_first_metro nil,")
 
     -- Metro 1 starts at the current pulse num
     g.metros[1] = metro.init(
@@ -226,8 +226,8 @@ function cancel_both_metros()
   if g.metros[2] then
     metro.free(g.metros[2].id)
   end
-  g.metro = null
-  g.metro_id = null
+  g.metro = nil
+  g.metro_id = nil
   g.metro_running = 0
 
   g.pulse_num = 1
