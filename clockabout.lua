@@ -220,8 +220,12 @@ end
 --
 function cancel_both_metros()
   debug("cancel_both_metros enter,")
-  g.metros[1]:free()
-  g.metros[2]:free()
+  if g.metros[1] then
+    metro.free(g.metros[1].id)
+  end
+  if g.metros[2] then
+    metro.free(g.metros[2].id)
+  end
   g.metro = null
   g.metro_id = null
   g.metro_running = 0
