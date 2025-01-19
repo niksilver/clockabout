@@ -48,7 +48,7 @@ function init_globals(vars)
 
   g.metro = nil      -- Current metro
   g.metros = {}      -- We'll swap between metros 1 and 2
-  g.metro_id = nil   -- Current metro id - 1 or 2
+  g.metro_num = nil  -- Our current metro num - 1 or 2. Not the metro's id
   g.metro_running = 0  -- Note: 0 or 1. Also a menu parameter
   g.tmp = ""  --  Tmp commentary
 
@@ -200,7 +200,7 @@ function init_first_metro()
     -- Identify current metro
 
     g.metro = g.metros[1]
-    g.metro_id = 1
+    g.metro_num = 1
 
   else
     error("Attempt to init already-init'ed metro")
@@ -227,16 +227,16 @@ function cancel_both_metros()
     metro.free(g.metros[2].id)
   end
   g.metro = nil
-  g.metro_id = nil
+  g.metro_num = nil
   g.metro_running = 0
 
   g.pulse_num = 1
 end
 
 
-function wrapped_pulse(metro_id)
+function wrapped_pulse(metro_num)
   return function(stage)
-    debug("metro_id " .. metro_id)
+    debug("metro_num " .. metro_num)
     send_pulse(stage)
   end
 end
@@ -251,7 +251,7 @@ function send_pulse(stage)
 
   g.devices[g.vport].connection:clock()
   g.pulse_total = g.pulse_total + 1
-  --print(g.pulse_total .. "," .. (util.time() - g.TMP_START_TIME) .. "," .. g.pulse_num .. "," .. g.metro_id .. "," .. stage .. "," .. g.tmp)
+  --print(g.pulse_total .. "," .. (util.time() - g.TMP_START_TIME) .. "," .. g.pulse_num .. "," .. g.metro_num .. "," .. stage .. "," .. g.tmp)
   g.tmp = ""
   g.pulse_num = g.pulse_num + 1
 
@@ -259,16 +259,18 @@ function send_pulse(stage)
 
     -- Prepare next metro
     debug("send_pulse prepare next")
-    local next_metro_id = 3 - g.metro_id
-    metro.free(next_metro_id)
+    local next_metro_num = 3 - g.metro_num
+    if g.metros[next_metro_num] then
+      metro.free(g.metros[next_metro_num].id)
+    end
 
     -- Next metro will follow on from the first
     local follow_on_pulse_num = g.pulse_num + g.PULSES_PP
     if follow_on_pulse_num > 24 then
       follow_on_pulse_num = 1
     end
-    g.metros[next_metro_id] = metro.init(
-      wrapped_pulse(next_metro_id),
+    g.metros[next_metro_num] = metro.init(
+      wrapped_pulse(next_metro_num),
       calc_interval(follow_on_pulse_num),
       g.PULSES_PP
     )
@@ -276,8 +278,8 @@ function send_pulse(stage)
   elseif stage == g.PULSES_PP then
     -- Switch metro
     debug("send_pulse switch")
-    g.metro_id = 3 - g.metro_id
-    g.metro = g.metros[g.metro_id]
+    g.metro_num = 3 - g.metro_num
+    g.metro = g.metros[g.metro_num]
     g.metro:start()
   end
 
