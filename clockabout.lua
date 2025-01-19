@@ -160,7 +160,7 @@ end
 
 function debug(s)
   g.tmp = g.tmp .. s
-  -- print(s)
+  print(s)
 end
 
 
@@ -192,7 +192,7 @@ function init_first_metro()
 
     -- Metro 1 starts at the current pulse num
     g.metros[1] = metro.init(
-      send_pulse,  -- Function to call
+      wrapped_pulse(1),  -- Function to call
       calc_interval(g.pulse_num),  -- Time between pulses
       PULSES_PP      -- Number of pulses to send before we recalculate
     )
@@ -228,6 +228,13 @@ function cancel_both_metros()
 end
 
 
+function wrapped_pulse(metro_id)
+  return function(stage)
+    debug("metro_id " .. metro_id .. ",")
+    send_pulse(stage)
+  end
+end
+
 -- Send a MIDI clock pulse.
 -- If it's the last in the part, recalculate and reset the metro for the next part.
 -- @tparam int stage  The stage of this pulse. Normally counts
@@ -245,7 +252,7 @@ function send_pulse(stage)
   if stage == 1 then
 
     -- Prepare next metro
-    debug("send_pulse prepare next,")
+--[[    debug("send_pulse prepare next,")
     local next_metro_id = 3 - g.metro_id
     metro.free(next_metro_id)
 
@@ -253,19 +260,19 @@ function send_pulse(stage)
     local follow_on_pulse_num = g.pulse_num + g.PULSES_PP
     if follow_on_pulse_num > 24 then
       follow_on_pulse_num = 1
-    end
-    g.metros[next_metro_id] = metro.init(
-      send_pulse,
+    end--]]
+--[[    g.metros[next_metro_id] = metro.init(
+      wrapped_pulse(next_metro_id),
       calc_interval(follow_on_pulse_num),
       PULSES_PP
-    )
+    )--]]
 
   elseif stage == g.PULSES_PP then
-    -- Switch metro
+--[[    -- Switch metro
     debug("send_pulse switch,")
     g.metro_id = 3 - g.metro_id
     g.metro = g.metros[g.metro_id]
-    g.metro:start()
+    g.metro:start()--]]
   end
 
   if (g.pulse_num > 24) then
