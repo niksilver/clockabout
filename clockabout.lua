@@ -41,7 +41,7 @@ function init_globals(vars)
     swing_pattern,
   }
   g.pattern_params = {}  --  Map from pattern number to its params. Set up later.
-  g.pattern_length = 4   -- Number of beats in the pattern
+  g.pattern_length = 1   -- Number of beats in the pattern
 
   g.pulse_num = 1    -- Number of next pulse in the bar, from 1, looping at end of bar
   g.pulse_total = 0  -- Total pulses we've sent
@@ -125,7 +125,7 @@ function init()
       cancel_both_metros()
       g.pulse_num = 1
       g.beat_num = 1
-      debug("Reset g.beat_num to 1")
+      log("Reset g.beat_num to 1")
     end
   end)
 
@@ -163,7 +163,7 @@ function init()
 end
 
 
-function debug(s)
+function log(s)
   --g.tmp = g.tmp .. "," .. tostring(s)
   print(s)
 end
@@ -244,7 +244,7 @@ end
 function send_pulse(stage)
 
   g.devices[g.vport].connection:clock()
-  debug("Sent pulse " .. g.pulse_num)
+  log("Sent pulse " .. g.pulse_num)
   g.pulse_total = g.pulse_total + 1
   --print(g.pulse_total .. "," .. (util.time() - g.TMP_START_TIME) .. "," .. g.pulse_num .. "," .. g.metro_num .. "," .. stage .. "," .. g.tmp)
   --g.tmp = ""
@@ -283,7 +283,7 @@ function send_pulse(stage)
     if g.beat_num > g.pattern_length then
       g.beat_num = 1
     end
-    debug("g.beat_num inc to " .. g.beat_num)
+    log("g.beat_num inc to " .. g.beat_num)
   end
 
 end

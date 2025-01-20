@@ -109,6 +109,8 @@ function test_calc_interval_swing_60_bpm_in_middle_of_bar()
   g = init_globals({
     bpm = 60,
     pattern = swing_pattern,
+    pattern_length = 1,
+    beat_num = 1,
   })
 
   -- Assume we're on pulse 14 of 24 (so over halfway) on the 5th beat.
@@ -116,7 +118,7 @@ function test_calc_interval_swing_60_bpm_in_middle_of_bar()
   -- We rely on the transform() function, as we've tested that above.
 
   g.pulse_num = 15
-  g.pulse_total = 5 * 24 - 1
+  g.pulse_total = 4 * 24 + g.pulse_num - 1
 
   swing_pattern.swing = 0.10
   swing_pattern.init_pattern()
@@ -129,6 +131,71 @@ function test_calc_interval_swing_60_bpm_in_middle_of_bar()
   local expected_pulse_duration = (y_end - y_start) / g.PULSES_PP * beat_duration
 
   lu.assertAlmostEquals( calc_interval(g.pulse_num), expected_pulse_duration, 0.001 )
+end
+
+function test_calc_interval_swing_60_bpm_in_middle_of_bar_pattern_length_2()
+  g = init_globals({
+    bpm = 60,
+    pattern = swing_pattern,
+    pattern_length = 2,    -- Pattern length 2
+    beat_num = 1,
+  })
+
+  -- Assume we're on pulse 14 of 24 of the 3rd beat, so that's the 1st
+  -- beat in a two-beat pattern.
+  -- And that means pulse 15 is the next one.
+  -- We rely on the transform() function, as we've tested that above.
+
+  g.beat_num = 1
+  g.pulse_num = 15
+  g.pulse_total = 2 * 24 + g.pulse_num - 1
+
+  swing_pattern.swing = 0.10
+  swing_pattern.init_pattern()
+
+  local x_start_normally = (g.pulse_num-1) / 24
+  local x_start_scaled = x_start_normally / g.pattern_length
+  local y_start = swing_pattern.transform(x_start_scaled)
+
+  local x_end_normally = (g.pulse_num - 1 + g.PULSES_PP) / 24
+  local x_end_scaled = x_end_normally / g.pattern_length
+  local y_end = swing_pattern.transform(x_end_scaled)
+
+  local beat_duration = 60 / g.bpm  -- Also the scale for calculating duration
+
+  local expected_pulse_duration = (y_end - y_start) / g.PULSES_PP * beat_duration
+
+  calc_interval(g.pulse_num)
+  lu.assertAlmostEquals( calc_interval(g.pulse_num), expected_pulse_duration, 0.001 )
+
+  -- Now let's do similar, but for the 2nd beat in a two-beat pattern.
+  -- This is just like the last one, but the x start and end are further along.
+
+  -- Assume we're on pulse 14 of 24 of the 4th beat, so that's the 2st
+  -- beat in a two-beat pattern.
+  -- And that means pulse 15 is the next one.
+
+  g.beat_num = 1
+  g.pulse_num = 15
+  g.pulse_total = 2 * 24 + g.pulse_num - 1
+
+  swing_pattern.swing = 0.10
+  swing_pattern.init_pattern()
+
+  local x_start_normally = (g.pulse_num-1) / 24
+  local x_start_scaled = x_start_normally / g.pattern_length + 0.5
+  local y_start = swing_pattern.transform(x_start_scaled)
+
+  local x_end_normally = (g.pulse_num - 1 + g.PULSES_PP) / 24
+  local x_end_scaled = x_end_normally / g.pattern_length + 0.5
+  local y_end = swing_pattern.transform(x_end_scaled)
+
+  local beat_duration = 60 / g.bpm  -- Also the scale for calculating duration
+
+  local expected_pulse_duration = (y_end - y_start) / g.PULSES_PP * beat_duration
+
+  lu.assertAlmostEquals( calc_interval(g.pulse_num), expected_pulse_duration, 0.001 )
+
 end
 
 os.exit( lu.LuaUnit.run() )
