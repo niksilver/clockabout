@@ -139,11 +139,11 @@ function pulse_printing_function()
   g = init_globals({
     bpm = 60,
     pattern = swing_pattern,
-    pattern_length = 2,    -- Pattern length 2
+    pattern_length = 3,    -- Pattern length 2
     beat_num = 1,
   })
 
-  swing_pattern.swing = 0.10
+  swing_pattern.swing = 0.79
   swing_pattern.init_pattern()
 
   g.beat_num = 1
@@ -152,7 +152,7 @@ function pulse_printing_function()
 
   print()
   local time = 0
-  for beat = 1, 2 do
+  for beat = 1, 6 do
     g.beat_num = beat
     for next_pulse = 1,24,6 do
       local interval = calc_interval(next_pulse)
@@ -231,6 +231,40 @@ function test_calc_interval_swing_60_bpm_in_middle_of_bar_pattern_length_2()
   local expected_pulse_duration_scaled = expected_pulse_duration * g.pattern_length
 
   lu.assertAlmostEquals( calc_interval(g.pulse_num), expected_pulse_duration_scaled, 0.001 )
+
+end
+
+function test_calc_interval_swing_60_bpm_pattern_length_3()
+  g = init_globals({
+    bpm = 60,
+    pattern = swing_pattern,
+    pattern_length = 8,
+    beat_num = 1,
+  })
+
+  swing_pattern.swing = 0.79
+  swing_pattern.init_pattern()
+
+  g.beat_num = 1
+  g.pulse_num = 1
+  g.pulse_total = 0
+
+  local time = 0
+  for beat = 1, g.pattern_length do
+    g.beat_num = beat
+
+    for next_pulse = 1, 24, g.PULSES_PP do
+      local interval = calc_interval(next_pulse)
+      for pulse = next_pulse, (next_pulse + g.PULSES_PP - 1) do
+
+        print(beat ..", ".. pulse ..", ".. time)
+        time = time + interval
+
+      end
+    end
+  end
+
+  lu.assertAlmostEquals( time, g.pattern_length, 0.001 )
 
 end
 

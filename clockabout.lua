@@ -24,7 +24,6 @@ function init_globals(vars)
   -- Constants
 
   g.PULSES_PP = 6    -- This many pulses per part before we set another metro
-  g.TMP_START_TIME = nil
 
   -- Variables
 
@@ -149,20 +148,43 @@ function init()
 
   show_hide_pattern_params(params:get("clockabout_pattern"))
 
+  -- Parameter for how many beats the pattern lasts for
+
+  params:add_number("clockabout_pattern_length",
+    "Pattern length",    -- Name
+    1, 16,  -- Min, max
+    1,      -- Default
+    function(param)             -- Formatter
+      local v = param:get()
+      local plural = v > 1 and 's' or ''
+      return string.format(v .. ' beat' .. plural)
+    end,
+    false  -- Wrap?
+  )
+  params:set_action("clockabout_pattern_length", function(x)
+    g.pattern_length = x
+  end)
+
   -- Initialise the current pattern
 
   g.pattern.init_pattern()
 
   -- Set the metronome going
 
-  g.TMP_START_TIME = util.time()
   params:set("clockabout_metro_running", 1)
 
 end
 
 
-function log(s)
-  print(s)
+function log(msg, ...)
+  if not(g.log_init_time) then
+    g.log_init_time = util.time()
+  end
+  if not(arg) then
+    arg = {}
+  end
+  local time = util.time() - g.log_init_time
+  print(time .. ',' .. string.format(msg, table.unpack(arg)))
 end
 
 
@@ -277,6 +299,7 @@ function send_pulse(stage)
     if g.beat_num > g.pattern_length then
       g.beat_num = 1
     end
+    log("Beat")
   end
 
 end
