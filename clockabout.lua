@@ -54,7 +54,6 @@ function init_globals(vars)
   g.metros = {}      -- We'll swap between metros 1 and 2
   g.metro_num = nil  -- Our current metro num - 1 or 2. Not the metro's id
   g.metro_running = 0  -- Note: 0 or 1. Also a menu parameter
-  g.tmp = ""  --  Tmp commentary
 
   -- Insert any overrides
 
@@ -125,7 +124,6 @@ function init()
       cancel_both_metros()
       g.pulse_num = 1
       g.beat_num = 1
-      log("Reset g.beat_num to 1")
     end
   end)
 
@@ -164,8 +162,7 @@ end
 
 
 function log(s)
-  --g.tmp = g.tmp .. "," .. tostring(s)
-  --print(s)
+  print(s)
 end
 
 
@@ -244,10 +241,7 @@ end
 function send_pulse(stage)
 
   g.devices[g.vport].connection:clock()
-  log("Sent pulse " .. g.pulse_num)
   g.pulse_total = g.pulse_total + 1
-  --print(g.pulse_total .. "," .. (util.time() - g.TMP_START_TIME) .. "," .. g.pulse_num .. "," .. g.metro_num .. "," .. stage .. "," .. g.tmp)
-  --g.tmp = ""
   g.pulse_num = g.pulse_num + 1
 
   if stage == 1 then
@@ -283,7 +277,6 @@ function send_pulse(stage)
     if g.beat_num > g.pattern_length then
       g.beat_num = 1
     end
-    log("g.beat_num inc to " .. g.beat_num)
   end
 
 end
