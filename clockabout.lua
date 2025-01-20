@@ -165,7 +165,7 @@ end
 
 function log(s)
   --g.tmp = g.tmp .. "," .. tostring(s)
-  print(s)
+  --print(s)
 end
 
 
@@ -291,9 +291,12 @@ end
 
 -- Calculate the interval between pulses for the current part.
 -- @tparam pulse_num  The next pulse number.
--- @treturn number  Seconds duration oft interval.
+-- @treturn number  Seconds duration of interval.
 --
 function calc_interval(pulse_num)
+
+  -- Initially, we assume the pattern is just one beat (24 pulses) long
+
   local curr_pulse = pulse_num - 1
   local end_pulse = curr_pulse + g.PULSES_PP
 
@@ -301,6 +304,12 @@ function calc_interval(pulse_num)
 
   local curr_scaled_time = curr_pulse / 24
   local end_scaled_time = end_pulse / 24
+
+  -- We'll scale it again, according to how many beats in the pattern
+  -- (pattern length) and which beat we're in.
+
+  curr_scaled_time = curr_scaled_time / g.pattern_length + 24 * (g.beat_num - 1)
+  end_scaled_time = end_scaled_time / g.pattern_length + 24 * (g.beat_num - 1)
 
   -- Duration of the part, scaled to bar length 1.0, and then in actual time
 
@@ -354,7 +363,7 @@ end
 linear_pattern = {
   name = "Linear",
 
-  transform = function(x, v)
+  transform = function(x)
     return x
   end,
 
