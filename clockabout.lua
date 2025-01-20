@@ -41,9 +41,14 @@ function init_globals(vars)
     swing_pattern,
   }
   g.pattern_params = {}  --  Map from pattern number to its params. Set up later.
+  g.pattern_length = 4   -- Number of beats in the pattern
 
   g.pulse_num = 1    -- Number of next pulse in the bar, from 1, looping at end of bar
   g.pulse_total = 0  -- Total pulses we've sent
+
+  g.beat_num = 1     -- Current beat num (might be pending its first pulse),
+                     -- up to the number of beats in the pattern (pattern length).
+                     -- Note: 1-indexed.
 
   g.metro = nil      -- Current metro
   g.metros = {}      -- We'll swap between metros 1 and 2
@@ -120,6 +125,7 @@ function init()
     else
       cancel_both_metros()
       g.pulse_num = 1
+      g.beat_num = 1
     end
   end)
 
@@ -159,7 +165,7 @@ end
 
 function debug(s)
   --g.tmp = g.tmp .. "," .. tostring(s)
-  --print(s)
+  print(s)
 end
 
 
@@ -230,6 +236,7 @@ function cancel_both_metros()
   g.metro_running = 0
 
   g.pulse_num = 1
+  g.beat_num = 1
 end
 
 
@@ -284,6 +291,12 @@ function send_pulse(stage)
 
   if (g.pulse_num > 24) then
     g.pulse_num = 1
+
+    g.beat_num = g.beat_num + 1
+    if g.beat_num > g.pattern_length then
+      g.beat_num = 1
+    end
+    print("g.beat_num inc to " .. g.beat_num)
   end
 
   debug("send_pulse exit")
