@@ -2,11 +2,11 @@ To do
 
 - Add a random pattern.
 - Allow pattern to regenerate.
-- Add a superellipse pattern.
-- Improve the pattern graph.
 
 Done
 
+- Add a superellipse pattern.
+- Improve the pattern graph.
 - Remove TMP clock code.
 - Allow patterns to run over several bars.
 - Add stop/start on K2.

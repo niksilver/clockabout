@@ -583,10 +583,17 @@ function draw_pattern()
   screen.move(0, 63)
   screen.line_width(1)
 
-  for x = 0.0, 1.0, 0.025 do
-    screen_x = x * 127
-    screen_y = 63 - (g.pattern.transform(x) * 48)
+  for x = 0.0, 1.025, 0.025 do
+
+    if x > 1 then  -- Deal with arithmetic imprecision
+      x = 1
+    end
+
+    local y = g.pattern.transform(x)
+    local screen_x = x * 127
+    local screen_y = 63 - (g.pattern.transform(x) * 48)
     screen.line(screen_x, screen_y)
+
   end
 
   screen.stroke()
