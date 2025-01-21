@@ -384,7 +384,6 @@ function test_pulse_interval_superellipse_60_bpm_power_2()
 
   -- Expected values below are from calculations in Excel
 
-  print('power 2.0')
   local time = 0
 
   for next_pulse = 1, 24, g.PULSES_PP do
@@ -392,7 +391,6 @@ function test_pulse_interval_superellipse_60_bpm_power_2()
     for pulse = next_pulse, (next_pulse + g.PULSES_PP - 1) do
 
       time = time + interval
-      print(string.format('%d, %d, %f', 1, pulse, time))
 
       -- At the quarter-way point
 
@@ -451,7 +449,6 @@ function test_pulse_interval_superellipse_60_bpm_power_0_5()
 
   -- Expected values below are from calculations in Excel
 
-  print('power 0.5')
   local time = 0
 
   for next_pulse = 1, 24, g.PULSES_PP do
@@ -459,7 +456,6 @@ function test_pulse_interval_superellipse_60_bpm_power_0_5()
     for pulse = next_pulse, (next_pulse + g.PULSES_PP - 1) do
 
       time = time + interval
-      print(string.format('%d, %d, %f', 1, pulse, time))
 
       -- At the quarter-way point
 
