@@ -299,7 +299,6 @@ function send_pulse(stage)
     if g.beat_num > g.pattern_length then
       g.beat_num = 1
     end
-    log("Beat")
   end
 
 end
