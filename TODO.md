@@ -1,6 +1,5 @@
 To do
 
-- Allow change of swing inflection point.
 - Add a random pattern.
 - Allow pattern to regenerate.
 - Add s-curve (double superellipse).
@@ -8,6 +7,7 @@ To do
 
 Done
 
+- Allow change of swing inflection point.
 - Add a superellipse pattern.
 - Improve the pattern graph.
 - Remove TMP clock code.

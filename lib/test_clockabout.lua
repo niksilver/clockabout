@@ -80,6 +80,7 @@ end
 
 function test_transform_for_swing_pattern_50pc_swing()
   swing_pattern.swing = 0.50
+  swing_pattern.inflection = 0.50
   swing_pattern.init_pattern()
 
   lu.assertAlmostEquals( swing_pattern.transform(0.00), 0,    0.001 )
@@ -92,6 +93,7 @@ end
 
 function test_transform_for_swing_pattern_75pc_swing()
   swing_pattern.swing = 0.75
+  swing_pattern.inflection = 0.50
   swing_pattern.init_pattern()
 
   lu.assertAlmostEquals( swing_pattern.transform(0.00), 0,     0.001 )
@@ -104,12 +106,28 @@ end
 
 function test_transform_for_swing_pattern_10pc_swing()
   swing_pattern.swing = 0.10
+  swing_pattern.inflection = 0.50
   swing_pattern.init_pattern()
 
   lu.assertAlmostEquals( swing_pattern.transform(0.00), 0,    0.001 )
   lu.assertAlmostEquals( swing_pattern.transform(0.25), 0.05, 0.001 )
   lu.assertAlmostEquals( swing_pattern.transform(0.50), 0.10, 0.001 )
   local y = (0.9/0.5) * 0.25 + 0.1
+  lu.assertAlmostEquals( swing_pattern.transform(0.75), y,    0.001 )
+  lu.assertAlmostEquals( swing_pattern.transform(1.00), 1.0,  0.001 )
+end
+
+
+function test_transform_for_swing_pattern_10pc_swing_25pc_inflection()
+  swing_pattern.swing = 0.10
+  swing_pattern.inflection = 0.25
+  swing_pattern.init_pattern()
+
+  lu.assertAlmostEquals( swing_pattern.transform(0.00), 0,    0.001 )
+  lu.assertAlmostEquals( swing_pattern.transform(0.25), 0.10, 0.001 )
+  local y = (0.9/0.75) * 0.25 + 0.1
+  lu.assertAlmostEquals( swing_pattern.transform(0.50), y,    0.001 )
+  local y = (0.9/0.75) * 0.50 + 0.1
   lu.assertAlmostEquals( swing_pattern.transform(0.75), y,    0.001 )
   lu.assertAlmostEquals( swing_pattern.transform(1.00), 1.0,  0.001 )
 end

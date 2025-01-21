@@ -344,19 +344,19 @@ end
 -- Time patterns ----------------------------------------------------------
 
 -- Fields and functions are:
---
+
 -- name
 --
 -- @field name  Short string name of the pattern.
---
---
+
+
 -- init_params()
 --
 -- Create and initialise menu parameters specific to this pattern..
 --
 -- @treturn table  A list of the parameter names added.
---
---
+
+
 -- transform(x)
 --
 -- Given a time point in the bar, say when that should actually occur.
@@ -366,8 +366,8 @@ end
 --
 -- @tparam number x  The original point in the bar, 0.0 to 1.0.
 -- @treturn number  Which point in the bar it should be occur, 0.0 to 1.0.
---
---
+
+
 -- init_pattern()
 --
 -- Do anything needed whenever the pattern becomes the current one. This may
@@ -419,9 +419,10 @@ swing_pattern = {
 
   -- Specific to this pattern
 
-  swing = 0.60,  -- Default
+  swing = 0.60,      -- Default
+  inflection = 0.50, -- Default, 0.0 to 1.0
 
-  transform = nil,  -- Set by init_pattern()
+  transform = nil,   -- Set by init_pattern()
 }
 
 -- @tparam number swing  Amount of swing, 0.01 to 0.99.
@@ -429,16 +430,17 @@ swing_pattern = {
 swing_pattern.init_pattern = function()
 
   local swing = swing_pattern.swing
+  local inflection = swing_pattern.inflection
 
   swing_pattern.transform = function(x)
 
-    if x < 0.5 then
-      local gradient = swing / 0.5
+    if x < inflection then
+      local gradient = swing / inflection
       local y = x * gradient
       return y
     else
-      local gradient = (1-swing) / 0.5
-      local y = (x - 0.5) * gradient + swing
+      local gradient = (1-swing) / (1-inflection)
+      local y = (x - inflection) * gradient + swing
       return y
     end
 
@@ -461,7 +463,21 @@ swing_pattern.init_params = function()
     swing_pattern.init_pattern()
   end)
 
-  return { "clockabout_swing_swing" }
+  params:add_number("clockabout_swing_inflection",
+    "Inflection",  -- Name
+    1, 99,         -- Min, max
+    swing_pattern.inflection * 100,  -- Default
+    function(param)                  -- Formatter
+      return string.format('%d%%', param:get())
+    end,
+    false  -- Wrap?
+  )
+  params:set_action("clockabout_swing_inflection", function(x)
+    swing_pattern.inflection = x / 100
+    swing_pattern.init_pattern()
+  end)
+
+  return { "clockabout_swing_swing", "clockabout_swing_inflection" }
 end
 
 
