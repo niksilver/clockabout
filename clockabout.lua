@@ -332,11 +332,11 @@ function pulse_interval(pulse_num)
   local proportional_part_duration =
     g.pattern.transform(end_scaled_time) - g.pattern.transform(curr_scaled_time)
   local scale = proportional_part_duration / (end_scaled_time - curr_scaled_time)
-  local std_beat_duration = 60 / g.bpm
-  local std_pulse_duration = std_beat_duration / 24
-  local actual_pulse_duration = std_pulse_duration * scale
+  local std_beat_interval = 60 / g.bpm
+  local std_pulse_interval = std_beat_interval / 24
+  local actual_pulse_interval = std_pulse_interval * scale
 
-  return actual_pulse_duration
+  return actual_pulse_interval
 
 end
 
