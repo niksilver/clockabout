@@ -495,7 +495,7 @@ end
 superellipse_pattern.init_params = function()
   params:add_taper("clockabout_superellipse_power",
     "Power",    -- Name
-    0.3, 3,     -- Min, max
+    0.5, 2.5,   -- Min, max
     superellipse_pattern.power,  -- Default
     0,          -- k
     ''          -- Units
