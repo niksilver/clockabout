@@ -280,7 +280,7 @@ function test_calc_interval_swing_60_bpm_pattern_length_3()
 
   lu.assertEquals(assertion_count, 3)
 
-  lu.assertAlmostEquals( time, g.pattern_length, 0.001 )
+  lu.assertAlmostEquals( time, 1.0 * scale, 0.001 )
 
 end
 
