@@ -251,21 +251,21 @@ function test_calc_interval_swing_60_bpm_pattern_length_3()
 
         time = time + interval
 
-        -- Should be the swing value at the half way point, scaled
+        -- At the half way point should be the swing value, scaled
 
         if beat == 2 and pulse == 12 then
           lu.assertAlmostEquals( time, 0.79 * scale, 0.001 )
           assertion_count = assertion_count + 1
         end
 
-        -- Should be half the swing value at the quarter-way point, scaled
+        -- At the quarter-way point, should be half the swing value, scaled
 
         if beat == 1 and pulse == 18 then
           lu.assertAlmostEquals( time, 0.79/2 * scale, 0.001 )
           assertion_count = assertion_count + 1
         end
 
-        -- Should be between the swing value and pattern length at the three-quarter-way point, scaled
+        -- At the three-quarter-way point, should be between the swing value and the full beat, scaled
 
         if beat == 3 and pulse == 6 then
           local expected = (0.79 + 1.00) / 2
@@ -322,21 +322,21 @@ function test_calc_interval_swing_90_bpm_pattern_length_3()
 
         time = time + interval
 
-        -- Should be the swing value at the half way point, scaled
+        -- At the half way point should be the swing value, scaled
 
         if beat == 2 and pulse == 12 then
           lu.assertAlmostEquals( time, 0.79 * scale, 0.001 )
           assertion_count = assertion_count + 1
         end
 
-        -- Should be half the swing value at the quarter-way point, scaled
+        -- At the quarter-way point, should be half the swing value, scaled
 
         if beat == 1 and pulse == 18 then
           lu.assertAlmostEquals( time, 0.79/2 * scale, 0.001 )
           assertion_count = assertion_count + 1
         end
 
-        -- Should be between the swing value and pattern length at the three-quarter-way point, scaled
+        -- At the three-quarter-way point, should be between the swing value and the full beat, scaled
 
         if beat == 3 and pulse == 6 then
           local expected = (0.79 + 1.00) / 2
