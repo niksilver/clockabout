@@ -262,7 +262,6 @@ end
 --
 function send_pulse(stage)
 
-  log('send_pulse(stage = %d)', stage)
   g.devices[g.vport].connection:clock()
   g.pulse_total = g.pulse_total + 1
 
@@ -279,7 +278,6 @@ function send_pulse(stage)
     if follow_on_pulse_num > 24 then
       follow_on_pulse_num = 1
     end
-    log('Preparing metro %d for pulse %d', next_metro_num, follow_on_pulse_num)
     g.metros[next_metro_num] = metro.init(
       send_pulse,
       calc_interval(follow_on_pulse_num),
@@ -296,7 +294,6 @@ function send_pulse(stage)
   g.pulse_num = g.pulse_num + 1
 
   if (g.pulse_num > 24) then
-    log('%d', g.pulse_num)
     g.pulse_num = 1
 
     g.beat_num = g.beat_num + 1
@@ -338,8 +335,6 @@ function calc_interval(pulse_num)
   local std_beat_duration = 60 / g.bpm
   local std_pulse_duration = std_beat_duration / 24
   local actual_pulse_duration = std_pulse_duration * scale
-
-  --log('Pulse %d-%d, proportionally x = %f to %f, y inc = %f', curr_pulse, end_pulse, curr_scaled_time, end_scaled_time, proportional_part_duration)
 
   return actual_pulse_duration
 
