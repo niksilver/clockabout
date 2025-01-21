@@ -6,14 +6,18 @@
 -- Allow packages to be picked up from both this directory
 -- and its parent directory
 
+
 package.path = package.path .. ";../?.lua;lib/?.lua"
 
 lu = require('luaunit')
 require('clockabout')
 
+
 g = {}
 
+
 -- calc_interval for linear pattern -------------------------------------
+
 
 function test_calc_interval_60_bpm()
   g = init_globals({
@@ -28,6 +32,7 @@ function test_calc_interval_60_bpm()
   lu.assertAlmostEquals( calc_interval(g.pulse_num), expected_interval, 0.01 )
 end
 
+
 function test_calc_interval_60_bpm_in_middle_of_bar()
   g = init_globals({
     bpm = 60,
@@ -40,6 +45,7 @@ function test_calc_interval_60_bpm_in_middle_of_bar()
 
   lu.assertAlmostEquals( calc_interval(g.pulse_num), expected_interval, 0.01 )
 end
+
 
 function test_calc_interval_60_bpm_in_middle_of_bar_3_beats_per_bar()
   g = init_globals({
@@ -54,6 +60,7 @@ function test_calc_interval_60_bpm_in_middle_of_bar_3_beats_per_bar()
   lu.assertAlmostEquals( calc_interval(g.pulse_num), expected_interval, 0.01 )
 end
 
+
 function test_calc_interval_120_bpm()
   g = init_globals({
     bpm = 120,
@@ -67,7 +74,9 @@ function test_calc_interval_120_bpm()
   lu.assertAlmostEquals( calc_interval(g.pulse_num), expected_interval, 0.01 )
 end
 
+
 -- transform for swing pattern -------------------------------------
+
 
 function test_transform_for_swing_pattern_50pc_swing()
   swing_pattern.swing = 0.50
@@ -80,6 +89,7 @@ function test_transform_for_swing_pattern_50pc_swing()
   lu.assertAlmostEquals( swing_pattern.transform(1.00), 1.0,  0.001 )
 end
 
+
 function test_transform_for_swing_pattern_75pc_swing()
   swing_pattern.swing = 0.75
   swing_pattern.init_pattern()
@@ -90,6 +100,7 @@ function test_transform_for_swing_pattern_75pc_swing()
   lu.assertAlmostEquals( swing_pattern.transform(0.75), 0.875, 0.001 )
   lu.assertAlmostEquals( swing_pattern.transform(1.00), 1.0,   0.001 )
 end
+
 
 function test_transform_for_swing_pattern_10pc_swing()
   swing_pattern.swing = 0.10
@@ -103,7 +114,9 @@ function test_transform_for_swing_pattern_10pc_swing()
   lu.assertAlmostEquals( swing_pattern.transform(1.00), 1.0,  0.001 )
 end
 
+
 -- calc_interval for swing pattern -------------------------------------
+
 
 function test_calc_interval_swing_60_bpm_in_middle_of_bar()
   g = init_globals({
@@ -133,38 +146,6 @@ function test_calc_interval_swing_60_bpm_in_middle_of_bar()
   lu.assertAlmostEquals( calc_interval(g.pulse_num), expected_pulse_duration, 0.001 )
 end
 
--- Not really a test... just a way to print out pulses and visually check them
---
-function pulse_printing_function()
-  g = init_globals({
-    bpm = 60,
-    pattern = swing_pattern,
-    pattern_length = 3,    -- Pattern length 2
-    beat_num = 1,
-  })
-
-  swing_pattern.swing = 0.79
-  swing_pattern.init_pattern()
-
-  g.beat_num = 1
-  g.pulse_num = 1
-  g.pulse_total = 0
-
-  print()
-  local time = 0
-  for beat = 1, 6 do
-    g.beat_num = beat
-    for next_pulse = 1,24,6 do
-      local interval = calc_interval(next_pulse)
-      for pulse = next_pulse, next_pulse+5 do
-        print(beat ..", ".. pulse ..", ".. time)
-        time = time + interval
-      end
-    end
-  end
-  print(time)
-
-end
 
 function test_calc_interval_swing_60_bpm_in_middle_of_bar_pattern_length_2()
   g = init_globals({
@@ -234,11 +215,12 @@ function test_calc_interval_swing_60_bpm_in_middle_of_bar_pattern_length_2()
 
 end
 
+
 function test_calc_interval_swing_60_bpm_pattern_length_3()
   g = init_globals({
     bpm = 60,
     pattern = swing_pattern,
-    pattern_length = 8,
+    pattern_length = 3,
     beat_num = 1,
   })
 
@@ -257,7 +239,10 @@ function test_calc_interval_swing_60_bpm_pattern_length_3()
       local interval = calc_interval(next_pulse)
       for pulse = next_pulse, (next_pulse + g.PULSES_PP - 1) do
 
-        print(beat ..", ".. pulse ..", ".. time)
+        -- Should be the swing value at the half way point
+        if beat == 2 and next_pulse == 12 then
+          lu.assertAlmostEquals( time, 0.79, 0.001 )
+        end
         time = time + interval
 
       end
@@ -267,5 +252,47 @@ function test_calc_interval_swing_60_bpm_pattern_length_3()
   lu.assertAlmostEquals( time, g.pattern_length, 0.001 )
 
 end
+
+
+function test_calc_interval_swing_90_bpm_pattern_length_3()
+
+  -- Should be just like bpm 90, but 90/60 faster
+
+  g = init_globals({
+    bpm = 90,
+    pattern = swing_pattern,
+    pattern_length = 3,
+    beat_num = 1,
+  })
+
+  swing_pattern.swing = 0.79
+  swing_pattern.init_pattern()
+
+  g.beat_num = 1
+  g.pulse_num = 1
+  g.pulse_total = 0
+
+  local time = 0
+  for beat = 1, g.pattern_length do
+    g.beat_num = beat
+
+    for next_pulse = 1, 24, g.PULSES_PP do
+      local interval = calc_interval(next_pulse)
+      for pulse = next_pulse, (next_pulse + g.PULSES_PP - 1) do
+
+        -- Should be the swing value at the half way point
+        if beat == 2 and next_pulse == 12 then
+          lu.assertAlmostEquals( time, 0.79 / (90/60), 0.001 )
+        end
+        time = time + interval
+
+      end
+    end
+  end
+
+  lu.assertAlmostEquals( time, g.pattern_length / (90/60), 0.001 )
+
+end
+
 
 os.exit( lu.LuaUnit.run() )

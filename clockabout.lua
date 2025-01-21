@@ -324,8 +324,8 @@ function calc_interval(pulse_num)
   -- We'll scale it again, according to how many beats in the pattern
   -- (pattern length) and which beat we're in.
 
-  curr_scaled_time = curr_scaled_time / g.pattern_length + 24 * (g.beat_num - 1)
-  end_scaled_time = end_scaled_time / g.pattern_length + 24 * (g.beat_num - 1)
+  curr_scaled_time = (curr_scaled_time + (g.beat_num - 1)) / g.pattern_length
+  end_scaled_time = (end_scaled_time + (g.beat_num - 1)) / g.pattern_length
 
   -- Duration of the part, scaled to bar length 1.0, and then in actual time
 
