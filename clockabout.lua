@@ -38,6 +38,7 @@ function init_globals(vars)
   g.patterns = {                -- All the patterns
     linear_pattern,
     swing_pattern,
+    superellipse_pattern,
   }
   g.pattern_params = {}  --  Map from pattern number to its params. Set up later.
   g.pattern_length = 1   -- Number of beats in the pattern
@@ -180,11 +181,10 @@ function log(msg, ...)
   if not(g.log_init_time) then
     g.log_init_time = util.time()
   end
-  if not(arg) then
-    arg = {}
-  end
+
   local time = util.time() - g.log_init_time
-  print(time .. ',' .. string.format(msg, table.unpack(arg)))
+
+  print(time .. ',' .. string.format(msg, table.unpack({...})))
 end
 
 
@@ -293,6 +293,7 @@ function send_pulse(stage)
   end
 
   if (g.pulse_num > 24) then
+    log('%d', g.pulse_num)
     g.pulse_num = 1
 
     g.beat_num = g.beat_num + 1
@@ -461,6 +462,50 @@ swing_pattern.init_params = function()
   end)
 
   return { "clockabout_swing_swing" }
+end
+
+
+-- Superellipse, which is just a smooth curve.
+-- See https://en.wikipedia.org/wiki/Superellipse
+
+superellipse_pattern = {
+  name = "Superellipse",
+
+  -- Specific to this pattern
+
+  power = 0.70,  -- Default
+
+  transform = nil,  -- Set by init_pattern()
+}
+
+
+-- @tparam number power  Degree of curve, > 0.
+--
+superellipse_pattern.init_pattern = function()
+
+  local power = superellipse_pattern.power
+
+  superellipse_pattern.transform = function(x)
+    return (1 - (1-x)^power) ^ (1/power)
+  end
+
+end
+
+
+superellipse_pattern.init_params = function()
+  params:add_taper("clockabout_superellipse_power",
+    "Power",    -- Name
+    0.3, 3,     -- Min, max
+    superellipse_pattern.power,  -- Default
+    0,          -- k
+    ''          -- Units
+  )
+  params:set_action("clockabout_superellipse_power", function(x)
+    superellipse_pattern.power = x
+    superellipse_pattern.init_pattern()
+  end)
+
+  return { "clockabout_superellipse_power" }
 end
 
 
