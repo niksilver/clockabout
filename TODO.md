@@ -1,7 +1,10 @@
 To do
 
+- Allow change of swing inflection point.
 - Add a random pattern.
 - Allow pattern to regenerate.
+- Add s-curve (double superellipse).
+- Allow change of inflection point on double superellipse.
 
 Done
 

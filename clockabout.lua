@@ -215,7 +215,7 @@ function init_first_metro()
     -- Metro 1 starts at the current pulse num
     g.metros[1] = metro.init(
       send_pulse,  -- Function to call
-      calc_interval(g.pulse_num),  -- Time between pulses
+      pulse_interval(g.pulse_num),  -- Time between pulses
       g.PULSES_PP      -- Number of pulses to send before we recalculate
     )
 
@@ -280,7 +280,7 @@ function send_pulse(stage)
     end
     g.metros[next_metro_num] = metro.init(
       send_pulse,
-      calc_interval(follow_on_pulse_num),
+      pulse_interval(follow_on_pulse_num),
       g.PULSES_PP
     )
 
@@ -309,7 +309,7 @@ end
 -- @tparam pulse_num  The next pulse number.
 -- @treturn number  Seconds duration of interval.
 --
-function calc_interval(pulse_num)
+function pulse_interval(pulse_num)
 
   -- Initially, we assume the pattern is just one beat (24 pulses) long
 
