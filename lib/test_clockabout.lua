@@ -231,6 +231,16 @@ function test_calc_interval_swing_60_bpm_pattern_length_3()
   g.pulse_num = 1
   g.pulse_total = 0
 
+  -- We need to scale our expected values to a pattern that's
+  -- 60 bpm and running over 3 beats
+
+  local scale = 3
+
+  -- Count our assertions, because they're in if statements and we may
+  -- erroneously miss some
+
+  local assertion_count = 0
+
   local time = 0
   for beat = 1, g.pattern_length do
     g.beat_num = beat
@@ -239,15 +249,36 @@ function test_calc_interval_swing_60_bpm_pattern_length_3()
       local interval = calc_interval(next_pulse)
       for pulse = next_pulse, (next_pulse + g.PULSES_PP - 1) do
 
-        -- Should be the swing value at the half way point
-        if beat == 2 and next_pulse == 12 then
-          lu.assertAlmostEquals( time, 0.79, 0.001 )
-        end
+        print(string.format('%d, %d, %f', beat, pulse, time))
         time = time + interval
+
+        -- Should be the swing value at the half way point, scaled
+
+        if beat == 2 and pulse == 12 then
+          lu.assertAlmostEquals( time, 0.79 * scale, 0.001 )
+          assertion_count = assertion_count + 1
+        end
+
+        -- Should be half the swing value at the quarter-way point, scaled
+
+        if beat == 1 and pulse == 18 then
+          lu.assertAlmostEquals( time, 0.79/2 * scale, 0.001 )
+          assertion_count = assertion_count + 1
+        end
+
+        -- Should be between the swing value and pattern length at the three-quarter-way point, scaled
+
+        if beat == 3 and pulse == 6 then
+          local expected = (0.79 + 1.00) / 2
+          lu.assertAlmostEquals( time, expected * scale, 0.001 )
+          assertion_count = assertion_count + 1
+        end
 
       end
     end
   end
+
+  lu.assertEquals(assertion_count, 3)
 
   lu.assertAlmostEquals( time, g.pattern_length, 0.001 )
 
