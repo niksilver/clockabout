@@ -7,6 +7,7 @@ To do
 
 Done
 
+- Shift-E3 to change second pattern param.
 - Allow change of swing inflection point.
 - Add a superellipse pattern.
 - Improve the pattern graph.

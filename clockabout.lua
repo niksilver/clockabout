@@ -6,6 +6,7 @@
 -- E1: Select pattern
 -- E2: Change BPM
 -- E3: Pattern-specific param
+-- K1+E3: Second pattern param
 -- K3: Start/stop metro
 
 
@@ -42,6 +43,8 @@ function init_globals(vars)
   }
   g.pattern_params = {}  --  Map from pattern number to its params. Set up later.
   g.pattern_length = 1   -- Number of beats in the pattern
+
+  g.shift = false    -- If K1 is pressed
 
   g.pulse_num = 1    -- Number of next pulse in the bar, from 1, looping at end of bar
   g.pulse_total = 0  -- Total pulses we've sent
@@ -530,23 +533,43 @@ end
 
 function enc(n, d)
   if n == 1 then
+
+    -- Change the pattern
     params:delta("clockabout_pattern", d)
     redraw()
+
   elseif n == 2 then
+
     -- Change MIDI tempo
     params:delta("clockabout_bpm", d)
     redraw()
-  elseif n==3 and #current_params() >= 1 then
-    -- Change pattern-specific value
+
+  elseif n==3 and not(g.shift) and #current_params() >= 1 then
+
+    -- Change first pattern-specific value
     local param_name = current_params()[1]
     local param = params:lookup_param(param_name)
     param:delta(d)
     redraw()
+
+  elseif n == 3 and g.shift and #current_params() >= 2 then
+
+    -- Change second pattern-specific value
+    local param_name = current_params()[2]
+    local param = params:lookup_param(param_name)
+    param:delta(d)
+    redraw()
+
   end
 end
 
 
 function key(n, z)
+  if n == 1 then
+    g.shift = (z == 1)
+    redraw()
+  end
+
   if n == 3 and z == 1 then
     params:set("clockabout_metro_running", 1 - g.metro_running)
     redraw()
@@ -581,6 +604,14 @@ function redraw()
     -- Pattern-specific value
     screen.move(0,30)
     local param_name = current_params()[1]
+    local param = params:lookup_param(param_name)
+    screen.text(param.name .. ": " .. params:string(param_name))
+  end
+
+  if #current_params() >= 2 and g.shift then
+    -- Pattern-specific value
+    screen.move(0,40)
+    local param_name = current_params()[2]
     local param = params:lookup_param(param_name)
     screen.text(param.name .. ": " .. params:string(param_name))
   end
