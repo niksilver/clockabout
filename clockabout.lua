@@ -590,21 +590,54 @@ end
 
 
 -- Generate a number of random x,y points between 0 and 1.0.
--- They must all be in order, and all be separated by at least 0.05.
+-- They must all be in order, starting from 0,
+-- and all be separated by at least 0.05.
+--
 -- @tparam int points  The number of points to generate.
 -- @treturn table  Values of x in order.
 -- @treturn table  Values of y in order.
 --
 function random_pattern_generate_points(points)
-  local x = {}
-  for i = 1, points do
-    x[i] = math.random()
-  end
 
-  local y = {}
-  for i = 1, points do
-    y[i] = math.random()
-  end
+  local x, y
+
+  for count = 1, 2 do  -- Do this for x and y
+
+    -- Keep trying until all the numbers are far enough apart
+
+    local p, all_good
+    repeat
+
+      p = { 0 }
+      all_good = true
+
+      for i = 2, points do
+        p[i] = math.random()
+      end
+      table.sort(p)
+
+      -- Make sure they're far enough apart
+      local prev = 0
+      for i = 2, points do
+        if p[i] - prev < 0.05 then
+          all_good = false
+        end
+      end
+
+      -- The last point must be far enough from 1.0, too
+      if p[#p] > 0.95 then
+        all_good = false
+      end
+
+    until all_good
+
+    if count == 1 then
+      x = p
+    else
+      y = p
+    end
+
+  end  -- count for both x and y
 
   return x, y
 end

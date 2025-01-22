@@ -521,6 +521,35 @@ function test_random_pattern_generate_points()
   lu.assertEquals(#x, 5)
   lu.assertEquals(#y, 5)
 
+  -- Points must be in order and must be at least 0.05 apart.
+  -- We'll try it many times, because points are random.
+
+  for tries = 1, 1000 do
+    local points = tries % 8 + 2  -- At least 2 points
+    x, y = random_pattern_generate_points(points)
+
+    -- Test both x and y
+    for _, p in ipairs({x, y}) do
+
+      -- Put the series of points into a string for debugging
+      local series = '\n{ ' .. table.concat(p, '\n  ') .. ' }'
+
+      -- First point must always be (0,0)
+      lu.assertEquals(p[1], 0, 'Testing for initial 0 in ' .. series)
+
+      local previous = 0
+      for i = 2, #p do
+        local v = p[i]
+        lu.assertTrue(previous < v, 'Testing seq p['..i..'] = '..v..' in '..series)
+        lu.assertTrue(v - previous >= 0.05, 'Testing gap p['..i..'] = '..v..' in '..series)
+      end
+
+      -- And the last point must be at least 0.05 from 1.0
+      lu.assertTrue(1.0 - p[#p] >= 0.05, 'Testing last gap in '..series)
+
+    end
+  end
+
 end
 
 os.exit( lu.LuaUnit.run() )
