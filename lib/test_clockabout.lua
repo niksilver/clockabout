@@ -505,4 +505,22 @@ function test_pulse_interval_superellipse_60_bpm_power_0_5()
 end
 
 
+---- Testing the random pattern ----------------------------
+
+function test_random_pattern_generate_points()
+
+  -- Must generate the correct number of points
+
+  local x, y
+
+  x, y = random_pattern_generate_points(2)
+  lu.assertEquals(#x, 2)
+  lu.assertEquals(#y, 2)
+
+  x, y = random_pattern_generate_points(5)
+  lu.assertEquals(#x, 5)
+  lu.assertEquals(#y, 5)
+
+end
+
 os.exit( lu.LuaUnit.run() )

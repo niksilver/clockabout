@@ -10,6 +10,9 @@
 -- K3: Start/stop metro
 
 
+math.randomseed(os.time())
+
+
 g = {}    -- Global values
 
 
@@ -498,14 +501,12 @@ superellipse_pattern = {
 
   -- Specific to this pattern
 
-  power = 0.70,  -- Default
+  power = 0.70,  -- Degree of curve. Default
 
   transform = nil,  -- Set by init_pattern()
 }
 
 
--- @tparam number power  Degree of curve, > 0.
---
 superellipse_pattern.init_pattern = function()
 
   local power = superellipse_pattern.power
@@ -533,6 +534,99 @@ superellipse_pattern.init_params = function()
   return { "clockabout_superellipse_power" }
 end
 
+
+
+--[[
+    Random. Random (increasing) points, joined by straight lines.
+
+    For 75% swing it looks like this. It repeats per beat.
+
+    1.00 +                         ,-o
+         |                    __,-'
+         |                __-'
+    0.75 +              o'
+         |             /
+         |            /
+    0.50 +           /
+         |       ___o
+         |   o--'
+    0.25 +  /
+         | /
+         |/
+    0.00 +------+------+------+------+
+         0     0.25   0.50   0.75   1.00
+
+    Each line segment is represented by a line y = mx + c.
+    Its starting point is a min value for x.
+    Values m, c, and min are held in a table.
+
+--]]
+
+
+random_pattern = {
+  name = "Random",
+
+  -- Specific to this pattern
+
+  points = 3,  -- Number of points
+
+  transform = nil,  -- Set by init_pattern()
+
+  algebra = {},  -- Described above
+}
+
+
+random_pattern.init_pattern = function()
+
+  local points = random_pattern.points
+
+  -- Get random points x,y in order
+  local xs, ys = random_pattern_generate_points(points)
+
+  random_pattern.transform = function(x)
+  end
+
+end
+
+
+-- Generate a number of random x,y points between 0 and 1.0.
+-- They must all be in order, and all be separated by at least 0.05.
+-- @tparam int points  The number of points to generate.
+-- @treturn table  Values of x in order.
+-- @treturn table  Values of y in order.
+--
+function random_pattern_generate_points(points)
+  local x = {}
+  for i = 1, points do
+    x[i] = math.random()
+  end
+
+  local y = {}
+  for i = 1, points do
+    y[i] = math.random()
+  end
+
+  return x, y
+end
+
+
+random_pattern.init_params = function()
+  params:add_number("clockabout_random_points",
+    "Points",    -- Name
+    2, 8,   -- Min, max
+    3,      -- Default
+    function(param)    -- Formatter
+      return tostring(param:get(x))
+    end,
+    false   -- Wrap?
+  )
+  params:set_action("clockabout_random_points", function(x)
+    random_pattern.points = x
+    random_pattern.init_pattern()
+  end)
+
+  return { "clockabout_random_points" }
+end
 
 -- Basic norns functions ------------------------------------------------
 
