@@ -23,13 +23,15 @@ function test_pulse_interval_60_bpm()
   g = init_globals({
     bpm = 60,
     pulse_num = 1,
+    beat_num = 1,
     pulse_total = 0,
+    pattern_length = 1,
   })
 
   local beat_dur_sec = 60 / g.bpm
   local expected_interval = beat_dur_sec / 24
 
-  lu.assertAlmostEquals( pulse_interval(g.pulse_num), expected_interval, 0.01 )
+  lu.assertAlmostEquals( pulse_interval(g.pulse_num, g.beat_num), expected_interval, 0.01 )
 end
 
 
@@ -37,13 +39,15 @@ function test_pulse_interval_60_bpm_in_middle_of_bar()
   g = init_globals({
     bpm = 60,
     pulse_num = 17,
+    beat_num = 1,
     pulse_total = 16 + 96,
+    pattern_length = 1,
   })
 
   local beat_dur_sec = 60 / g.bpm
   local expected_interval = beat_dur_sec / 24
 
-  lu.assertAlmostEquals( pulse_interval(g.pulse_num), expected_interval, 0.01 )
+  lu.assertAlmostEquals( pulse_interval(g.pulse_num, g.beat_num), expected_interval, 0.01 )
 end
 
 
@@ -51,13 +55,15 @@ function test_pulse_interval_60_bpm_in_middle_of_bar_3_beats_per_bar()
   g = init_globals({
     bpm = 60,
     pulse_num = 17,
+    beat_num = 1,
     pulse_total = 16 + 96,
+    pattern_length = 1,
   })
 
   local beat_dur_sec = 60 / g.bpm
   local expected_interval = beat_dur_sec / 24
 
-  lu.assertAlmostEquals( pulse_interval(g.pulse_num), expected_interval, 0.01 )
+  lu.assertAlmostEquals( pulse_interval(g.pulse_num, g.beat_num), expected_interval, 0.01 )
 end
 
 
@@ -65,13 +71,15 @@ function test_pulse_interval_120_bpm()
   g = init_globals({
     bpm = 120,
     pulse_num = 1,
+    beat_num = 1,
     pulse_total = 0,
+    pattern_length = 1,
   })
 
   local beat_dur_sec = 60 / g.bpm
   local expected_interval = beat_dur_sec / 24
 
-  lu.assertAlmostEquals( pulse_interval(g.pulse_num), expected_interval, 0.01 )
+  lu.assertAlmostEquals( pulse_interval(g.pulse_num, g.beat_num), expected_interval, 0.01 )
 end
 
 
@@ -141,7 +149,6 @@ function test_pulse_interval_swing_60_bpm_in_middle_of_bar()
     bpm = 60,
     pattern = swing_pattern,
     pattern_length = 1,
-    beat_num = 1,
   })
 
   -- Assume we're on pulse 14 of 24 (so over halfway) on the 5th beat.
@@ -149,6 +156,7 @@ function test_pulse_interval_swing_60_bpm_in_middle_of_bar()
   -- We rely on the transform() function, as we've tested that above.
 
   g.pulse_num = 15
+  g.beat_num = 5
   g.pulse_total = 4 * 24 + g.pulse_num - 1
 
   swing_pattern.swing = 0.10
@@ -161,7 +169,7 @@ function test_pulse_interval_swing_60_bpm_in_middle_of_bar()
 
   local expected_pulse_duration = (y_end - y_start) / g.PULSES_PP * beat_duration
 
-  lu.assertAlmostEquals( pulse_interval(g.pulse_num), expected_pulse_duration, 0.001 )
+  lu.assertAlmostEquals( pulse_interval(g.pulse_num, g.beat_num), expected_pulse_duration, 0.001 )
 end
 
 
@@ -170,7 +178,6 @@ function test_pulse_interval_swing_60_bpm_in_middle_of_bar_pattern_length_2()
     bpm = 60,
     pattern = swing_pattern,
     pattern_length = 2,    -- Pattern length 2
-    beat_num = 1,
   })
 
   swing_pattern.swing = 0.10
@@ -200,7 +207,7 @@ function test_pulse_interval_swing_60_bpm_in_middle_of_bar_pattern_length_2()
   -- Scale up for multi-beat pattern
   local expected_pulse_duration_scaled = expected_pulse_duration * g.pattern_length
 
-  lu.assertAlmostEquals( pulse_interval(g.pulse_num), expected_pulse_duration_scaled, 0.001 )
+  lu.assertAlmostEquals( pulse_interval(g.pulse_num, g.beat_num), expected_pulse_duration_scaled, 0.001 )
 
   -- Now let's do similar, but for the 2nd beat in a two-beat pattern.
   -- This is just like the last one, but the x start and end are further along.
@@ -229,7 +236,7 @@ function test_pulse_interval_swing_60_bpm_in_middle_of_bar_pattern_length_2()
   -- Scale up for multi-beat pattern
   local expected_pulse_duration_scaled = expected_pulse_duration * g.pattern_length
 
-  lu.assertAlmostEquals( pulse_interval(g.pulse_num), expected_pulse_duration_scaled, 0.001 )
+  lu.assertAlmostEquals( pulse_interval(g.pulse_num, g.beat_num), expected_pulse_duration_scaled, 0.001 )
 
 end
 
@@ -239,13 +246,11 @@ function test_pulse_interval_swing_60_bpm_pattern_length_3()
     bpm = 60,
     pattern = swing_pattern,
     pattern_length = 3,
-    beat_num = 1,
   })
 
   swing_pattern.swing = 0.79
   swing_pattern.init_pattern()
 
-  g.beat_num = 1
   g.pulse_num = 1
   g.pulse_total = 0
 
@@ -261,10 +266,9 @@ function test_pulse_interval_swing_60_bpm_pattern_length_3()
 
   local time = 0
   for beat = 1, g.pattern_length do
-    g.beat_num = beat
 
     for next_pulse = 1, 24, g.PULSES_PP do
-      local interval = pulse_interval(next_pulse)
+      local interval = pulse_interval(next_pulse, beat)
       for pulse = next_pulse, (next_pulse + g.PULSES_PP - 1) do
 
         time = time + interval
@@ -310,13 +314,11 @@ function test_pulse_interval_swing_90_bpm_pattern_length_3()
     bpm = 90,
     pattern = swing_pattern,
     pattern_length = 3,
-    beat_num = 1,
   })
 
   swing_pattern.swing = 0.79
   swing_pattern.init_pattern()
 
-  g.beat_num = 1
   g.pulse_num = 1
   g.pulse_total = 0
 
@@ -332,10 +334,9 @@ function test_pulse_interval_swing_90_bpm_pattern_length_3()
 
   local time = 0
   for beat = 1, g.pattern_length do
-    g.beat_num = beat
 
     for next_pulse = 1, 24, g.PULSES_PP do
-      local interval = pulse_interval(next_pulse)
+      local interval = pulse_interval(next_pulse, beat)
       for pulse = next_pulse, (next_pulse + g.PULSES_PP - 1) do
 
         time = time + interval
@@ -381,7 +382,6 @@ function test_pulse_interval_superellipse_60_bpm_power_2()
     bpm = 60,
     pattern = superellipse_pattern,
     pattern_length = 1,
-    beat_num = 1,
   })
 
   superellipse_pattern.power = 2.00
@@ -405,7 +405,7 @@ function test_pulse_interval_superellipse_60_bpm_power_2()
   local time = 0
 
   for next_pulse = 1, 24, g.PULSES_PP do
-    local interval = pulse_interval(next_pulse)
+    local interval = pulse_interval(next_pulse, g.beat_num)
     for pulse = next_pulse, (next_pulse + g.PULSES_PP - 1) do
 
       time = time + interval
@@ -446,7 +446,6 @@ function test_pulse_interval_superellipse_60_bpm_power_0_5()
     bpm = 60,
     pattern = superellipse_pattern,
     pattern_length = 1,
-    beat_num = 1,
   })
 
   superellipse_pattern.power = 0.50
@@ -470,7 +469,7 @@ function test_pulse_interval_superellipse_60_bpm_power_0_5()
   local time = 0
 
   for next_pulse = 1, 24, g.PULSES_PP do
-    local interval = pulse_interval(next_pulse)
+    local interval = pulse_interval(next_pulse, g.beat_num)
     for pulse = next_pulse, (next_pulse + g.PULSES_PP - 1) do
 
       time = time + interval

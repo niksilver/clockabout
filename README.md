@@ -1,7 +1,11 @@
-# clockabout
+# Clockabout
 
 An irregular MIDI clock for monome norns - why should
 shuffle be the only irregular time pattern?
+
+## Misc notes
+
+- MIDI start/stop. Is it any use?
 
 # Development and testing
 

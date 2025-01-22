@@ -218,7 +218,7 @@ function init_first_metro()
     -- Metro 1 starts at the current pulse num
     g.metros[1] = metro.init(
       send_pulse,  -- Function to call
-      pulse_interval(g.pulse_num),  -- Time between pulses
+      pulse_interval(g.pulse_num, g.beat_num),  -- Time between pulses
       g.PULSES_PP      -- Number of pulses to send before we recalculate
     )
 
@@ -276,14 +276,19 @@ function send_pulse(stage)
       metro.free(g.metros[next_metro_num].id)
     end
 
-    -- Next metro will follow on from the first
+    -- Next metro will follow on from this one
     local follow_on_pulse_num = g.pulse_num + g.PULSES_PP
+    local beat_num = g.beat_num
+
     if follow_on_pulse_num > 24 then
       follow_on_pulse_num = 1
+      if beat_num > g.pattern_length then
+        beat_num = 1
+      end
     end
     g.metros[next_metro_num] = metro.init(
       send_pulse,
-      pulse_interval(follow_on_pulse_num),
+      pulse_interval(follow_on_pulse_num, beat_num),
       g.PULSES_PP
     )
 
@@ -309,10 +314,11 @@ end
 
 
 -- Calculate the interval between pulses for the current part.
--- @tparam pulse_num  The next pulse number.
+-- @tparam pulse_num  The pulse number of the start of the part (1-24).
+-- @tparam beat_num  The beat number of the pulse.
 -- @treturn number  Seconds duration of interval.
 --
-function pulse_interval(pulse_num)
+function pulse_interval(pulse_num, beat_num)
 
   -- Initially, we assume the pattern is just one beat (24 pulses) long
 
@@ -327,8 +333,8 @@ function pulse_interval(pulse_num)
   -- We'll scale it again, according to how many beats in the pattern
   -- (pattern length) and which beat we're in.
 
-  curr_scaled_time = (curr_scaled_time + (g.beat_num - 1)) / g.pattern_length
-  end_scaled_time = (end_scaled_time + (g.beat_num - 1)) / g.pattern_length
+  curr_scaled_time = (curr_scaled_time + (beat_num - 1)) / g.pattern_length
+  end_scaled_time = (end_scaled_time + (beat_num - 1)) / g.pattern_length
 
   -- Duration of the part, scaled to bar length 1.0, and then in actual time
 
