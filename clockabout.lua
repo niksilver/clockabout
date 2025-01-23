@@ -12,9 +12,12 @@
 
 math.randomseed(os.time())
 
-linear_pattern = require('lib/linear_pattern')
-swing_pattern = require('lib/swing_pattern')
-superellipse_pattern = require('lib/superellipse_pattern')
+-- Use our own 'include', for when this is tested outside of norns.
+include = include and include or require
+
+linear_pattern = include('lib/linear_pattern')
+swing_pattern = include('lib/swing_pattern')
+superellipse_pattern = include('lib/superellipse_pattern')
 
 
 g = {}    -- Global values
