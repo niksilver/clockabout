@@ -16,6 +16,7 @@ lu = require('luaunit')
 
 
 require('test_clockabout')
+require('test_swing_pattern')
 require('test_superellipse_pattern')
 require('test_random_pattern')
 
