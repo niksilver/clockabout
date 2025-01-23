@@ -559,6 +559,8 @@ end
     Each line segment is represented by a line y = mx + c.
     Its starting point is a min value for x.
     Values m, c, and min are held in a table.
+    Of the points, the first is expected to be at (0,0) and the
+    last one is expected to be at (1.0, 1.0)
 
 --]]
 
@@ -590,10 +592,10 @@ end
 
 
 -- Generate a number of random x,y points between 0 and 1.0.
--- They must all be in order, starting from 0,
+-- They must all be in order, starting from 0, ending with 1.0,
 -- and all be separated by at least 0.05.
 --
--- @tparam int points  The number of points to generate.
+-- @tparam int points  The number of points to generate, >= 2.
 -- @treturn table  Values of x in order.
 -- @treturn table  Values of y in order.
 --
@@ -608,11 +610,12 @@ function random_pattern_generate_points(points)
     local p, all_good
     repeat
 
-      p = { 0 }
       all_good = true
 
-      for i = 2, points do
-        p[i] = math.random()
+      -- Create ordered list from 0.0 to 1.0 with random points between
+      p = { 0, 1 }
+      for i = 2, points-1 do
+        p[#p+1] = math.random()
       end
       table.sort(p)
 
@@ -622,11 +625,6 @@ function random_pattern_generate_points(points)
         if p[i] - prev < 0.05 then
           all_good = false
         end
-      end
-
-      -- The last point must be far enough from 1.0, too
-      if p[#p] > 0.95 then
-        all_good = false
       end
 
     until all_good

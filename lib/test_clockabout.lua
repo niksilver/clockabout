@@ -517,6 +517,10 @@ function test_random_pattern_generate_points()
   lu.assertEquals(#x, 2)
   lu.assertEquals(#y, 2)
 
+  x, y = random_pattern_generate_points(3)
+  lu.assertEquals(#x, 3)
+  lu.assertEquals(#y, 3)
+
   x, y = random_pattern_generate_points(5)
   lu.assertEquals(#x, 5)
   lu.assertEquals(#y, 5)
@@ -544,8 +548,8 @@ function test_random_pattern_generate_points()
         lu.assertTrue(v - previous >= 0.05, 'Testing gap p['..i..'] = '..v..' in '..series)
       end
 
-      -- And the last point must be at least 0.05 from 1.0
-      lu.assertTrue(1.0 - p[#p] >= 0.05, 'Testing last gap in '..series)
+      -- And the last point must be at (1.0, 1.0)
+      lu.assertEquals(p[#p], 1, 'Testing for final 1.0 in ' .. series)
 
     end
   end
