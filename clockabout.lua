@@ -12,6 +12,7 @@
 
 math.randomseed(os.time())
 
+linear_pattern = require('lib/linear_pattern')
 swing_pattern = require('lib/swing_pattern')
 superellipse_pattern = require('lib/superellipse_pattern')
 
@@ -354,57 +355,6 @@ function pulse_interval(pulse_num, beat_num)
   return actual_pulse_interval
 
 end
-
-
--- Time patterns ----------------------------------------------------------
-
--- Fields and functions are:
-
--- name
---
--- @field name  Short string name of the pattern.
-
-
--- init_params()
---
--- Create and initialise menu parameters specific to this pattern..
---
--- @treturn table  A list of the parameter names added.
-
-
--- transform(x)
---
--- Given a time point in the bar, say when that should actually occur.
--- Must be strictly monotonically increasing. That is, if
--- b > a then transform(b) > transform(a).
--- Also we must have transform(0.0) == 0.0 and transform(1.0) == 1.0.
---
--- @tparam number x  The original point in the bar, 0.0 to 1.0.
--- @treturn number  Which point in the bar it should be occur, 0.0 to 1.0.
-
-
--- init_pattern()
---
--- Do anything needed whenever the pattern becomes the current one. This may
--- mean setting the transform() function.
-
-
--- A normal linear clock. Number of beats per bar and param value don't matter.
-
-linear_pattern = {
-  name = "Linear",
-
-  transform = function(x)
-    return x
-  end,
-
-  init_params = function()
-    return {}
-  end,
-
-  init_pattern = function()
-  end,
-}
 
 
 
