@@ -12,10 +12,11 @@
 
 package.path = package.path .. ";../?.lua;lib/?.lua"
 
-
 lu = require('luaunit')
 
+
 require('test_clockabout')
+require('test_superellipse_pattern')
 require('test_random_pattern')
 
 os.exit(lu.LuaUnit.run())
