@@ -58,7 +58,6 @@ function init_globals(vars)
   g.shift = false    -- If K1 is pressed
 
   g.pulse_num = 1    -- Number of next pulse in the bar, from 1, looping at end of bar
-  g.pulse_total = 0  -- Total pulses we've sent
 
   g.beat_num = 1     -- Current beat num (might be pending its first pulse),
                      -- up to the number of beats in the pattern (pattern length).
@@ -277,7 +276,6 @@ end
 function send_pulse(stage)
 
   g.devices[g.vport].connection:clock()
-  g.pulse_total = g.pulse_total + 1
 
   if stage == 1 then
 

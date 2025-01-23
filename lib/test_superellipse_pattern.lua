@@ -23,7 +23,6 @@ function test_pulse_interval_superellipse_60_bpm_power_2()
 
   g.beat_num = 1
   g.pulse_num = 1
-  g.pulse_total = 0
 
   -- No special scaling needed
 
@@ -87,7 +86,6 @@ function test_pulse_interval_superellipse_60_bpm_power_0_5()
 
   g.beat_num = 1
   g.pulse_num = 1
-  g.pulse_total = 0
 
   -- No special scaling needed
 

@@ -16,7 +16,6 @@ function test_pulse_interval_60_bpm()
     bpm = 60,
     pulse_num = 1,
     beat_num = 1,
-    pulse_total = 0,
     pattern_length = 1,
   })
 
@@ -32,7 +31,6 @@ function test_pulse_interval_60_bpm_in_middle_of_bar()
     bpm = 60,
     pulse_num = 17,
     beat_num = 1,
-    pulse_total = 16 + 96,
     pattern_length = 1,
   })
 
@@ -48,7 +46,6 @@ function test_pulse_interval_60_bpm_in_middle_of_bar_3_beats_per_bar()
     bpm = 60,
     pulse_num = 17,
     beat_num = 1,
-    pulse_total = 16 + 96,
     pattern_length = 1,
   })
 
@@ -64,7 +61,6 @@ function test_pulse_interval_120_bpm()
     bpm = 120,
     pulse_num = 1,
     beat_num = 1,
-    pulse_total = 0,
     pattern_length = 1,
   })
 

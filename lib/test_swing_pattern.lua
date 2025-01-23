@@ -82,7 +82,6 @@ function test_pulse_interval_swing_60_bpm_in_middle_of_bar()
 
   g.pulse_num = 15
   g.beat_num = 5
-  g.pulse_total = 4 * 24 + g.pulse_num - 1
 
   swing_pattern.swing = 0.10
   swing_pattern.init_pattern()
@@ -114,7 +113,6 @@ function test_pulse_interval_swing_60_bpm_in_middle_of_bar_pattern_length_2()
 
   g.beat_num = 1
   g.pulse_num = 15
-  g.pulse_total = 2 * 24 + g.pulse_num - 1
 
   local x_start_normally = (g.pulse_num-1) / 24
   -- Scale down for first beat of two
@@ -143,7 +141,6 @@ function test_pulse_interval_swing_60_bpm_in_middle_of_bar_pattern_length_2()
 
   g.beat_num = 2
   g.pulse_num = 15
-  g.pulse_total = 3 * 24 + g.pulse_num - 1
 
   local x_start_normally = (g.pulse_num-1) / 24
   -- Scale down and shift across for second beat of two
@@ -177,7 +174,6 @@ function test_pulse_interval_swing_60_bpm_pattern_length_3()
   swing_pattern.init_pattern()
 
   g.pulse_num = 1
-  g.pulse_total = 0
 
   -- We need to scale our expected values to a pattern that's
   -- 60 bpm and running over 3 beats
@@ -245,7 +241,6 @@ function test_pulse_interval_swing_90_bpm_pattern_length_3()
   swing_pattern.init_pattern()
 
   g.pulse_num = 1
-  g.pulse_total = 0
 
   -- We need to scale our expected values to a pattern that's
   -- 90 bpm and running over 3 beats
