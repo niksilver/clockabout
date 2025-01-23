@@ -10,8 +10,6 @@
 -- K3: Start/stop metro
 
 
-math.randomseed(os.time())
-
 -- Use our own 'include', for when this is tested outside of norns.
 include = include and include or require
 
