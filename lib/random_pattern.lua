@@ -46,10 +46,8 @@ random_pattern.init_pattern = function()
   local points = random_pattern.points
 
   -- Get random points x,y in order
-  local xs, ys = random_pattern_generate_points(points)
-
-  random_pattern.transform = function(x)
-  end
+  local x, y = random_pattern.generate_points(points)
+  random_pattern.algebra = random_pattern.calculate_algebra(x, y)
 
 end
 
@@ -105,6 +103,7 @@ end
 
 
 -- Create the algebraic values of m, c, start_x for each of the points.
+-- Does not actually set the algebra field of the random pattern.
 --
 -- @tparam table x  The list of x values, in order, from 0.0 to 1.1.
 -- @tparam table y  The list of y values, in order, from 0.0 to 1.1.
@@ -113,7 +112,7 @@ end
 --     1,2,3,... in order of x. Table keys are x, m, c, min_x.
 --     Entries for the last index (min_x = 1) are almost arbitrary.
 --
-random_pattern.algebra = function(x, y)
+random_pattern.calculate_algebra = function(x, y)
   local alg = {}
 
   for i = 1, #x-1 do
@@ -143,6 +142,27 @@ random_pattern.algebra = function(x, y)
   }
 
   return alg
+end
+
+
+-- The standard transform function.
+--
+random_pattern.transform = function(x)
+  local prev_alg = random_pattern.algebra[1]
+
+  for i = 2, #random_pattern.algebra do
+
+    local alg = random_pattern.algebra[i]
+    if alg.start_x >= x then
+      -- We've gone beyond the relevant segment
+      return prev_alg.m * x + prev_alg.c
+    end
+
+    -- Get ready to move onto the next segment
+    prev_alg = alg
+  end
+
+  error('No segment found for x = ' .. x)
 end
 
 

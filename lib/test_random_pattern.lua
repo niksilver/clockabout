@@ -61,14 +61,15 @@ function test_random_pattern_generate_points()
 end
 
 
----- Testing initial points in the random pattern ----------------------------
+---- Testing calculations for line segments ----------------------------
 
 
 function test_random_pattern_algebra()
   local x = { 0, 0.2, 0.8, 1.0 }
   local y = { 0, 0.2, 0.9, 1.0 }
 
-  local algebra = random_pattern.algebra(x, y)
+  random_pattern.points = 4
+  local algebra = random_pattern.calculate_algebra(x, y)
 
   -- Sanity check - there should be four sets of variables.
 
@@ -118,4 +119,64 @@ function test_random_pattern_algebra()
   f = function(x) return coeff.m * x + coeff.c end
 
   lu.assertEquals( f(1.0), 1.0 )
+end
+
+
+---- Testing transform() in the random pattern ----------------------------
+
+function test_random_pattern_transform()
+
+  -- Horrible overriding of a function just to force results we expect.
+  -- We'll force particular 'random' points for testing.
+
+  local save_fn = random_pattern.generate_points
+  random_pattern.generate_points = function()
+    return { 0, 0.2, 0.8, 1.0 },
+           { 0, 0.2, 0.9, 1.0 }
+  end
+  random_pattern.init_pattern()
+  random_pattern.generate_points = saved_fn
+
+  -- Point 1, from (0, 0) to (0.2, 0.2)
+
+  local x0 = 0.0
+  local x1 = 0.2
+  local y0 = random_pattern.transform(x0)
+  local y1 = random_pattern.transform(x1)
+  local x_mid = 0.1
+  local y_mid = random_pattern.transform(x_mid)
+  lu.assertAlmostEquals( y0, 0.0, 0.001)
+  lu.assertAlmostEquals( y1, 0.2, 0.001)
+  lu.assertAlmostEquals( y_mid, 0.1, 0.001)
+
+  -- Point 2, from (0.2, 0.2) to (0.8, 0.9)
+
+  x0 = 0.2
+  x1 = 0.8
+  y0 = random_pattern.transform(x0)
+  y1 = random_pattern.transform(x1)
+  x_mid = 0.5
+  y_mid = random_pattern.transform(x_mid)
+  lu.assertAlmostEquals( y0, 0.2, 0.001)
+  lu.assertAlmostEquals( y1, 0.9, 0.001)
+  lu.assertAlmostEquals( y_mid, (y0 + y1)/2, 0.001)
+
+  -- Point 3, from (0.8, 0.9) to (1.0, 1.0)
+
+  x0 = 0.8
+  x1 = 1.0
+  y0 = random_pattern.transform(x0)
+  y1 = random_pattern.transform(x1)
+  x_mid = 0.9
+  y_mid = random_pattern.transform(x_mid)
+  lu.assertAlmostEquals( y0, 0.9, 0.001)
+  lu.assertAlmostEquals( y1, 1.0, 0.001)
+  lu.assertAlmostEquals( y_mid, (y0 + y1)/2, 0.001)
+
+  -- Point 4 just has to work for (1.0, 1.0)
+
+  x0 = 1.0
+  y0 = random_pattern.transform(x0)
+  lu.assertAlmostEquals( y0, 1.0, 0.001)
+
 end

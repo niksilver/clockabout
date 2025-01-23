@@ -189,11 +189,14 @@ end
 
 
 function log(msg, ...)
+  local time_fn = util and util.time or os.clock
+
   if not(g.log_init_time) then
-    g.log_init_time = util.time()
+    -- Get this to work on norns and in testing (off norns)
+    g.log_init_time = time_fn()
   end
 
-  local time = util.time() - g.log_init_time
+  local time = time_fn() - g.log_init_time
 
   print(time .. ',' .. string.format(msg, table.unpack({...})))
 end
