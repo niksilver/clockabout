@@ -8,7 +8,8 @@ require('clockabout')
 g = {}
 
 
----- Testing the random pattern ----------------------------
+---- Testing initial points in the random pattern ----------------------------
+
 
 function test_random_pattern_generate_points()
 
@@ -16,15 +17,15 @@ function test_random_pattern_generate_points()
 
   local x, y
 
-  x, y = random_pattern_generate_points(2)
+  x, y = random_pattern.generate_points(2)
   lu.assertEquals(#x, 2)
   lu.assertEquals(#y, 2)
 
-  x, y = random_pattern_generate_points(3)
+  x, y = random_pattern.generate_points(3)
   lu.assertEquals(#x, 3)
   lu.assertEquals(#y, 3)
 
-  x, y = random_pattern_generate_points(5)
+  x, y = random_pattern.generate_points(5)
   lu.assertEquals(#x, 5)
   lu.assertEquals(#y, 5)
 
@@ -33,7 +34,7 @@ function test_random_pattern_generate_points()
 
   for tries = 1, 1000 do
     local points = tries % 8 + 2  -- At least 2 points
-    x, y = random_pattern_generate_points(points)
+    x, y = random_pattern.generate_points(points)
 
     -- Test both x and y
     for _, p in ipairs({x, y}) do
@@ -57,4 +58,64 @@ function test_random_pattern_generate_points()
     end
   end
 
+end
+
+
+---- Testing initial points in the random pattern ----------------------------
+
+
+function test_random_pattern_algebra()
+  local x = { 0, 0.2, 0.8, 1.0 }
+  local y = { 0, 0.2, 0.9, 1.0 }
+
+  local algebra = random_pattern.algebra(x, y)
+
+  -- Sanity check - there should be four sets of variables.
+
+  lu.assertEquals(#algebra, 4)
+
+  -- Point 1, from (0, 0) to (0.2, 0.2)
+
+  local coeff, f
+
+  coeff = algebra[1]
+  lu.assertEquals( coeff.start_x, 0)
+  lu.assertEquals( coeff.m,       1.0)
+  lu.assertEquals( coeff.c,       0.0)
+
+  f = function(x) return coeff.m * x + coeff.c end
+
+  lu.assertAlmostEquals( f(0.0), 0.0, 0.001)
+  lu.assertAlmostEquals( f(0.2), 0.2, 0.001)
+
+  -- Point 2, from (0.2, 0.2) to (0.8, 0.9)
+
+  coeff = algebra[2]
+  lu.assertAlmostEquals( coeff.start_x, 0.2,                       0.001)
+  lu.assertAlmostEquals( coeff.m,       (0.9 - 0.2) / (0.8 - 0.2), 0.001)
+
+  f = function(x) return coeff.m * x + coeff.c end
+
+  lu.assertAlmostEquals( f(0.2), 0.2, 0.001)
+  lu.assertAlmostEquals( f(0.8), 0.9, 0.001)
+
+  -- Point 3, from (0.8, 0.9) to (1.0, 1.0)
+
+  coeff = algebra[3]
+  lu.assertAlmostEquals( coeff.start_x, 0.8,                       0.001)
+  lu.assertAlmostEquals( coeff.m,       (1.0 - 0.9) / (1.0 - 0.8), 0.001)
+
+  f = function(x) return coeff.m * x + coeff.c end
+
+  lu.assertEquals( f(0.8), 0.9 )
+  lu.assertEquals( f(1.0), 1.0 )
+
+  -- Point 4, from (1.0, 1.0) just has to have usable values
+
+  coeff = algebra[4]
+  lu.assertAlmostEquals( coeff.start_x, 1.0,                       0.001)
+
+  f = function(x) return coeff.m * x + coeff.c end
+
+  lu.assertEquals( f(1.0), 1.0 )
 end

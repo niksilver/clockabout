@@ -1,5 +1,7 @@
 --[[
     Random. Random (increasing) points, joined by straight lines.
+    Of the points, the first is expected to be at (0,0) and the
+    last one is expected to be at (1.0, 1.0)
 
     1.00 +                         ,-o
          |                    __,-'
@@ -18,9 +20,8 @@
 
     Each line segment is represented by a line y = mx + c.
     Its starting point is a min value for x.
-    Values m, c, and min are held in a table.
-    Of the points, the first is expected to be at (0,0) and the
-    last one is expected to be at (1.0, 1.0)
+    Values m, c, and min_x are held in a table, which is indexed
+    in order of min_x.
 
 --]]
 
@@ -34,7 +35,9 @@ random_pattern = {
 
   transform = nil,  -- Set by init_pattern()
 
-  algebra = {},  -- Described above
+  algebra = {},  -- Indexed 1,2,3,... in order of x.
+                 -- Table keys x, m, c, min_x.
+                 -- The last index (min_x = 1) are almost arbitrary.
 }
 
 
@@ -59,7 +62,7 @@ end
 -- @treturn table  Values of x in order.
 -- @treturn table  Values of y in order.
 --
-function random_pattern_generate_points(points)
+random_pattern.generate_points = function(points)
 
   local x, y
 
@@ -98,6 +101,48 @@ function random_pattern_generate_points(points)
   end  -- count for both x and y
 
   return x, y
+end
+
+
+-- Create the algebraic values of m, c, start_x for each of the points.
+--
+-- @tparam table x  The list of x values, in order, from 0.0 to 1.1.
+-- @tparam table y  The list of y values, in order, from 0.0 to 1.1.
+--
+-- @treturn table  Table of values for each point. The table is indexed
+--     1,2,3,... in order of x. Table keys are x, m, c, min_x.
+--     Entries for the last index (min_x = 1) are almost arbitrary.
+--
+random_pattern.algebra = function(x, y)
+  local alg = {}
+
+  for i = 1, #x-1 do
+    local x0 = x[i]
+    local y0 = y[i]
+    local x1 = x[i+1]
+    local y1 = y[i+1]
+
+    -- y = mx + c, therefore c = y - mx
+
+    local m = (y1 - y0) / (x1 - x0)
+    local c = y0 - m * x0
+
+    alg[i] = {
+      start_x = x0,
+      m = m,
+      c = c,
+    }
+  end
+
+  -- Put in the semi-arbitrary values for (1.0, 1.0)
+
+  alg[#x] = {
+    start_x = 1.0,
+    m = 1,
+    c = 0,
+  }
+
+  return alg
 end
 
 
