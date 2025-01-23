@@ -49,6 +49,7 @@ function init_globals(vars)
     linear_pattern,
     swing_pattern,
     superellipse_pattern,
+    random_pattern,
   }
   g.pattern_params = {}  --  Map from pattern number to its params. Set up later.
   g.pattern_length = 1   -- Number of beats in the pattern

@@ -31,7 +31,7 @@ random_pattern = {
 
   -- Specific to this pattern
 
-  points = 3,  -- Number of points
+  points = 4,  -- Number of points
 
   transform = nil,  -- Set by init_pattern()
 
@@ -168,13 +168,13 @@ end
 
 random_pattern.init_params = function()
   params:add_number("clockabout_random_points",
-    "Points",    -- Name
-    2, 8,   -- Min, max
-    3,      -- Default
-    function(param)    -- Formatter
+    "Points",  -- Name
+    3, 8,      -- Min, max
+    random_pattern.points,  -- Default
+    function(param)         -- Formatter
       return tostring(param:get(x))
     end,
-    false   -- Wrap?
+    false      -- Wrap?
   )
   params:set_action("clockabout_random_points", function(x)
     random_pattern.points = x
