@@ -58,5 +58,3 @@ function test_random_pattern_generate_points()
   end
 
 end
-
-os.exit( lu.LuaUnit.run() )
