@@ -122,6 +122,7 @@ function init()
   params:set_action("clockabout_bpm", function(x)
     -- The metro will update at the next part
     g.bpm = x
+    log('bpm = %d', x)
   end)
 
   -- Our own parameter for whether the metro is running
@@ -153,6 +154,7 @@ function init()
     g.pattern = g.patterns[i]
     show_hide_pattern_params(i)
     g.pattern.init_pattern()
+    log('pattern = %s', g.pattern.name)
   end)
 
   -- Parameters for the each of the patterns
@@ -280,6 +282,7 @@ end
 function send_pulse(stage)
 
   g.devices[g.vport].connection:clock()
+  log('%d,Beat', g.pulse_num)
 
   if stage == 1 then
 
@@ -293,12 +296,26 @@ function send_pulse(stage)
     local follow_on_pulse_num = g.pulse_num + g.PULSES_PP
     local beat_num = g.beat_num
 
+    -- If the next metro goes into the next beat, and
+    -- maybe also repeats the pattern
+
     if follow_on_pulse_num > 24 then
+      -- We'll be in the next beat
       follow_on_pulse_num = 1
+      beat_num = beat_num + 1
+
       if beat_num > g.pattern_length then
+        -- We'll be repeating the pattern
         beat_num = 1
+        -- Give the pattern a chance to regenerate
+        if g.pattern.regenerate then
+          g.pattern.regenerate()
+          redraw()
+        end
       end
+
     end
+
     g.metros[next_metro_num] = metro.init(
       send_pulse,
       pulse_interval(follow_on_pulse_num, beat_num),
@@ -323,14 +340,7 @@ function send_pulse(stage)
 
     g.beat_num = g.beat_num + 1
     if g.beat_num > g.pattern_length then
-        -- At the end of the pattern
-
-        -- Give the pattern a chance to regenerate
-        if g.pattern.regenerate then
-          g.pattern.regenerate()
-          redraw()
-        end
-
+      -- At the end of the pattern
       g.beat_num = 1
     end
   end
