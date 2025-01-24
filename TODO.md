@@ -1,5 +1,7 @@
 To do
 
+- Write readme.
+
 Done
 
 - Add s-curve (double superellipse).
