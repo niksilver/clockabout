@@ -283,7 +283,7 @@ function send_pulse(stage)
 
   if stage == 1 then
 
-    -- Prepare next metro
+    -- At the start of the part - prepare next metro
     local next_metro_num = 3 - g.metro_num
     if g.metros[next_metro_num] then
       metro.free(g.metros[next_metro_num].id)
@@ -306,19 +306,31 @@ function send_pulse(stage)
     )
 
   elseif stage == g.PULSES_PP then
-    -- Switch metro
+
+    -- At the end of the part - switch metro
     g.metro_num = 3 - g.metro_num
     g.metro = g.metros[g.metro_num]
     g.metro:start()
+
   end
 
   g.pulse_num = g.pulse_num + 1
 
   if (g.pulse_num > 24) then
+    -- At the end of the beat
+
     g.pulse_num = 1
 
     g.beat_num = g.beat_num + 1
     if g.beat_num > g.pattern_length then
+        -- At the end of the pattern
+
+        -- Give the pattern a chance to regenerate
+        if g.pattern.regenerate then
+          g.pattern.regenerate()
+          redraw()
+        end
+
       g.beat_num = 1
     end
   end

@@ -52,6 +52,9 @@ random_pattern.init_pattern = function()
 end
 
 
+random_pattern.regenerate = random_pattern.init_pattern
+
+
 -- Generate a number of random x,y points between 0 and 1.0.
 -- They must all be in order, starting from 0, ending with 1.0,
 -- and all be separated by at least 0.05.

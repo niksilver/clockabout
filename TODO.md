@@ -1,12 +1,12 @@
 To do
 
-- Add a random pattern.
-- Allow pattern to regenerate.
 - Add s-curve (double superellipse).
 - Allow change of inflection point on double superellipse.
 
 Done
 
+- Add a random pattern.
+- Random pattern regenerates after each run-through.
 - Send MIDI start/stop on pattern start/stop.
 - Shift-E3 to change second pattern param.
 - Allow change of swing inflection point.
