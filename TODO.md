@@ -1,6 +1,5 @@
 To do
 
-- Send MIDI start/stop on pattern start/stop.
 - Add a random pattern.
 - Allow pattern to regenerate.
 - Add s-curve (double superellipse).
@@ -8,6 +7,7 @@ To do
 
 Done
 
+- Send MIDI start/stop on pattern start/stop.
 - Shift-E3 to change second pattern param.
 - Allow change of swing inflection point.
 - Add a superellipse pattern.

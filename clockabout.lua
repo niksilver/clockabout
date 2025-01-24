@@ -131,9 +131,11 @@ function init()
     g.metro_running = x
     if g.metro_running == 1 then
       init_first_metro()
+      g.devices[g.vport].connection:start()
       start_metro()
     else
       cancel_both_metros()
+      g.devices[g.vport].connection:stop()
       g.pulse_num = 1
       g.beat_num = 1
     end

@@ -5,7 +5,7 @@ shuffle be the only irregular time pattern?
 
 ## Misc notes
 
-- MIDI start/stop. Is it any use?
+- MIDI start/stop happens.
 
 # Development and testing
 
