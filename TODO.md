@@ -1,6 +1,9 @@
 To do
 
-- Write readme.
+- Write readme and add to norns.community.
+- Add credits.
+- Improve compilation of vport table.
+
 
 Done
 
