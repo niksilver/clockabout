@@ -6,6 +6,7 @@ shuffle be the only irregular time pattern?
 ## Misc notes
 
 - MIDI start/stop happens.
+- It's a quirk that beats come together on the 24th pulse.
 
 # Development and testing
 

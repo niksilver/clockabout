@@ -122,7 +122,6 @@ function init()
   params:set_action("clockabout_bpm", function(x)
     -- The metro will update at the next part
     g.bpm = x
-    log('bpm = %d', x)
   end)
 
   -- Our own parameter for whether the metro is running
@@ -154,7 +153,6 @@ function init()
     g.pattern = g.patterns[i]
     show_hide_pattern_params(i)
     g.pattern.init_pattern()
-    log('pattern = %s', g.pattern.name)
   end)
 
   -- Parameters for the each of the patterns
@@ -282,7 +280,6 @@ end
 function send_pulse(stage)
 
   g.devices[g.vport].connection:clock()
-  log('%d,Beat', g.pulse_num)
 
   if stage == 1 then
 
