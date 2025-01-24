@@ -45,13 +45,13 @@ function init_globals(vars)
 
   g.bpm = 60  -- Also a menu parameter
 
-  g.pattern = linear_pattern    -- The pattern of our pulses
+  g.pattern = swing_pattern     -- The pattern of our pulses, initial value
   g.patterns = {                -- All the patterns
-    linear_pattern,
     swing_pattern,
     superellipse_pattern,
     double_superellipse_pattern,
     random_pattern,
+    linear_pattern,
   }
   g.pattern_params = {}  --  Map from pattern number to its params. Set up later.
   g.pattern_length = 1   -- Number of beats in the pattern
