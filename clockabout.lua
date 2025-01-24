@@ -16,6 +16,7 @@ include = include and include or require
 linear_pattern = include('lib/linear_pattern')
 swing_pattern = include('lib/swing_pattern')
 superellipse_pattern = include('lib/superellipse_pattern')
+double_superellipse_pattern = include('lib/double_superellipse_pattern')
 random_pattern = include('lib/random_pattern')
 
 
@@ -49,6 +50,7 @@ function init_globals(vars)
     linear_pattern,
     swing_pattern,
     superellipse_pattern,
+    double_superellipse_pattern,
     random_pattern,
   }
   g.pattern_params = {}  --  Map from pattern number to its params. Set up later.

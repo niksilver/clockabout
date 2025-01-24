@@ -1,10 +1,9 @@
 To do
 
-- Add s-curve (double superellipse).
-- Allow change of inflection point on double superellipse.
-
 Done
 
+- Add s-curve (double superellipse).
+- Allow change of inflection point on double superellipse.
 - Add a random pattern.
 - Random pattern regenerates after each run-through.
 - Send MIDI start/stop on pattern start/stop.
