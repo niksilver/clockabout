@@ -1,6 +1,6 @@
 -- Clockabout
 --
--- Why should shuffle be the
+-- Why should swing be the
 -- only irregular clock pattern?
 --
 -- E1: Select pattern
