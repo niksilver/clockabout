@@ -134,10 +134,12 @@ function init()
     if g.metro_running == 1 then
       init_first_metro()
       g.devices[g.vport].connection:start()
+      log('Start')
       start_metro()
     else
       cancel_both_metros()
       g.devices[g.vport].connection:stop()
+      log('Stop')
       g.pulse_num = 1
       g.beat_num = 1
     end
@@ -232,6 +234,7 @@ function init_first_metro()
   if g.metro == nil then
 
     -- Metro 1 starts at the current pulse num
+    log('init metro 1')
     g.metros[1] = metro.init(
       send_pulse,  -- Function to call
       pulse_interval(g.pulse_num, g.beat_num),  -- Time between pulses
@@ -282,6 +285,7 @@ end
 function send_pulse(stage)
 
   g.devices[g.vport].connection:clock()
+  log('%d,%d', g.beat_num, g.pulse_num)
 
   if stage == 1 then
 
@@ -369,6 +373,7 @@ function pulse_interval(pulse_num, beat_num)
 
   curr_scaled_time = (curr_scaled_time + (beat_num - 1)) / g.pattern_length
   end_scaled_time = (end_scaled_time + (beat_num - 1)) / g.pattern_length
+  log('curr_scaled_time = %f', curr_scaled_time)
 
   -- Duration of the part, scaled to bar length 1.0, and then in actual time
 
