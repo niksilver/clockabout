@@ -193,6 +193,8 @@ function init()
 end
 
 
+-- Write a log line with a timestamp.
+--
 function log(msg, ...)
   local time_fn = util and util.time or os.clock
 
@@ -204,6 +206,13 @@ function log(msg, ...)
   local time = time_fn() - g.log_init_time
 
   print(time .. ',' .. string.format(msg, table.unpack({...})))
+end
+
+
+-- Simple log: log without a timestamp.
+--
+function slog(msg, ...)
+  print(string.format(msg, table.unpack({...})))
 end
 
 

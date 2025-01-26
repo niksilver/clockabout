@@ -5,18 +5,29 @@ function _norns_init()
 
   _norns = {}
 
+
+  -- Mocking real internal _norns functions -----------------------------------------
+
   -- In reality a C function.
   -- @tparam int id  Metro id (number).
   -- @tparam number time  Gap between clicks.
   --
   _norns.metro_start = function(id, time, count, init_stage)
+    local m = _norns.metros[id]
+    m.is_running = true
+    m.time = time
+    m.count = count
+    m.next_event_time = _norns.time + time
+    m.stage = init_stage
   end
+
 
   -- In reality a C function.
   -- @tparam int id  Metro id (number).
   --
   _norns.metro_stop = function(id)
   end
+
 
   -- From the metro module:
   -- NB: metro time isn't applied until the next wakeup.
@@ -29,7 +40,10 @@ function _norns_init()
   _norns.metro_set_time = function(id, time)
   end
 
-  -- Callback function to be set by the metro moduule.
+
+  -- Callback function to be set internally by the metro module.
+  -- @tparam int id  Numeric id of the metro.
+  -- @tparam int stage  Stage number of the metro (from 1).
   --
   _norns.metro = nil
 
@@ -49,13 +63,41 @@ function _norns_init()
   --
   _norns.set_time = function(s)
     _norns.time = s
+
+    for id, m in ipairs(_norns.metros) do
+      if s >= m.next_event_time then
+        _norns.metro(id, m.stage)
+        m.stage = m.stage + 1
+        m.next_event_time = m.next_event_time + m.time
+
+        if m.stage > m.count then
+          m.is_running = false
+          m.next_event_time = math.maxinteger
+        end
+      end
+    end
+
   end
 
 
   -- Increment the time by some number of seconds.
   --
   _norns.inc_time = function(delta)
-    _norns.time = _norns.time + delta
+    _norns.set_time( _norns.time + delta )
+  end
+
+
+  -- Simulate internal metros -------------------------------------------------------
+
+
+  _norns.metros = {}
+
+  for i = 1,36 do
+    _norns.metros[i] = {
+      is_running = false,
+      next_event_time = math.maxinteger,
+      stage = 0,  -- Next or currently-running stage
+    }
   end
 
 
