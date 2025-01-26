@@ -53,7 +53,6 @@ function _norns_init()
   -- @tparam int stage  Stage number of the metro (from 1).
   --
   _norns.metro = function(id, stage)
-    slog('Called empty _norns.metro(%d, %d)', id, stage)
   end
 
 
@@ -74,11 +73,8 @@ function _norns_init()
     _norns.time = s
 
     for id, m in ipairs(_norns.metros) do
-      slog('metro id = %d, time = %f compared to m.next_event_time = %f', id, s, m.next_event_time)
       if s >= m.next_event_time then
-        slog('Calling _norns.metro(%d, %d)', id, m.stage)
         _norns.metro(id, m.stage)
-        slog('Called _norns.metro(%d, %d)', id, m.stage)
         m.stage = m.stage + 1
         m.next_event_time = m.next_event_time + m.time
 
