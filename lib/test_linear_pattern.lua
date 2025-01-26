@@ -17,6 +17,7 @@ function test_pulse_interval_60_bpm()
     pulse_num = 1,
     beat_num = 1,
     pattern_length = 1,
+    pattern = linear_pattern,
   })
 
   local beat_dur_sec = 60 / g.bpm
@@ -32,6 +33,7 @@ function test_pulse_interval_60_bpm_in_middle_of_bar()
     pulse_num = 17,
     beat_num = 1,
     pattern_length = 1,
+    pattern = linear_pattern,
   })
 
   local beat_dur_sec = 60 / g.bpm
@@ -47,6 +49,7 @@ function test_pulse_interval_60_bpm_in_middle_of_bar_3_beats_per_bar()
     pulse_num = 17,
     beat_num = 1,
     pattern_length = 1,
+    pattern = linear_pattern,
   })
 
   local beat_dur_sec = 60 / g.bpm
@@ -62,6 +65,7 @@ function test_pulse_interval_120_bpm()
     pulse_num = 1,
     beat_num = 1,
     pattern_length = 1,
+    pattern = linear_pattern,
   })
 
   local beat_dur_sec = 60 / g.bpm
