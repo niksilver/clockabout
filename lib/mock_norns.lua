@@ -78,8 +78,7 @@ function _norns_init()
         m.next_event_time = m.next_event_time + m.time
 
         if m.stage > m.count then
-          m.is_running = false
-          m.next_event_time = math.maxinteger
+          _norns.metro_stop(id)
         end
       end
     end
