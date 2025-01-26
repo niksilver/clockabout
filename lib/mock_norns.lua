@@ -29,3 +29,28 @@ end
 -- Callback function to be set by the metro moduule.
 --
 _norns.metro = nil
+
+
+-- Functions to mock time passing -------------------------------------------------
+
+
+-- Read the (pretend) time. Do not write to this variable, because
+-- setting the time may also need to trigger a metronome event.
+--
+-- @tfield number time  The clock time in seconds
+--
+_norns.time = 0
+
+
+-- Set the time (in seconds).
+--
+_norns.set_time = function(s)
+  _norns.time = s
+end
+
+
+-- Increment the time by some number of seconds.
+--
+_norns.inc_time = function(delta)
+  _norns.time = _norns.time + delta
+end
