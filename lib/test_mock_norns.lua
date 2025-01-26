@@ -165,4 +165,51 @@ TestMockNorns = {
 
   end,
 
+
+  test_can_stop_a_metro = function()
+    _norns.set_time(33)
+
+    -- Start metro #7 that runs exactly two times, once every second.
+    -- We'll stop it before the second tick.
+
+    local ticks = { 0, 0 }
+    _norns.metro = function(id, stage)
+      if id == 7 then
+        ticks[stage] = ticks[stage] + 1
+      end
+    end
+
+    local m = _norns.metros[7]
+
+    lu.assertEquals(m.is_running, false)
+
+    _norns.metro_start(7, 1.0, 2, 1)
+    lu.assertEquals(m.is_running, true)
+    lu.assertEquals(ticks, { 0, 0 })
+
+    _norns.inc_time(0.50)
+    lu.assertEquals(_norns.time, 33 + 0.50)
+    lu.assertEquals(m.is_running, true)
+    lu.assertEquals(ticks, { 0, 0 })
+
+    _norns.inc_time(0.50)  -- At start + 1.0 seconds, should trigger for first time
+    lu.assertEquals(_norns.time, 33 + 1.0)
+    lu.assertEquals(m.is_running, true)
+    lu.assertEquals(ticks, { 1, 0 })
+
+    _norns.metro_stop(7)  -- Stop the metro!
+
+    -- Continue moving through time, events should no longer trigger
+
+    _norns.inc_time(0.50)
+    _norns.inc_time(0.50)
+    _norns.inc_time(0.50)
+    _norns.inc_time(0.50)
+    _norns.inc_time(0.50)
+    lu.assertEquals(_norns.time, 33 + 3.5)
+    lu.assertEquals(m.is_running, false)  -- ...and metro should stop running.
+    lu.assertEquals(ticks, { 1, 0 })
+
+  end,
+
 }

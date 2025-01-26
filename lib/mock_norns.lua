@@ -26,6 +26,9 @@ function _norns_init()
   -- @tparam int id  Metro id (number).
   --
   _norns.metro_stop = function(id)
+    local m = _norns.metros[id]
+    m.is_running = false
+    m.next_event_time = math.maxinteger
   end
 
 
