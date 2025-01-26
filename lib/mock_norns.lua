@@ -38,6 +38,10 @@ function _norns_init()
   -- @tparam int id  Metro id (number)
   -- @tparam number time  Gap between clicks.
   _norns.metro_set_time = function(id, time)
+    local m = _norns.metros[id]
+    local old_time = m.time
+    m.time = time
+    m.next_event_time = m.next_event_time + (time - old_time)
   end
 
 

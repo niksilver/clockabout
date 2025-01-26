@@ -96,6 +96,73 @@ TestMockNorns = {
     lu.assertEquals(m.is_running, false)
     lu.assertEquals(ticks, {1, 1, 1 })
 
-  end
+  end,
+
+
+  test_can_set_norns_time = function()
+    _norns.set_time(50)
+
+    -- Start metro #6 that runs exactly two times, once every second.
+
+    local ticks = { 0, 0 }
+    _norns.metro = function(id, stage)
+      if id == 6 then
+        ticks[stage] = ticks[stage] + 1
+      end
+    end
+
+    local m = _norns.metros[6]
+
+    lu.assertEquals(m.is_running, false)
+
+    _norns.metro_start(6, 1.0, 2, 1)
+    lu.assertEquals(m.is_running, true)
+    lu.assertEquals(ticks, { 0, 0 })
+
+    _norns.inc_time(0.50)
+    lu.assertEquals(_norns.time, 50 + 0.50)
+    lu.assertEquals(m.is_running, true)
+    lu.assertEquals(ticks, { 0, 0 })
+
+    _norns.inc_time(0.50)  -- At start + 1.0 seconds, should trigger for first time
+    lu.assertEquals(_norns.time, 50 + 1.0)
+    lu.assertEquals(m.is_running, true)
+    lu.assertEquals(ticks, { 1, 0 })
+
+    -- Now set the time (delay) to two seconds. It should trigger at second start + 3.
+    _norns.metro_set_time(6, 2.0)
+
+    _norns.inc_time(0.50)
+    lu.assertEquals(_norns.time, 50 + 1.5)
+    lu.assertEquals(m.is_running, true)
+    lu.assertEquals(ticks, { 1, 0 })
+
+    _norns.inc_time(0.50)
+    lu.assertEquals(_norns.time, 50 + 2.0)
+    lu.assertEquals(m.is_running, true)
+    lu.assertEquals(ticks, { 1, 0 })
+
+    _norns.inc_time(0.50)
+    lu.assertEquals(_norns.time, 50 + 2.5)
+    lu.assertEquals(m.is_running, true)
+    lu.assertEquals(ticks, { 1, 0 })
+
+    _norns.inc_time(0.50)
+    lu.assertEquals(_norns.time, 50 + 3.0)     -- At the third second, event should trigger...
+    lu.assertEquals(m.is_running, false)  -- ...and metro should stop running.
+    lu.assertEquals(ticks, { 1, 1 })
+
+    -- Continue moving through time, events should no longer trigger
+
+    _norns.inc_time(0.50)
+    _norns.inc_time(0.50)
+    _norns.inc_time(0.50)
+    _norns.inc_time(0.50)
+    _norns.inc_time(0.50)
+    lu.assertEquals(_norns.time, 50 + 5.5)
+    lu.assertEquals(m.is_running, false)  -- ...and metro should stop running.
+    lu.assertEquals(ticks, { 1, 1 })
+
+  end,
 
 }
