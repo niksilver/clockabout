@@ -1,10 +1,10 @@
 -- Mocking up _norns C functions, for testing purposes.
 
 
-function _norns_init()
+_norns = {}
 
-  _norns = {}
 
+_norns.init = function()
 
   -- Mocking real internal _norns functions -----------------------------------------
 
@@ -112,5 +112,5 @@ function _norns_init()
 end
 
 
-_norns_init()
+_norns.init()
 

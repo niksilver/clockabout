@@ -1,6 +1,5 @@
 To do
 
-- Change norns_init() to norns.init().
 - Write readme and add to norns.community.
 - Add credits.
 - Set default MIDI vport to 1.
@@ -8,6 +7,7 @@ To do
 
 Done
 
+- Change norns_init() to norns.init().
 - Add s-curve (double superellipse).
 - Allow change of inflection point on double superellipse.
 - Add a random pattern.

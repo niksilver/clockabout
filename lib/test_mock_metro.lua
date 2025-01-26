@@ -10,7 +10,7 @@ TestMockNorns = {
 
 
   setUp = function()
-    _norns_init()
+    _norns.init()
     metro.init_module()
   end,
 

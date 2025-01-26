@@ -10,7 +10,7 @@ require('mock_metro')
 TestMockMetro = {
 
   setUp = function()
-    _norns_init()
+    _norns.init()
   end,
 
 

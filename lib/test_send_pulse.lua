@@ -7,7 +7,7 @@ metro = require('mock_metro')
 
 function test_send_pulse_sends_24_pulses()
 
-  _norns_init()
+  _norns.init()
   metro.init_module()
 
   g = init_globals({
