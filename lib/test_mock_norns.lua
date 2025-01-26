@@ -1,12 +1,13 @@
 -- Testing our mock norns code.
 
 
-require('mock_norns')
+require('clockabout')
+require('mock_metro')
 
 
 -- We'll put these tests in a table to be able to use setUp() / tearDown()
 
-TestMockNorns = {
+TestMockMetro = {
 
   setUp = function()
     _norns_init()
@@ -15,6 +16,11 @@ TestMockNorns = {
 
   test_norns_variable_is_populated = function()
     lu.assertNotNil(_norns)
+  end,
+
+
+  test_norns_can_set_time_on_unstarted_metro = function()
+    _norns.metro_set_time(7, 1)  -- Some metro #7
   end,
 
 
@@ -42,7 +48,7 @@ TestMockNorns = {
   end,
 
 
-  test_can_start_run_and_stop_a_metro = function()
+  test_can_start_and_run_a_metro = function()
     _norns.set_time(100)
 
     -- Start metro #11 that runs exactly three times, once every 0.5 seconds.

@@ -9,6 +9,8 @@
 -- @module metro
 -- @alias Metro
 
+require('mock_norns')
+
 local Metro = {}
 Metro.__index = Metro
 
@@ -153,32 +155,42 @@ setmetatable(Metro, Metro)
 
 --
 -- static initialization
+-- We put monome's code in its own function so that it can be
+-- reinitialised when testing.
 
--- initialize module data
-for i=1,Metro.num_metros do
-  Metro.metros[i] = Metro.new(i)
-end
+Metro.init_module = function()
 
-for i=1,Metro.num_script_metros do
-  Metro.available[i] = true
-  Metro.assigned[i] = false
-end
+  -- initialize module data
+  for i=1,Metro.num_metros do
+    Metro.metros[i] = Metro.new(i)
+  end
 
--- callback on metro tick from C.
-_norns.metro = function(idx, stage)
-  local m = Metro.metros[idx]
-  if m then
-    if m.event then
-      m.event(stage)
-    end
-    if m.count > -1 then
-      if (stage > m.count) then
-        m.is_running = false
+  for i=1,Metro.num_script_metros do
+    Metro.available[i] = true
+    Metro.assigned[i] = false
+  end
+
+  -- callback on metro tick from C.
+  _norns.metro = function(idx, stage)
+    slog('In _norns_metro(%d, %d)', idx, stage)
+    local m = Metro.metros[idx]
+    if m then
+      slog('If m? Yes...')
+      if m.event then
+        slog('If m.event? Yes...')
+        m.event(stage)
+      end
+      if m.count > -1 then
+        if (stage > m.count) then
+          m.is_running = false
+        end
       end
     end
   end
+
 end
 
+Metro.init_module()
 
 
 return Metro
