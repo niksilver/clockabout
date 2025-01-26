@@ -15,6 +15,8 @@ package.path = package.path .. ";../?.lua;lib/?.lua"
 lu = require('luaunit')
 
 
+require('test_mock_norns')
+
 require('test_linear_pattern')
 require('test_swing_pattern')
 require('test_superellipse_pattern')
