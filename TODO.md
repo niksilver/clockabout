@@ -1,8 +1,9 @@
 To do
 
+- Change norns_init() to norns.init().
 - Write readme and add to norns.community.
 - Add credits.
-- Improve compilation of vport table.
+- Set default MIDI vport to 1.
 
 
 Done
