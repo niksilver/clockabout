@@ -42,6 +42,12 @@ function init_globals(vars)
                   -- A table with keys: connection, name
                   -- Also allows a 0-indexed "none" device
   g.vport = 2     -- MIDI clock out vport (int >= 1)
+  g.connection = nil  -- The MIDI connection object to the current device.
+                      -- We override this in tests. Must implement these
+                      -- functions:
+                      -- clock(self)
+                      -- start(self)
+                      -- stop(self)
 
   g.bpm = 60  -- Also a menu parameter
 
@@ -68,8 +74,6 @@ function init_globals(vars)
   g.metros = {}      -- We'll swap between metros 1 and 2
   g.metro_num = nil  -- Our current metro num - 1 or 2. Not the metro's id
   g.metro_running = 0  -- Note: 0 or 1. Also a menu parameter
-
-  g.send_pulse_fn = send_pulse  -- Function to send a pulse (and more), which we override in tests
 
   -- Insert any overrides
 
@@ -113,6 +117,7 @@ function init()
   params:add_option("clockabout_vport", "Port", short_names, g.vport)
   params:set_action("clockabout_vport", function(i)
     g.vport = i
+    g.connection = g.devices[g.vport]
   end)
 
   -- Our own parameter for the bpm
@@ -134,12 +139,10 @@ function init()
   params:set_action("clockabout_metro_running", function(x)
     g.metro_running = x
     if g.metro_running == 1 then
-      init_first_metro()
-      g.devices[g.vport].connection:start()
-      start_metro()
+      start_pulses()
     else
       cancel_both_metros()
-      g.devices[g.vport].connection:stop()
+      g.connection:stop()
       g.pulse_num = 1
       g.beat_num = 1
     end
@@ -237,6 +240,16 @@ function show_hide_pattern_params(show_pat)
 end
 
 
+-- Start sending the pulses. Uses global g.connection to know where
+-- to send to.
+--
+function start_pulses()
+  init_first_metro()
+  g.connection:start()
+  start_metro()
+end
+
+
 -- Set up the the first metro only. Doesn't start it.
 --
 function init_first_metro()
@@ -244,9 +257,9 @@ function init_first_metro()
 
     -- Metro 1 starts at the current pulse num
     g.metros[1] = metro.init(
-      g.send_pulse_fn,  -- Function to call
+      send_pulse,  -- Function to call
       pulse_interval(g.pulse_num, g.beat_num),  -- Time between pulses
-      g.PULSES_PP      -- Number of pulses to send before we recalculate
+      g.PULSES_PP  -- Number of pulses to send before we recalculate
     )
 
     -- Identify current metro
@@ -289,17 +302,10 @@ end
 -- If it's the last in the part, recalculate and reset the metro for the next part.
 -- @tparam int stage  The stage of this pulse. Normally counts
 --    from 1, but we insert our own 0.
--- @tparam[opt] func clock_fn  Optional function to call for sending the pulse.
---     Defaults to the MIDI clock call to the currently selected device.
---     This is used for testing.
 --
-function send_pulse(stage, clock_fn)
+function send_pulse(stage)
 
-  if clock_fn then
-    clock_fn()
-  else
-    g.devices[g.vport].connection:clock()
-  end
+  g.connection:clock()
 
   if stage == 1 then
 
@@ -334,7 +340,7 @@ function send_pulse(stage, clock_fn)
     end
 
     g.metros[next_metro_num] = metro.init(
-      g.send_pulse_fn,
+      send_pulse,
       pulse_interval(follow_on_pulse_num, beat_num),
       g.PULSES_PP
     )

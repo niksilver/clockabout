@@ -20,19 +20,21 @@ function test_send_pulse_sends_24_pulses()
   })
 
   local pulses = 0
-  local clock_fn = function()
-    pulses = pulses + 1
-  end
 
-  -- Override the basic send_pulse function
+  -- Override the basic connection object
 
-  g.send_pulse_fn = function(stage)
-    send_pulse(stage, clock_fn)
-  end
+  g.connection = {
+    clock = function(self)
+      pulses = pulses + 1
+    end,
+
+    start = function(self)
+    end,
+  }
 
   -- This is what happens when we set the metro running via the parameter
-  init_first_metro()
-  start_metro()
+
+  start_pulses()
 
   -- Run the pretend clock for 1 second, with a resolution of 0.01 seconds
   for t = 0, 1.0001, 0.01 do
