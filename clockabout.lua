@@ -247,6 +247,8 @@ function start_pulses()
   init_first_metro()
   g.connection:start()
   start_metro()
+  g.connection:clock()
+  g.pulse_num = g.pulse_num + 1
 end
 
 

@@ -5,7 +5,10 @@ require('clockabout')
 metro = require('mock_metro')
 
 
-function test_send_pulse_sends_24_pulses()
+function test_send_pulse_sends_25_pulses_when_60_bpm()
+  -- Should send 25 pulses per beat at 60 bpm
+  -- because it's 24 per beat, but we're also including
+  -- a pulse at second 0.
 
   _norns.init()
   metro.init_module()
@@ -28,8 +31,9 @@ function test_send_pulse_sends_24_pulses()
       pulses = pulses + 1
     end,
 
-    start = function(self)
-    end,
+    start = function(self) end,
+
+    stop = function(self) end,
   }
 
   -- This is what happens when we set the metro running via the parameter
@@ -41,5 +45,5 @@ function test_send_pulse_sends_24_pulses()
     _norns.set_time(t)
   end
 
-  lu.assertEquals(pulses, 24)
+  lu.assertEquals(pulses, 25)
 end
