@@ -74,6 +74,8 @@ _norns.init = function()
 
     for id, m in ipairs(_norns.metros) do
       if s >= m.next_event_time then
+        slog('_norns.set_time(): calling metro(%d, %d) and m.props = %s', id, m.stage, tostring(m.props))
+        slog('_norns.set_time(): calling metro(%d, %d) but m.props.stage = %s', id, m.stage, tostring(m.props and m.props.stage))
         _norns.metro(id, m.stage)
         m.stage = m.stage + 1
         m.next_event_time = m.next_event_time + m.time

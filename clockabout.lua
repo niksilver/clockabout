@@ -247,8 +247,6 @@ function start_pulses()
   init_first_metro()
   g.connection:start()
   start_metro()
-  g.connection:clock()
-  g.pulse_num = g.pulse_num + 1
 end
 
 
@@ -259,7 +257,7 @@ function init_first_metro()
 
     -- Metro 1 starts at the current pulse num
     g.metros[1] = metro.init(
-      send_pulse,  -- Function to call
+      mock_send_pulse(1),  -- Function to call
       pulse_interval(g.pulse_num, g.beat_num),  -- Time between pulses
       g.PULSES_PP  -- Number of pulses to send before we recalculate
     )
@@ -275,10 +273,16 @@ function init_first_metro()
 end
 
 
--- Start the current metro running.
+-- Start the first metro running.
 --
 function start_metro()
-  g.metro:start()
+  -- slog('start_metro(): Enter, send first pulse')
+  -- send_pulse(1, 0)
+  slog('start_metro(): Starting first metro at stage 2')
+  g.metro:start({stage = 2})
+  slog('start_metro(): Done starting first metro at stage 2')
+  g.connection:clock()
+  g.pulse_num = g.pulse_num + 1
 end
 
 
@@ -299,15 +303,21 @@ function cancel_both_metros()
   g.beat_num = 1
 end
 
+function mock_send_pulse(metro)
+  return function(stage)
+    send_pulse(stage, metro)
+  end
+end
 
 -- Send a MIDI clock pulse.
 -- If it's the last in the part, recalculate and reset the metro for the next part.
 -- @tparam int stage  The stage of this pulse. Normally counts
 --    from 1, but we insert our own 0.
 --
-function send_pulse(stage)
+function send_pulse(stage, metro_for_testing)
 
   g.connection:clock()
+  slog('In metro %d, stage %d, beat %d, pulse %d', metro_for_testing, stage, g.beat_num, g.pulse_num)
 
   if stage == 1 then
 
@@ -341,8 +351,9 @@ function send_pulse(stage)
 
     end
 
+    slog('  Setting up metro #%d', next_metro_num)
     g.metros[next_metro_num] = metro.init(
-      send_pulse,
+      mock_send_pulse(next_metro_num),
       pulse_interval(follow_on_pulse_num, beat_num),
       g.PULSES_PP
     )
@@ -352,6 +363,7 @@ function send_pulse(stage)
     -- At the end of the part - switch metro
     g.metro_num = 3 - g.metro_num
     g.metro = g.metros[g.metro_num]
+    slog('  Switching to metro #%d', g.metro_num)
     g.metro:start()
 
   end
@@ -405,6 +417,7 @@ function pulse_interval(pulse_num, beat_num)
   local std_pulse_interval = std_beat_interval / 24
   local actual_pulse_interval = std_pulse_interval * scale
 
+  slog('  Calcing pulse %d, beat %d, using %f - %f\tinterval = %f', pulse_num, beat_num, curr_scaled_time, end_scaled_time, actual_pulse_interval)
   return actual_pulse_interval
 
 end

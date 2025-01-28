@@ -100,7 +100,7 @@ function Metro:start(time, count, stage)
   if type(time) == "table" then
     if time.time then self.props.time = time.time end
     if time.count then self.props.count = time.count end
-    if time.stage then self.props.stage = time.stage end
+    if time.stage then self.props.stage = time.stage; slog('Metro:start() for metro id %d, setting stage = %d', self.id, time.stage); end
   else
 
     if time then self.props.time = time end
@@ -172,6 +172,7 @@ Metro.init_module = function()
 
   -- callback on metro tick from C.
   _norns.metro = function(idx, stage)
+    slog('Metro\'s _norns.metro(%d, %d)', idx, stage)
     local m = Metro.metros[idx]
     if m then
       if m.event then
