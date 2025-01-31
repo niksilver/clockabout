@@ -279,7 +279,8 @@ function start_metro()
   -- slog('start_metro(): Enter, send first pulse')
   -- send_pulse(1, 0)
   slog('start_metro(): Starting first metro at stage 2')
-  g.metro:start({stage = 2})
+  local m = g.metro
+  g.metro:start(m.init, m.count, 2)
   slog('start_metro(): Done starting first metro at stage 2')
   g.connection:clock()
   g.pulse_num = g.pulse_num + 1

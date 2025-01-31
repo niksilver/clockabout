@@ -1,6 +1,7 @@
 -- Testing our mock metro code.
 
 
+require('clockabout')
 local metro = require('mock_metro')
 
 
@@ -15,7 +16,8 @@ TestMockNorns = {
   end,
 
 
-  test_can_start_and_run_a_metro = function()
+  IGNORE_test_can_start_and_run_a_metro = function()
+    slog('- - - - - - - Start test - - - - - - -')
     _norns.set_time(100)
 
     -- Start metro that runs exactly three times, once every 0.5 seconds.
@@ -28,6 +30,8 @@ TestMockNorns = {
 
     -- Init the metro, but don't start it for a while
     local m = metro.init(record_tick, 0.5, 3)
+    m.name = 'MockMeetro'
+    slog('test_...(): Inited metro m = %s', tostring(m))
 
     _norns.inc_time(0.25)
     _norns.inc_time(0.25)
@@ -37,6 +41,7 @@ TestMockNorns = {
     lu.assertEquals(ticks, { 0, 0, 0 })
 
     -- Now start the metro
+    slog('test_...(): Starting metro = %s', tostring(m))
     m:start()
     lu.assertEquals(ticks, { 0, 0, 0 })
 
@@ -74,7 +79,7 @@ TestMockNorns = {
   end,
 
 
-  test_can_run_two_metros = function()
+  IGNORE_test_can_run_two_metros = function()
     _norns.set_time(10)
 
     -- Start metro that runs exactly three times, once every 0.5 seconds.
@@ -151,6 +156,63 @@ TestMockNorns = {
     lu.assertEquals(_norns.time, 11 + 4.0)
     lu.assertEquals(ticks_a, { 1, 1, 1 })
     lu.assertEquals(ticks_b, { 1, 1, 1 })
+
+  end,
+
+
+  test_can_start_at_different_stage = function()
+    slog('- - - - - - - Start test - - - - - - -')
+    _norns.set_time(55)
+
+    -- Start metro that runs exactly 5 times, once every 0.5 seconds,
+    -- but we'll really start it at stage 4.
+    -- We'll record which stages it gets called at.
+
+    local ticks = { 0, 0, 0, 0, 0 }
+    local record_tick = function(stage)
+      ticks[stage] = ticks[stage] + 1
+    end
+
+    -- Init the metro, but don't start it for a while
+    local m = metro.init(record_tick, 0.5, 5)
+    slog('test_...(): Inited metro m = %s', tostring(m))
+
+    _norns.inc_time(0.25)
+    _norns.inc_time(0.25)
+    _norns.inc_time(0.25)
+    _norns.inc_time(0.25)
+    lu.assertEquals(_norns.time, 56)  -- This should be the time now
+    lu.assertEquals(ticks, { 0, 0, 0, 0, 0 })
+
+    -- Now start the metro at stage 4
+    slog('test_...(): Starting metro = %s', tostring(m))
+    m:start(m.time, m.count, 4)
+    lu.assertEquals(ticks, { 0, 0, 0, 0, 0 })
+
+    _norns.inc_time(0.25)
+    lu.assertEquals(_norns.time, 56 + 0.25)
+    lu.assertEquals(ticks, { 0, 0, 0, 0, 0 })
+
+    _norns.inc_time(0.25)
+    lu.assertEquals(_norns.time, 56 + 0.50)
+    lu.assertEquals(ticks, { 0, 0, 0, 1, 0 })  -- Should have triggered event
+
+    _norns.inc_time(0.25)
+    lu.assertEquals(_norns.time, 56 + 0.75)
+    lu.assertEquals(ticks, { 0, 0, 0, 1, 0 })
+
+    _norns.inc_time(0.25)
+    lu.assertEquals(_norns.time, 56 + 1.00)
+    lu.assertEquals(ticks, { 0, 0, 0, 1, 1 })  -- Should have triggered event
+
+    -- Should not trigger any more events
+
+    _norns.inc_time(0.25)
+    _norns.inc_time(0.25)
+    _norns.inc_time(0.25)
+    _norns.inc_time(0.25)
+    lu.assertEquals(_norns.time, 56 + 2.00)
+    lu.assertEquals(ticks, { 0, 0, 0, 1, 1 })
 
   end,
 

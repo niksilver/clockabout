@@ -94,7 +94,7 @@ function test_sends_pulses_according_to_swing()
   for t = 0.01, 0.25001, 0.0001 do -- Start running time from after second 0.
     _norns.set_time(t)
   end
-  u.assertEquals(pulses, 13)
+  lu.assertEquals(pulses, 13)
 
   for t = 0.26, 1.0001, 0.01 do -- Continue the clock
     _norns.set_time(t)

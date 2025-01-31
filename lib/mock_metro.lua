@@ -100,7 +100,7 @@ function Metro:start(time, count, stage)
   if type(time) == "table" then
     if time.time then self.props.time = time.time end
     if time.count then self.props.count = time.count end
-    if time.stage then self.props.stage = time.stage; slog('Metro:start() for metro id %d, setting stage = %d', self.id, time.stage); end
+    if time.stage then self.props.stage = time.stage end
   else
 
     if time then self.props.time = time end
@@ -172,10 +172,11 @@ Metro.init_module = function()
 
   -- callback on metro tick from C.
   _norns.metro = function(idx, stage)
-    slog('Metro\'s _norns.metro(%d, %d)', idx, stage)
+    slog('Metros\'s_norns.metro(%d, %d): Enter', idx, stage)
     local m = Metro.metros[idx]
     if m then
       if m.event then
+        slog('Metros\'s_norns.metro(%d, %d): Calling m.event() for m = %s', idx, stage, tostring(m))
         m.event(stage)
       end
       if m.count > -1 then
@@ -185,6 +186,10 @@ Metro.init_module = function()
       end
     end
   end
+
+  -- Extra line for mocking, so that the mock _norns code
+  -- picks up on these metros.
+  _norns.set_metros_to_trigger(Metro.metros)
 
 end
 
