@@ -104,8 +104,6 @@ end
 
 
 function test_sends_pulses_according_to_swing_over_3_beats()
-  slog('- - - - - - - - - - -')
-
   _norns.init()
   metro.init_module()
 
@@ -155,6 +153,69 @@ function test_sends_pulses_according_to_swing_over_3_beats()
     _norns.set_time(t)
   end
   lu.assertEquals(pulses, 3*24+1)
-  slog('- - - - - - - - - - -')
+
+end
+
+
+function test_pattern_can_regenerate_after_end_of_pattern()
+  slog('- - - - - - - - - - - - - - - - -')
+
+  -- Make our own pattern, like random, but with our own regenerate()
+  -- which checks that it's been called
+
+  local regenerate_called = false
+
+  local our_pattern = {}
+  for k, v in pairs(random_pattern) do
+    our_pattern[k] = random_pattern[k]
+  end
+
+  our_pattern.regenerate = function()
+    regenerate_called = true
+  end
+
+  -- Now run the metros as usual
+
+  _norns.init()
+  metro.init_module()
+
+  g = init_globals({
+    pulse_num = 1,
+    beat_num = 1,
+    bpm = 60,
+
+    pattern = our_pattern,
+    pattern_length = 1,
+  })
+
+  our_pattern.init_pattern()
+
+  local pulses = 0
+
+  -- Override the basic connection object
+
+  g.connection = {
+    clock = function(self)
+      pulses = pulses + 1
+      slog('  Clock: %f\tpulse %d', _norns.time, pulses)
+    end,
+
+    start = function(self) end,
+
+    stop = function(self) end,
+  }
+
+  -- Just to be sure, check we get 25 pulses.
+
+  start_pulses()
+
+  for t = 0.0001, 1.0005, 0.0001 do -- Start running time from after second 0.
+    _norns.set_time(t)
+  end
+  lu.assertEquals(pulses, 25)
+
+  -- Now the real test.
+
+  lu.assertEquals(regenerate_called, true)
 
 end

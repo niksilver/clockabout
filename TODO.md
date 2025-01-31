@@ -1,5 +1,7 @@
 To do
 
+- Restore redraw() from send_pulse() regenerate clause.
+- Remove 'metro_for_testing' param in send_pulse().
 - Write readme and add to norns.community.
 - Add credits.
 - Set default MIDI vport to 1.

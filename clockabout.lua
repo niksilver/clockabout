@@ -371,7 +371,14 @@ function send_pulse(stage, metro_for_testing)
     end
 
     -- Next metro will follow on from this one
-    local follow_on_pulse_num = g.pulse_num -- + 1
+    local follow_on_pulse_num = g.pulse_num -- Eliminate this!
+    local beat_num = g.beat_num -- Eliminate this!
+    local _, _, end_of_pattern = advance_pulse(g.pulse_num + g.PULSES_PP)
+    if end_of_pattern and g.pattern.regenerate then
+      g.pattern.regenerate()
+      -- redraw()  -- Restore me!
+    end
+--[[    local follow_on_pulse_num = g.pulse_num -- + 1
     local beat_num = g.beat_num
 
     -- If the next metro goes into the next beat, and
@@ -392,7 +399,7 @@ function send_pulse(stage, metro_for_testing)
         end
       end
 
-    end
+    end--]]
 
     slog('  Setting up metro #%d', next_metro_num)
     g.metros[next_metro_num] = metro.init(
@@ -409,7 +416,8 @@ function send_pulse(stage, metro_for_testing)
 
   end
 
-  g.pulse_num = g.pulse_num + 1
+  g.pulse_num, g.beat_num = advance_pulse(g.pulse_num + 1)
+--[[  g.pulse_num = g.pulse_num + 1
 
   if (g.pulse_num > 24) then
     -- At the end of the beat
@@ -421,8 +429,37 @@ function send_pulse(stage, metro_for_testing)
       -- At the end of the pattern
       g.beat_num = 1
     end
+  end--]]
+
+end
+
+
+-- Return values if we would advance the pulse number.
+-- @tparam int pulse_num  The new pulse number. It may be more than 24.
+-- @treturn int  The new pulse number, wrapped if it was more than 24.
+-- @treturn int  The new beat number, which may have wrapped back to 1.
+--     This reads from `g.beat_num`.
+-- @treturn bool  If it was the end of the pattern and we wrapped the beat num.
+--     This reads from `g.pattern_length`.
+--
+function advance_pulse(pulse_num)
+  local beat_num = g.beat_num
+  local wrapped = false
+
+  if (pulse_num > 24) then
+    -- At the end of the beat
+
+    pulse_num = 1
+
+    beat_num = g.beat_num + 1
+    if beat_num > g.pattern_length then
+      -- At the end of the pattern
+      beat_num = 1
+      wrapped = true
+    end
   end
 
+  return pulse_num, beat_num, wrapped
 end
 
 
