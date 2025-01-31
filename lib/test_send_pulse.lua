@@ -244,7 +244,6 @@ TestSendPulse = {
 
     -- Run the metros as usual, and capture when the first pulse happens.
 
-    log.s('----------------------------------')
     _norns.init()
     metro.init_module()
 
@@ -267,7 +266,6 @@ TestSendPulse = {
     g.connection = {
       clock = function(self)
         pulses = pulses + 1
-        log.s('%f - Pulse %d, mod = %d', _norns.time, pulses, (pulses-1) % 24)
         if (pulses-1) % 24 == 0 then
           local idx = (pulses // 24) + 1
           pulse_times[idx] = _norns.time
@@ -290,7 +288,6 @@ TestSendPulse = {
 
     -- Now see what we've got
 
-    log.s('----------------------------------')
     lu.assertEquals(#pulse_times, 6)
 
     for i = 1, #pulse_times-1 do

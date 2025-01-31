@@ -351,7 +351,6 @@ function send_pulse(stage)
     -- If it's the end of pattern, we may need to regenerate the next one
     local _, _, end_of_pattern = advance_pulse(g.pulse_num + g.PULSES_PP)
     if end_of_pattern and g.pattern.regenerate then
-      log.s('Regenerated because now at pulse %d and so %d is pattern end', g.pulse_num, g.pulse_num + g.PULSES_PP)
       g.pattern.regenerate()
       redraw()
     end
@@ -428,7 +427,6 @@ function pulse_interval(pulse_num, beat_num)
   local std_beat_interval = 60 / g.bpm
   local std_pulse_interval = std_beat_interval / 24
   local actual_pulse_interval = std_pulse_interval * scale
-  log.s('%f - %f has duration %f', curr_pulse, end_pulse, proportional_part_duration)
 
   return actual_pulse_interval
 
