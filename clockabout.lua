@@ -352,7 +352,7 @@ function send_pulse(stage, metro_for_testing)
     local _, _, end_of_pattern = advance_pulse(g.pulse_num + g.PULSES_PP)
     if end_of_pattern and g.pattern.regenerate then
       g.pattern.regenerate()
-      -- redraw()  -- Restore me!
+      redraw()
     end
 
     -- Set up the next metro

@@ -1,6 +1,5 @@
 To do
 
-- Restore redraw() from send_pulse() regenerate clause.
 - Remove 'metro_for_testing' param in send_pulse().
 - Write readme and add to norns.community.
 - Add credits.
@@ -9,6 +8,7 @@ To do
 
 Done
 
+- Restore redraw() from send_pulse() regenerate clause.
 - Change norns_init() to norns.init().
 - Add s-curve (double superellipse).
 - Allow change of inflection point on double superellipse.
