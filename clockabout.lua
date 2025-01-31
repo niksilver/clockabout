@@ -236,7 +236,7 @@ function init_first_metro()
 
     -- Metro 1 starts at the current pulse num
     g.metros[1] = metro.init(
-      mock_send_pulse(1),  -- Function to call
+      send_pulse,  -- Function to call
       pulse_interval(g.pulse_num, g.beat_num),  -- Time between pulses
       g.PULSES_PP  -- Number of pulses to send before we recalculate
     )
@@ -278,11 +278,6 @@ function cancel_both_metros()
   g.beat_num = 1
 end
 
-function mock_send_pulse(metro)
-  return function(stage)
-    send_pulse(stage, metro)
-  end
-end
 
 -- Send a MIDI clock pulse.
 -- If it's the last in the part, recalculate and reset the metro for the next part.
@@ -333,9 +328,8 @@ end
     |_ Forced (manual) first beat, triggers first metro
 
 --]]
-function send_pulse(stage, metro_for_testing)
+function send_pulse(stage)
 
-  log.s('In metro %d, stage %d, beat %d, pulse %d', metro_for_testing, stage, g.beat_num, g.pulse_num)
   g.connection:clock()
 
   if stage == g.PULSES_PP then
@@ -358,7 +352,7 @@ function send_pulse(stage, metro_for_testing)
     -- Set up the next metro
     log.s('  Setting up metro #%d', next_metro_num)
     g.metros[next_metro_num] = metro.init(
-      mock_send_pulse(next_metro_num),
+      send_pulse,
       pulse_interval(g.pulse_num, g.beat_num),
       g.PULSES_PP
     )

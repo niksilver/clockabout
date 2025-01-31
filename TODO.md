@@ -1,6 +1,5 @@
 To do
 
-- Remove 'metro_for_testing' param in send_pulse().
 - Write readme and add to norns.community.
 - Add credits.
 - Set default MIDI vport to 1.
@@ -8,6 +7,7 @@ To do
 
 Done
 
+- Remove 'metro_for_testing' param in send_pulse().
 - Restore redraw() from send_pulse() regenerate clause.
 - Change norns_init() to norns.init().
 - Add s-curve (double superellipse).
