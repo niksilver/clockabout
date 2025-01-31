@@ -296,7 +296,7 @@ TestSendPulse = {
     for i = 1, #pulse_times-1 do
       local time1 = pulse_times[i]
       local time2 = pulse_times[i+1]
-      lu.assertAlmostEqual(time2 - time1, 1.0, 0.01)
+      lu.assertAlmostEquals(time2 - time1, 1.0, 0.01)
     end
 
   end,

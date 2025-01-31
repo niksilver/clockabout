@@ -341,19 +341,20 @@ function send_pulse(stage)
       metro.free(g.metros[next_metro_num].id)
     end
 
-    -- If it's the end of pattern, we may need to regenerate the next one
-    local _, _, end_of_pattern = advance_pulse(g.pulse_num + g.PULSES_PP)
-    if end_of_pattern and g.pattern.regenerate then
-      g.pattern.regenerate()
-      redraw()
-    end
-
     -- Set up the next metro
     g.metros[next_metro_num] = metro.init(
       send_pulse,
       pulse_interval(g.pulse_num, g.beat_num),
       g.PULSES_PP
     )
+
+    -- If it's the end of pattern, we may need to regenerate the next one
+    local _, _, end_of_pattern = advance_pulse(g.pulse_num + g.PULSES_PP)
+    if end_of_pattern and g.pattern.regenerate then
+      log.s('Regenerated because now at pulse %d and so %d is pattern end', g.pulse_num, g.pulse_num + g.PULSES_PP)
+      g.pattern.regenerate()
+      redraw()
+    end
 
     -- Now switch to the new metro
     g.metro_num = 3 - g.metro_num
