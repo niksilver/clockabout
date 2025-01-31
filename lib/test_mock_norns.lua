@@ -1,7 +1,6 @@
 -- Testing our mock norns code.
 
 
-require('clockabout')
 require('mock_metro')
 
 

@@ -95,7 +95,6 @@ TestSendPulse = {
     g.connection = {
       clock = function(self)
         pulses = pulses + 1
-        log.s('  Clock: %f\tpulse %d', _norns.time, pulses)
       end,
 
       start = function(self) end,
@@ -149,7 +148,6 @@ TestSendPulse = {
     g.connection = {
       clock = function(self)
         pulses = pulses + 1
-        log.s('  Clock: %f\tpulse %d', _norns.time, pulses)
       end,
 
       start = function(self) end,
@@ -180,8 +178,6 @@ TestSendPulse = {
 
 
   test_pattern_can_regenerate_after_end_of_pattern = function()
-    log.s('- - - - - - - - - - - - - - - - -')
-
     -- Make our own pattern, like random, but with our own regenerate()
     -- which checks that it's been called
 
@@ -219,7 +215,6 @@ TestSendPulse = {
     g.connection = {
       clock = function(self)
         pulses = pulses + 1
-        log.s('  Clock: %f\tpulse %d', _norns.time, pulses)
       end,
 
       start = function(self) end,

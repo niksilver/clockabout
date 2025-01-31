@@ -333,7 +333,6 @@ function send_pulse(stage)
   g.connection:clock()
 
   if stage == g.PULSES_PP then
-    log.s('At stage %d, so last pulse', stage)
 
     -- At the end of the part - prepare next metro
 
@@ -350,7 +349,6 @@ function send_pulse(stage)
     end
 
     -- Set up the next metro
-    log.s('  Setting up metro #%d', next_metro_num)
     g.metros[next_metro_num] = metro.init(
       send_pulse,
       pulse_interval(g.pulse_num, g.beat_num),
@@ -360,7 +358,6 @@ function send_pulse(stage)
     -- Now switch to the new metro
     g.metro_num = 3 - g.metro_num
     g.metro = g.metros[g.metro_num]
-    log.s('  Switching to metro #%d', g.metro_num)
     g.metro:start()
 
   end
@@ -431,7 +428,6 @@ function pulse_interval(pulse_num, beat_num)
   local std_pulse_interval = std_beat_interval / 24
   local actual_pulse_interval = std_pulse_interval * scale
 
-  log.s('  Calcing pulse %d, beat %d, using %f - %f\tinterval = %f', pulse_num, beat_num, curr_scaled_time, end_scaled_time, actual_pulse_interval)
   return actual_pulse_interval
 
 end
