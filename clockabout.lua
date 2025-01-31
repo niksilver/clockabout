@@ -371,14 +371,14 @@ function send_pulse(stage, metro_for_testing)
       metro.free(g.metros[next_metro_num].id)
     end
 
-    -- Next metro will follow on from this one
-
+    -- If it's the end of pattern, we may need to regenerate the next one
     local _, _, end_of_pattern = advance_pulse(g.pulse_num + g.PULSES_PP)
     if end_of_pattern and g.pattern.regenerate then
       g.pattern.regenerate()
       -- redraw()  -- Restore me!
     end
 
+    -- Set up the next metro
     slog('  Setting up metro #%d', next_metro_num)
     g.metros[next_metro_num] = metro.init(
       mock_send_pulse(next_metro_num),

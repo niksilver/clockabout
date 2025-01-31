@@ -16,7 +16,7 @@ TestMockNorns = {
   end,
 
 
-  IGNORE_test_can_start_and_run_a_metro = function()
+  test_can_start_and_run_a_metro = function()
     slog('- - - - - - - Start test - - - - - - -')
     _norns.set_time(100)
 
@@ -79,7 +79,7 @@ TestMockNorns = {
   end,
 
 
-  IGNORE_test_can_run_two_metros = function()
+  test_can_run_two_metros = function()
     _norns.set_time(10)
 
     -- Start metro that runs exactly three times, once every 0.5 seconds.
