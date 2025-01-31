@@ -73,7 +73,7 @@ function test_sends_pulses_according_to_swing()
   g.connection = {
     clock = function(self)
       pulses = pulses + 1
-      slog('  Clock: %f\tpulse %d', _norns.time, pulses)
+      log.s('  Clock: %f\tpulse %d', _norns.time, pulses)
     end,
 
     start = function(self) end,
@@ -127,7 +127,7 @@ function test_sends_pulses_according_to_swing_over_3_beats()
   g.connection = {
     clock = function(self)
       pulses = pulses + 1
-      slog('  Clock: %f\tpulse %d', _norns.time, pulses)
+      log.s('  Clock: %f\tpulse %d', _norns.time, pulses)
     end,
 
     start = function(self) end,
@@ -158,7 +158,7 @@ end
 
 
 function test_pattern_can_regenerate_after_end_of_pattern()
-  slog('- - - - - - - - - - - - - - - - -')
+  log.s('- - - - - - - - - - - - - - - - -')
 
   -- Make our own pattern, like random, but with our own regenerate()
   -- which checks that it's been called
@@ -197,7 +197,7 @@ function test_pattern_can_regenerate_after_end_of_pattern()
   g.connection = {
     clock = function(self)
       pulses = pulses + 1
-      slog('  Clock: %f\tpulse %d', _norns.time, pulses)
+      log.s('  Clock: %f\tpulse %d', _norns.time, pulses)
     end,
 
     start = function(self) end,

@@ -1,7 +1,7 @@
 -- Testing our mock metro code.
 
 
-require('clockabout')
+local log = require('log')
 local metro = require('mock_metro')
 
 
@@ -17,7 +17,7 @@ TestMockNorns = {
 
 
   test_can_start_and_run_a_metro = function()
-    slog('- - - - - - - Start test - - - - - - -')
+    log.s('- - - - - - - Start test - - - - - - -')
     _norns.set_time(100)
 
     -- Start metro that runs exactly three times, once every 0.5 seconds.
@@ -31,7 +31,7 @@ TestMockNorns = {
     -- Init the metro, but don't start it for a while
     local m = metro.init(record_tick, 0.5, 3)
     m.name = 'MockMeetro'
-    slog('test_...(): Inited metro m = %s', tostring(m))
+    log.s('test_...(): Inited metro m = %s', tostring(m))
 
     _norns.inc_time(0.25)
     _norns.inc_time(0.25)
@@ -41,7 +41,7 @@ TestMockNorns = {
     lu.assertEquals(ticks, { 0, 0, 0 })
 
     -- Now start the metro
-    slog('test_...(): Starting metro = %s', tostring(m))
+    log.s('test_...(): Starting metro = %s', tostring(m))
     m:start()
     lu.assertEquals(ticks, { 0, 0, 0 })
 
@@ -161,7 +161,7 @@ TestMockNorns = {
 
 
   test_can_start_at_different_stage = function()
-    slog('- - - - - - - Start test - - - - - - -')
+    log.s('- - - - - - - Start test - - - - - - -')
     _norns.set_time(55)
 
     -- Start metro that runs exactly 5 times, once every 0.5 seconds,
@@ -175,7 +175,7 @@ TestMockNorns = {
 
     -- Init the metro, but don't start it for a while
     local m = metro.init(record_tick, 0.5, 5)
-    slog('test_...(): Inited metro m = %s', tostring(m))
+    log.s('test_...(): Inited metro m = %s', tostring(m))
 
     _norns.inc_time(0.25)
     _norns.inc_time(0.25)
@@ -185,7 +185,7 @@ TestMockNorns = {
     lu.assertEquals(ticks, { 0, 0, 0, 0, 0 })
 
     -- Now start the metro at stage 4
-    slog('test_...(): Starting metro = %s', tostring(m))
+    log.s('test_...(): Starting metro = %s', tostring(m))
     m:start(m.time, m.count, 4)
     lu.assertEquals(ticks, { 0, 0, 0, 0, 0 })
 

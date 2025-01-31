@@ -13,6 +13,8 @@
 -- Use our own 'include', for when this is tested outside of norns.
 include = include and include or require
 
+log = include('lib/log')
+
 linear_pattern = include('lib/linear_pattern')
 swing_pattern = include('lib/swing_pattern')
 superellipse_pattern = include('lib/superellipse_pattern')
@@ -198,29 +200,6 @@ function init()
 end
 
 
--- Write a log line with a timestamp.
---
-function log(msg, ...)
-  local time_fn = util and util.time or os.clock
-
-  if not(g.log_init_time) then
-    -- Get this to work on norns and in testing (off norns)
-    g.log_init_time = time_fn()
-  end
-
-  local time = time_fn() - g.log_init_time
-
-  print(time .. ',' .. string.format(msg, table.unpack({...})))
-end
-
-
--- Simple log: log without a timestamp.
---
-function slog(msg, ...)
-  print(string.format(msg, table.unpack({...})))
-end
-
-
 -- Show the parameters for a given pattern, and hide the rest.
 -- @tparam int show_pat  Pattern number whose params we want to show.
 --
@@ -276,8 +255,6 @@ end
 -- Start the first metro running.
 --
 function start_metro()
-  -- slog('start_metro(): Enter, send first pulse')
-  -- send_pulse(1, 0)
   g.metro:start()
   g.connection:clock()
   g.pulse_num = g.pulse_num + 1
@@ -358,11 +335,11 @@ end
 --]]
 function send_pulse(stage, metro_for_testing)
 
-  slog('In metro %d, stage %d, beat %d, pulse %d', metro_for_testing, stage, g.beat_num, g.pulse_num)
+  log.s('In metro %d, stage %d, beat %d, pulse %d', metro_for_testing, stage, g.beat_num, g.pulse_num)
   g.connection:clock()
 
   if stage == g.PULSES_PP then
-    slog('At stage %d, so last pulse', stage)
+    log.s('At stage %d, so last pulse', stage)
 
     -- At the end of the part - prepare next metro
 
@@ -379,7 +356,7 @@ function send_pulse(stage, metro_for_testing)
     end
 
     -- Set up the next metro
-    slog('  Setting up metro #%d', next_metro_num)
+    log.s('  Setting up metro #%d', next_metro_num)
     g.metros[next_metro_num] = metro.init(
       mock_send_pulse(next_metro_num),
       pulse_interval(g.pulse_num, g.beat_num),
@@ -389,7 +366,7 @@ function send_pulse(stage, metro_for_testing)
     -- Now switch to the new metro
     g.metro_num = 3 - g.metro_num
     g.metro = g.metros[g.metro_num]
-    slog('  Switching to metro #%d', g.metro_num)
+    log.s('  Switching to metro #%d', g.metro_num)
     g.metro:start()
 
   end
@@ -460,7 +437,7 @@ function pulse_interval(pulse_num, beat_num)
   local std_pulse_interval = std_beat_interval / 24
   local actual_pulse_interval = std_pulse_interval * scale
 
-  slog('  Calcing pulse %d, beat %d, using %f - %f\tinterval = %f', pulse_num, beat_num, curr_scaled_time, end_scaled_time, actual_pulse_interval)
+  log.s('  Calcing pulse %d, beat %d, using %f - %f\tinterval = %f', pulse_num, beat_num, curr_scaled_time, end_scaled_time, actual_pulse_interval)
   return actual_pulse_interval
 
 end
