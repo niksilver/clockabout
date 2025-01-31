@@ -50,8 +50,6 @@ end
 
 
 function test_sends_pulses_according_to_swing()
-  slog('- - - - - - - - - - -')
-
   _norns.init()
   metro.init_module()
 
@@ -101,6 +99,62 @@ function test_sends_pulses_according_to_swing()
     _norns.set_time(t)
   end
   lu.assertEquals(pulses, 25)
+
+end
+
+
+function test_sends_pulses_according_to_swing_over_3_beats()
+  slog('- - - - - - - - - - -')
+
+  _norns.init()
+  metro.init_module()
+
+  g = init_globals({
+    pulse_num = 1,
+    beat_num = 1,
+    bpm = 60,
+
+    pattern = swing_pattern,
+    pattern_length = 3,
+  })
+
+  swing_pattern.swing = 0.25
+  swing_pattern.inflection = 0.50
+  swing_pattern.init_pattern()
+
+  local pulses = 0
+
+  -- Override the basic connection object
+
+  g.connection = {
+    clock = function(self)
+      pulses = pulses + 1
+      slog('  Clock: %f\tpulse %d', _norns.time, pulses)
+    end,
+
+    start = function(self) end,
+
+    stop = function(self) end,
+  }
+
+  -- When we start the pulses and move through time we should get
+  -- 3*12+1 pulses in the first 3*0.25 seconds, and the rest
+  -- in the remaining time. We'll allow some time overrun to cater
+  -- for imperfections in the small steps and precision errors.
+  --
+  -- Remember: 3*24+1 pulses in total, because there's one each at 0.0 and 1.0 seconds.
+
+  start_pulses()
+
+  for t = 0.0001, 3*0.2502, 0.0001 do -- Start running time from after second 0.
+    _norns.set_time(t)
+  end
+  lu.assertEquals(pulses, 3*12+1)
+
+  for t = 3*0.2502, 3*1.0005, 0.0001 do -- Continue the clock
+    _norns.set_time(t)
+  end
+  lu.assertEquals(pulses, 3*24+1)
   slog('- - - - - - - - - - -')
 
 end
