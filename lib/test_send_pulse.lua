@@ -237,4 +237,68 @@ TestSendPulse = {
 
   end,
 
+
+  test_first_pulse_of_pattern_starts_regularly = function()
+    -- The first pulse should always be on the beat. E.g. with 60 bpm
+    -- those first pulses should be 1 second apart.
+
+    -- Run the metros as usual, and capture when the first pulse happens.
+
+    log.s('----------------------------------')
+    _norns.init()
+    metro.init_module()
+
+    g = init_globals({
+      pulse_num = 1,
+      beat_num = 1,
+      bpm = 60,
+
+      pattern = random_pattern,
+      pattern_length = 1,
+    })
+
+    random_pattern.init_pattern()
+
+    local pulses = 0
+    local pulse_times = {}
+
+    -- Override the basic connection object
+
+    g.connection = {
+      clock = function(self)
+        pulses = pulses + 1
+        log.s('%f - Pulse %d, mod = %d', _norns.time, pulses, (pulses-1) % 24)
+        if (pulses-1) % 24 == 0 then
+          local idx = (pulses // 24) + 1
+          pulse_times[idx] = _norns.time
+        end
+      end,
+
+      start = function(self) end,
+
+      stop = function(self) end,
+    }
+
+    -- Run the metro for a bit over 5 'seconds', which will mean six first-pulses,
+    -- at seconds 0, 1, 2, 3, 4, 5.
+
+    start_pulses()
+
+    for t = 0.0001, 5.1, 0.0001 do
+      _norns.set_time(t)
+    end
+
+    -- Now see what we've got
+
+    log.s('----------------------------------')
+    lu.assertEquals(#pulse_times, 6)
+
+    for i = 1, #pulse_times-1 do
+      local time1 = pulse_times[i]
+      local time2 = pulse_times[i+1]
+      lu.assertAlmostEqual(time2 - time1, 1.0, 0.01)
+    end
+
+  end,
+
 }

@@ -49,6 +49,12 @@ random_pattern.init_pattern = function()
   local x, y = random_pattern.generate_points(points)
   random_pattern.algebra = random_pattern.calculate_algebra(x, y)
 
+  local str = ''
+  for x = 0, 1.0, 0.1 do
+    str = str .. tostring(random_pattern.transform(x)) .. ' '
+  end
+  log.s(str)
+
 end
 
 

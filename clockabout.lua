@@ -427,6 +427,7 @@ function pulse_interval(pulse_num, beat_num)
   local std_beat_interval = 60 / g.bpm
   local std_pulse_interval = std_beat_interval / 24
   local actual_pulse_interval = std_pulse_interval * scale
+  log.s('%f - %f has duration %f', curr_pulse, end_pulse, proportional_part_duration)
 
   return actual_pulse_interval
 
