@@ -365,46 +365,24 @@ function send_pulse(stage, metro_for_testing)
     slog('At stage %d, so last pulse', stage)
 
     -- At the end of the part - prepare next metro
+
     local next_metro_num = 3 - g.metro_num
     if g.metros[next_metro_num] then
       metro.free(g.metros[next_metro_num].id)
     end
 
     -- Next metro will follow on from this one
-    local follow_on_pulse_num = g.pulse_num -- Eliminate this!
-    local beat_num = g.beat_num -- Eliminate this!
+
     local _, _, end_of_pattern = advance_pulse(g.pulse_num + g.PULSES_PP)
     if end_of_pattern and g.pattern.regenerate then
       g.pattern.regenerate()
       -- redraw()  -- Restore me!
     end
---[[    local follow_on_pulse_num = g.pulse_num -- + 1
-    local beat_num = g.beat_num
-
-    -- If the next metro goes into the next beat, and
-    -- maybe also repeats the pattern
-
-    if follow_on_pulse_num > 24 then
-      -- We'll be in the next beat
-      follow_on_pulse_num = 1
-      beat_num = beat_num + 1
-
-      if beat_num > g.pattern_length then
-        -- We'll be repeating the pattern
-        beat_num = 1
-        -- Give the pattern a chance to regenerate
-        if g.pattern.regenerate then
-          g.pattern.regenerate()
-          redraw()
-        end
-      end
-
-    end--]]
 
     slog('  Setting up metro #%d', next_metro_num)
     g.metros[next_metro_num] = metro.init(
       mock_send_pulse(next_metro_num),
-      pulse_interval(follow_on_pulse_num, beat_num),
+      pulse_interval(g.pulse_num, g.beat_num),
       g.PULSES_PP
     )
 
@@ -416,20 +394,7 @@ function send_pulse(stage, metro_for_testing)
 
   end
 
-  g.pulse_num, g.beat_num = advance_pulse(g.pulse_num + 1)
---[[  g.pulse_num = g.pulse_num + 1
-
-  if (g.pulse_num > 24) then
-    -- At the end of the beat
-
-    g.pulse_num = 1
-
-    g.beat_num = g.beat_num + 1
-    if g.beat_num > g.pattern_length then
-      -- At the end of the pattern
-      g.beat_num = 1
-    end
-  end--]]
+  g.pulse_num, g.beat_num, _ = advance_pulse(g.pulse_num + 1)
 
 end
 
