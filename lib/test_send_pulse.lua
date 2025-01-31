@@ -85,18 +85,19 @@ function test_sends_pulses_according_to_swing()
 
   -- When we start the pulses and move through time we should get
   -- 13 pulses in the first 0.25 seconds, and the rest
-  -- in the remaining time.
+  -- in the remaining time. We'll allow some time overrun to cater
+  -- for imperfections in the small steps and precision errors.
   --
   -- Remember: 25 pulses in total, because there's one each at 0.0 and 1.0 seconds.
 
   start_pulses()
 
-  for t = 0.01, 0.25001, 0.0001 do -- Start running time from after second 0.
+  for t = 0.0001, 0.2501, 0.0001 do -- Start running time from after second 0.
     _norns.set_time(t)
   end
   lu.assertEquals(pulses, 13)
 
-  for t = 0.26, 1.0001, 0.01 do -- Continue the clock
+  for t = 0.2502, 1.0005, 0.0001 do -- Continue the clock
     _norns.set_time(t)
   end
   lu.assertEquals(pulses, 25)

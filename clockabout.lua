@@ -278,10 +278,7 @@ end
 function start_metro()
   -- slog('start_metro(): Enter, send first pulse')
   -- send_pulse(1, 0)
-  slog('start_metro(): Starting first metro at stage 2')
-  local m = g.metro
-  g.metro:start(m.init, m.count, 2)
-  slog('start_metro(): Done starting first metro at stage 2')
+  g.metro:start()
   g.connection:clock()
   g.pulse_num = g.pulse_num + 1
 end
@@ -315,21 +312,66 @@ end
 -- @tparam int stage  The stage of this pulse. Normally counts
 --    from 1, but we insert our own 0.
 --
+--[[
+    For simplicity, suppose there are 8 pulses per quarter note, and 4 pulses
+    per part. And suppose we want have a swing pattern. Then we want this:
+
+    |                                    /
+    |                                   o
+    |                                  /
+    |                                 /
+    |                                /
+    |                             _ o
+    |                         _ o
+    |                     _ o       |
+    |                 _ o
+    |               o               |
+    |              /
+    |             /                 |
+    |            /  |
+    |           o                   |
+    |          /    |
+    |         /                     |
+    |        /      |
+    |       o                       |
+    |      /        |
+    |     /                         |
+    |    /          |
+    |   o                           |
+    |  /            |
+    | /                             |
+    |/              |
+    o---+---+---+---+---+---+---+---+---+----------------------------
+    1   2   3   4   5   6   7   8   1   2...
+
+    |   |           |   |           |
+    |   |           |   |           |_ Second metro's last beat, triggers next
+    |   |           |   |
+    |   |           |   |_ Second metro's first beat
+    |   |           |
+    |   |           |_ First metro's last beat, triggers second metro
+    |   |
+    |   |_ First metro's first beat
+    |
+    |_ Forced (manual) first beat, triggers first metro
+
+--]]
 function send_pulse(stage, metro_for_testing)
 
-  g.connection:clock()
   slog('In metro %d, stage %d, beat %d, pulse %d', metro_for_testing, stage, g.beat_num, g.pulse_num)
+  g.connection:clock()
 
-  if stage == 1 then
+  if stage == g.PULSES_PP then
+    slog('At stage %d, so last pulse', stage)
 
-    -- At the start of the part - prepare next metro
+    -- At the end of the part - prepare next metro
     local next_metro_num = 3 - g.metro_num
     if g.metros[next_metro_num] then
       metro.free(g.metros[next_metro_num].id)
     end
 
     -- Next metro will follow on from this one
-    local follow_on_pulse_num = g.pulse_num + g.PULSES_PP
+    local follow_on_pulse_num = g.pulse_num -- + 1
     local beat_num = g.beat_num
 
     -- If the next metro goes into the next beat, and
@@ -359,9 +401,7 @@ function send_pulse(stage, metro_for_testing)
       g.PULSES_PP
     )
 
-  elseif stage == g.PULSES_PP then
-
-    -- At the end of the part - switch metro
+    -- Now switch to the new metro
     g.metro_num = 3 - g.metro_num
     g.metro = g.metros[g.metro_num]
     slog('  Switching to metro #%d', g.metro_num)

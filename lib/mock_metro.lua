@@ -172,11 +172,11 @@ Metro.init_module = function()
 
   -- callback on metro tick from C.
   _norns.metro = function(idx, stage)
-    slog('Metros\'s_norns.metro(%d, %d): Enter', idx, stage)
+    -- slog('Metros\'s_norns.metro(%d, %d): Enter', idx, stage)
     local m = Metro.metros[idx]
     if m then
       if m.event then
-        slog('Metros\'s_norns.metro(%d, %d): Calling m.event() for m = %s', idx, stage, tostring(m))
+        -- slog('Metros\'s_norns.metro(%d, %d): Calling m.event()', idx, stage)
         m.event(stage)
       end
       if m.count > -1 then
