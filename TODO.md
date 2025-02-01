@@ -7,6 +7,7 @@ To do
 
 Done
 
+- Check if we need to free metros (we do).
 - Remove 'metro_for_testing' param in send_pulse().
 - Restore redraw() from send_pulse() regenerate clause.
 - Change norns_init() to norns.init().

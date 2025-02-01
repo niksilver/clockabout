@@ -1,7 +1,7 @@
 -- Clockabout
 --
 -- Why should swing be the
--- only irregular clock pattern?
+-- only non-linear clock pattern?
 --
 -- E1: Select pattern
 -- E2: Change BPM
@@ -13,19 +13,19 @@
 -- Use our own 'include', for when this is tested outside of norns.
 include = include and include or require
 
-log = include('lib/log')
+log                         = include('lib/log')
 
-linear_pattern = include('lib/linear_pattern')
-swing_pattern = include('lib/swing_pattern')
-superellipse_pattern = include('lib/superellipse_pattern')
+linear_pattern              = include('lib/linear_pattern')
+swing_pattern               = include('lib/swing_pattern')
+superellipse_pattern        = include('lib/superellipse_pattern')
 double_superellipse_pattern = include('lib/double_superellipse_pattern')
-random_pattern = include('lib/random_pattern')
+random_pattern              = include('lib/random_pattern')
 
 
 g = {}    -- Global values
 
 
--- Set global values and return them as a table.
+-- Define global values and return them as a table. Does not set any global vars.
 -- These are in their own function so we can set them up and reset them in unit tests.
 --
 -- @tparam table vars  Optional table of names/values to set, if not the defaults.
@@ -34,7 +34,7 @@ g = {}    -- Global values
 function init_globals(vars)
   local g = {}
 
-  -- Constants
+  -- Constant
 
   g.PULSES_PP = 6    -- This many pulses per part before we set another metro
 
@@ -264,12 +264,9 @@ end
 -- Cancel the metronomes.
 --
 function cancel_both_metros()
-  if g.metros[1] then
-    metro.free(g.metros[1].id)
-  end
-  if g.metros[2] then
-    metro.free(g.metros[2].id)
-  end
+  if g.metros[1] then metro.free(g.metros[1].id) end
+  if g.metros[2] then metro.free(g.metros[2].id) end
+
   g.metro = nil
   g.metro_num = nil
   g.metro_running = 0
