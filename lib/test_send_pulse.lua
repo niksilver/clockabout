@@ -298,4 +298,41 @@ TestSendPulse = {
 
   end,
 
+
+  test_can_cycle_through_many_metros = function()
+    -- Just to see if we're using the Metro module correctly.
+    -- Can we use > 36 metros without a problem?
+
+    _norns.init()
+    metro.init_module()
+
+    g = init_globals({
+      pulse_num = 1,
+      beat_num = 1,
+      bpm = 60,
+
+      pattern = linear_pattern,
+      pattern_length = 1,
+    })
+
+    local pulses = 0
+
+    -- Override the basic connection object
+
+    g.connection = {
+      clock = function(self) end,
+      start = function(self) end,
+      stop = function(self) end,
+    }
+
+    -- If we assume 4 metros per second (1 beat/sec at 60 bpm)
+    -- then 12 seconds takes us through 48 metros.
+
+    start_pulses()
+
+    for t = 0, 12, 0.001 do
+      _norns.set_time(t)
+    end
+
+  end,
 }

@@ -341,7 +341,6 @@ function send_pulse(stage)
       metro.free(g.metros[next_metro_num].id)
     end
 
-    -- Set up the next metro
     g.metros[next_metro_num] = metro.init(
       send_pulse,
       pulse_interval(g.pulse_num, g.beat_num),
@@ -356,7 +355,7 @@ function send_pulse(stage)
     end
 
     -- Now switch to the new metro
-    g.metro_num = 3 - g.metro_num
+    g.metro_num = next_metro_num
     g.metro = g.metros[g.metro_num]
     g.metro:start()
 
