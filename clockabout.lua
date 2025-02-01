@@ -119,8 +119,9 @@ function init()
   params:add_option("clockabout_vport", "Port", short_names, g.vport)
   params:set_action("clockabout_vport", function(i)
     g.vport = i
-    g.connection = g.devices[g.vport]
+    g.connection = g.devices[g.vport].connection
   end)
+  g.connection = g.devices[g.vport].connection
 
   -- Our own parameter for the bpm
 
