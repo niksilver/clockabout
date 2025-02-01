@@ -288,44 +288,44 @@ end
     For simplicity, suppose there are 8 pulses per quarter note, and 4 pulses
     per part. And suppose we want have a swing pattern. Then we want this:
 
-    |                                    /
-    |                                   o
-    |                                  /
-    |                                 /
-    |                                /
-    |                             _ o
-    |                         _ o
-    |                     _ o       |
-    |                 _ o
-    |               o               |
-    |              /
-    |             /                 |
-    |            /  |
-    |           o                   |
-    |          /    |
-    |         /                     |
-    |        /      |
-    |       o                       |
-    |      /        |
-    |     /                         |
-    |    /          |
-    |   o                           |
-    |  /            |
-    | /                             |
-    |/              |
-    o---+---+---+---+---+---+---+---+---+----------------------------
-    1   2   3   4   5   6   7   8   1   2...
+    Time                                   /
+      ^                                   o
+      |                                  /
+      |                                 /
+      |                                /
+      |                             _ o
+      |                         _ o
+      |                     _ o       :
+      |                 _ o
+      |               o               :
+      |              /
+      |             /                 :
+      |            /  :
+      |           o                   :
+      |          /    :
+      |         /                     :
+      |        /      :
+      |       o                       :
+      |      /        :
+      |     /                         :
+      |    /          :
+      |   o                           :
+      |  /            :
+      | /                             :
+      |/              :
+      o---+---+---+---+---+---+---+---+---+------->  Beat number
+      1   2   3   4   5   6   7   8   1   2...
 
-    |   |           |   |           |
-    |   |           |   |           |_ Second metro's last beat, triggers next
-    |   |           |   |
-    |   |           |   |_ Second metro's first beat
-    |   |           |
-    |   |           |_ First metro's last beat, triggers second metro
-    |   |
-    |   |_ First metro's first beat
-    |
-    |_ Forced (manual) first beat, triggers first metro
+      |   |           |   |           |
+      |   |           |   |           |_ Second metro's last beat, triggers next
+      |   |           |   |
+      |   |           |   |_ Second metro's first beat
+      |   |           |
+      |   |           |_ First metro's last beat, triggers second metro
+      |   |
+      |   |_ First metro's first beat
+      |
+      |_ Forced (manual) first beat, triggers first metro
 
 --]]
 function send_pulse(stage)
