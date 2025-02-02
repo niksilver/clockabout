@@ -59,11 +59,11 @@ TestSendPulse = {
     }
 
     -- Start the pulses and run the pretend clock for 1 second,
-    -- with a resolution of 0.01 seconds.
+    -- with a resolution of 0.001 seconds.
 
     start_pulses()
 
-    for t = 0, 1.005, 0.001 do -- Tmp! Revert!
+    for t = 0, 1.005, 0.001 do
       _norns.set_time(t)
     end
 
