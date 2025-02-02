@@ -9,6 +9,7 @@ To do
 
 Done
 
+- Optimise metro init/start work.
 - Check if we need to free metros (we do).
 - Remove 'metro_for_testing' param in send_pulse().
 - Restore redraw() from send_pulse() regenerate clause.

@@ -41,9 +41,7 @@ function init_globals(vars)
   -- Variables
 
   g.devices = {}  -- Container for connected midi devices and their data.
-                  -- A table with keys: connection, name
-                  -- Also allows a 0-indexed "none" device
-  g.vport = 2     -- MIDI clock out vport (int >= 1)
+                  -- A table with keys: connection, name, active
   g.connection = nil  -- The MIDI connection object to the current device.
                       -- We override this in tests. Must implement these
                       -- functions:
@@ -95,7 +93,9 @@ function init()
 
   -- Query MIDI vports, connect, collect info, switch off norns's own clock out.
 
+  local default_vport = 2
   local short_names = {}
+
   for i = 1, #midi.vports do
     local conn = midi.connect(i)
     local name = "Port " ..i.. ": " .. util.trim_string_to_width(conn.name, 80)
@@ -104,6 +104,7 @@ function init()
     g.devices[i] = {
       connection = conn,
       name = name,
+      active = (i == default_vport),
     }
     table.insert(short_names, short_name)
 
@@ -116,12 +117,12 @@ function init()
 
   -- Parameter for the out vport.
 
-  params:add_option("clockabout_vport", "Port", short_names, g.vport)
+  params:add_option("clockabout_vport", "Port", short_names, default_vport)
   params:set_action("clockabout_vport", function(i)
-    g.vport = i
-    g.connection = g.devices[g.vport].connection
+    for idx, device in pairs(g.devices) do
+      device.active = (idx == i)
+    end
   end)
-  g.connection = g.devices[g.vport].connection
 
   -- Our own parameter for the bpm
 
@@ -145,7 +146,7 @@ function init()
       start_pulses()
     else
       cancel_both_metros()
-      g.connection:stop()
+      stop_all_connections()
       g.pulse_num = 1
       g.beat_num = 1
     end
@@ -220,15 +221,45 @@ function show_hide_pattern_params(show_pat)
 end
 
 
+-- Send MIDI stop to all connections, whether marked active or not.
+--
+function stop_active_connections()
+  for idx, device in pairs(g.devices) do
+    device.connection:stop()
+  end
+end
+
+
+-- Send MIDI start to all active connections.
+--
+function start_active_connections()
+  for idx, device in pairs(g.devices) do
+    if device.active then
+      device.connection:start()
+    end
+  end
+end
+
+
 -- Start sending the pulses. Uses global g.connection to know where
 -- to send to.
 --
 function start_pulses()
   init_first_metro()
-  g.connection:start()
+  start_active_connections()
   start_metro()
 end
 
+
+-- Send MIDI clock message to active connections.
+--
+function clock_to_active_connections()
+  for idx, device in pairs(g.devices) do
+    if device.active then
+      device.connection:clock()
+    end
+  end
+end
 
 -- Set up the the first metro only. Doesn't start it.
 --
@@ -257,7 +288,7 @@ end
 --
 function start_metro()
   g.metro:start()
-  g.connection:clock()
+  clock_to_active_connections()
   g.pulse_num = g.pulse_num + 1
 end
 
@@ -328,7 +359,7 @@ end
 --]]
 function send_pulse(stage)
 
-  g.connection:clock()
+  clock_to_active_connections()
 
   -- We do these things at different stages so that there isn't a lot of
   -- work all in the final stage of a metro, which may cause a delay.

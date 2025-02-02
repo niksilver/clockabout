@@ -46,16 +46,25 @@ TestSendPulse = {
 
     local pulses = 0
 
-    -- Override the basic connection object
+    -- Create a mock connection in a mock MIDI device
 
-    g.connection = {
-      clock = function(self)
-        pulses = pulses + 1
-      end,
+    g.devices = {
+      {
+        name = 'Mock device',
 
-      start = function(self) end,
+        active = true,
 
-      stop = function(self) end,
+        connection = {
+
+          clock = function(self)
+            pulses = pulses + 1
+          end,
+
+          start = function(self) end,
+
+          stop = function(self) end,
+        }
+      }
     }
 
     -- Start the pulses and run the pretend clock for 1 second,
@@ -89,6 +98,27 @@ TestSendPulse = {
     swing_pattern.init_pattern()
 
     local pulses = 0
+
+    -- Create a mock connection in a mock MIDI device
+
+    g.devices = {
+      {
+        name = 'Mock device',
+
+        active = true,
+
+        connection = {
+
+          clock = function(self)
+            pulses = pulses + 1
+          end,
+
+          start = function(self) end,
+
+          stop = function(self) end,
+        }
+      }
+    }
 
     -- Override the basic connection object
 
@@ -143,16 +173,25 @@ TestSendPulse = {
 
     local pulses = 0
 
-    -- Override the basic connection object
+    -- Create a mock connection in a mock MIDI device
 
-    g.connection = {
-      clock = function(self)
-        pulses = pulses + 1
-      end,
+    g.devices = {
+      {
+        name = 'Mock device',
 
-      start = function(self) end,
+        active = true,
 
-      stop = function(self) end,
+        connection = {
+
+          clock = function(self)
+            pulses = pulses + 1
+          end,
+
+          start = function(self) end,
+
+          stop = function(self) end,
+        }
+      }
     }
 
     -- When we start the pulses and move through time we should get
@@ -210,16 +249,25 @@ TestSendPulse = {
 
     local pulses = 0
 
-    -- Override the basic connection object
+    -- Create a mock connection in a mock MIDI device
 
-    g.connection = {
-      clock = function(self)
-        pulses = pulses + 1
-      end,
+    g.devices = {
+      {
+        name = 'Mock device',
 
-      start = function(self) end,
+        active = true,
 
-      stop = function(self) end,
+        connection = {
+
+          clock = function(self)
+            pulses = pulses + 1
+          end,
+
+          start = function(self) end,
+
+          stop = function(self) end,
+        }
+      }
     }
 
     -- Just to be sure, check we get 25 pulses.
@@ -261,22 +309,30 @@ TestSendPulse = {
     local pulses = 0
     local pulse_times = {}
 
-    -- Override the basic connection object
+    -- Create a mock connection in a mock MIDI device
 
-    g.connection = {
-      clock = function(self)
-        pulses = pulses + 1
-        if (pulses-1) % 24 == 0 then
-          local idx = (pulses // 24) + 1
-          pulse_times[idx] = _norns.time
-        end
-      end,
+    g.devices = {
+      {
+        name = 'Mock device',
 
-      start = function(self) end,
+        active = true,
 
-      stop = function(self) end,
+        connection = {
+
+          clock = function(self)
+            pulses = pulses + 1
+            if (pulses-1) % 24 == 0 then
+              local idx = (pulses // 24) + 1
+              pulse_times[idx] = _norns.time
+            end
+          end,
+
+          start = function(self) end,
+
+          stop = function(self) end,
+        }
+      }
     }
-
     -- Run the metro for a bit over 5 'seconds', which will mean six first-pulses,
     -- at seconds 0, 1, 2, 3, 4, 5.
 
