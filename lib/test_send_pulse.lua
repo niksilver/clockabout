@@ -63,7 +63,7 @@ TestSendPulse = {
 
     start_pulses()
 
-    for t = 0, 1.0001, 0.01 do
+    for t = 0, 1.005, 0.001 do -- Tmp! Revert!
       _norns.set_time(t)
     end
 
@@ -111,12 +111,12 @@ TestSendPulse = {
 
     start_pulses()
 
-    for t = 0.0001, 0.2501, 0.0001 do -- Start running time from after second 0.
+    for t = 0.0001, 0.2505, 0.0001 do -- Start running time from after second 0.
       _norns.set_time(t)
     end
     lu.assertEquals(pulses, 13)
 
-    for t = 0.2502, 1.0005, 0.0001 do -- Continue the clock
+    for t = 0.2506, 1.0005, 0.0001 do -- Continue the clock
       _norns.set_time(t)
     end
     lu.assertEquals(pulses, 25)

@@ -5,7 +5,8 @@ local log = {
   -- Write a log line with a timestamp.
   --
   t = function(msg, ...)
-    local time_fn = util and util.time or os.clock
+    -- We're either on a norns or in our test environment
+    local time = util and util.time() or _norns.time
 
     if not(g) then
       g = {}
@@ -13,12 +14,12 @@ local log = {
 
     if not(g.log_init_time) then
       -- Get this to work on norns and in testing (off norns)
-      g.log_init_time = time_fn()
+      g.log_init_time = time
     end
 
-    local time = time_fn() - g.log_init_time
+    local rel_time = time - g.log_init_time
 
-    print(time .. ',' .. string.format(msg, table.unpack({...})))
+    print(rel_time .. ',' .. string.format(msg, table.unpack({...})))
   end,
 
 

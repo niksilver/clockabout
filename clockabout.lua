@@ -36,7 +36,7 @@ function init_globals(vars)
 
   -- Constant
 
-  g.PULSES_PP = 6    -- This many pulses per part before we set another metro
+  g.PULSES_PP = 4    -- This many pulses per part before we set another metro
 
   -- Variables
 
@@ -277,13 +277,21 @@ For 6 pulse pp, random pattern, bpm 300, beat 1 is this:
   Wanted: 0.2000
   Got:    0.2035
 
+For 4 pulse pp, random pattern, bpm 60, beat 1 is this:
+  Wanted: 1.0000
+  Got:    1.0050
+
+For 4 pulse pp, random pattern, bpm 300, beat 1 is this:
+  Wanted: 0.2000
+  Got:    0.2050
+
 --]]
 function tmp_log()
   if not(g.tmp_pulse_time) then
     g.tmp_pulse_time = {}
   end
 
-  local t = (util and util.time) and util.time() or os.clock()
+  local t = (util and util.time) and util.time() or _norns.time
   local n = g.pulse_num
   local diff_str = g.tmp_pulse_time[n] and tostring(t - g.tmp_pulse_time[n]) or ''
   g.tmp_pulse_time[n] = t
@@ -369,9 +377,10 @@ function send_pulse(stage)
       metro.free(g.metros[next_metro_num].id)
     end
 
+    local interval = pulse_interval(g.pulse_num, g.beat_num)
     g.metros[next_metro_num] = metro.init(
       send_pulse,
-      pulse_interval(g.pulse_num, g.beat_num),
+      interval,
       g.PULSES_PP
     )
 
