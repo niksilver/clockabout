@@ -144,6 +144,7 @@ function init()
     g.metro_running = x
     if g.metro_running == 1 then
       start_pulses()
+      start_active_connections()
     else
       cancel_both_metros()
       stop_all_connections()
@@ -223,7 +224,7 @@ end
 
 -- Send MIDI stop to all connections, whether marked active or not.
 --
-function stop_active_connections()
+function stop_all_connections()
   for idx, device in pairs(g.devices) do
     device.connection:stop()
   end
