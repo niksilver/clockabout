@@ -368,21 +368,41 @@ function send_pulse(stage)
   g.connection:clock()
   tmp_log()  -- Tmp
 
-  if stage == g.PULSES_PP then
+  -- We do these things at different stages so that there isn't a lot of
+  -- work all in the final stage of a metro, which may cause a delay.
 
-    -- At the end of the part - prepare next metro
+  if stage == 1 then
+
+    -- Free up the next metro
 
     local next_metro_num = 3 - g.metro_num
     if g.metros[next_metro_num] then
       metro.free(g.metros[next_metro_num].id)
     end
 
-    local interval = pulse_interval(g.pulse_num, g.beat_num)
+  elseif stage == g.PULSES_PP - 1 then
+
+    -- Almost (not quite) at the end of the part - prepare next metro
+
+    local next_metro_num = 3 - g.metro_num
+    local next_pulse_num, next_beat_num, _ = advance_pulse(g.pulse_num + 1)
+    local interval = pulse_interval(next_pulse_num, next_beat_num)
+
     g.metros[next_metro_num] = metro.init(
       send_pulse,
       interval,
       g.PULSES_PP
     )
+
+  elseif stage == g.PULSES_PP then
+
+    -- At the end of the part - start the next metro
+
+    -- Now switch to the new metro
+    local next_metro_num = 3 - g.metro_num
+    g.metro_num = next_metro_num
+    g.metro = g.metros[g.metro_num]
+    g.metro:start()
 
     -- If it's the end of pattern, we may need to regenerate the next one
     local _, _, end_of_pattern = advance_pulse(g.pulse_num + g.PULSES_PP)
@@ -390,11 +410,6 @@ function send_pulse(stage)
       g.pattern.regenerate()
       redraw()
     end
-
-    -- Now switch to the new metro
-    g.metro_num = next_metro_num
-    g.metro = g.metros[g.metro_num]
-    g.metro:start()
 
   end
 
