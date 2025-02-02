@@ -285,6 +285,16 @@ For 4 pulse pp, random pattern, bpm 300, beat 1 is this:
   Wanted: 0.2000
   Got:    0.2050
 
+After attempted optimisation...
+
+For 4 pulse pp, random pattern, bpm 60, beat 1 is this:
+  Wanted: 1.0000
+  Got:    1.0030
+
+For 4 pulse pp, random pattern, bpm 300, beat 1 is this:
+  Wanted: 0.2000
+  Got:    0.2030
+
 --]]
 function tmp_log()
   if not(g.tmp_pulse_time) then

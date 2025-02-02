@@ -23,6 +23,7 @@ lasts for.
 - MIDI start/stop happens.
 - It's a quirk that beats come together on the 24th pulse.
 - Graph is probably not what you think it is.
+- It's about 3/1000 of a second out.
 
 # Development and testing
 
