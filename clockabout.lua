@@ -134,6 +134,8 @@ function init()
   params:set_action("clockabout_bpm", function(x)
     -- The metro will update at the next part
     g.bpm = x
+    log.s('Time,Pattern,BPM,Pulse num,Diff-24')  -- Tmp
+    g.tmp_pulse_time = {} -- Tmp
   end)
 
   -- Our own parameter for whether the metro is running
@@ -163,6 +165,8 @@ function init()
     g.pattern = g.patterns[i]
     show_hide_pattern_params(i)
     g.pattern.init_pattern()
+    log.s('Time,Pattern,BPM,Pulse num,Diff-24')  -- Tmp
+    g.tmp_pulse_time = {} -- Tmp
   end)
 
   -- Parameters for the each of the patterns
@@ -258,7 +262,32 @@ end
 function start_metro()
   g.metro:start()
   g.connection:clock()
+  tmp_log()  -- Tmp
   g.pulse_num = g.pulse_num + 1
+end
+
+
+--[[ Tmp notes:
+
+For 6 pulse pp, random pattern, bpm 60, beat 1 is this:
+  Wanted: 1.0000
+  Got:    1.0025
+
+For 6 pulse pp, random pattern, bpm 300, beat 1 is this:
+  Wanted: 0.2000
+  Got:    0.2035
+
+--]]
+function tmp_log()
+  if not(g.tmp_pulse_time) then
+    g.tmp_pulse_time = {}
+  end
+
+  local t = (util and util.time) and util.time() or os.clock()
+  local n = g.pulse_num
+  local diff_str = g.tmp_pulse_time[n] and tostring(t - g.tmp_pulse_time[n]) or ''
+  g.tmp_pulse_time[n] = t
+  log.t('%s,%d,%d,%s', g.pattern.name, g.bpm, n, diff_str)
 end
 
 
@@ -329,6 +358,7 @@ end
 function send_pulse(stage)
 
   g.connection:clock()
+  tmp_log()  -- Tmp
 
   if stage == g.PULSES_PP then
 

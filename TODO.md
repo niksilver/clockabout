@@ -1,5 +1,7 @@
 To do
 
+- Allow multiple MIDI out channels.
+- Save/Load params on init/exit.
 - Write readme and add to norns.community.
 - Add credits.
 - Set default MIDI vport to 1.
