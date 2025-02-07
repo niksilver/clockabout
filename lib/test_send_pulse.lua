@@ -52,7 +52,7 @@ TestSendPulse = {
       {
         name = 'Mock device',
 
-        active = true,
+        active = 1,
 
         connection = {
 
@@ -105,7 +105,7 @@ TestSendPulse = {
       {
         name = 'Mock device',
 
-        active = true,
+        active = 1,
 
         connection = {
 
@@ -179,7 +179,7 @@ TestSendPulse = {
       {
         name = 'Mock device',
 
-        active = true,
+        active = 1,
 
         connection = {
 
@@ -255,7 +255,7 @@ TestSendPulse = {
       {
         name = 'Mock device',
 
-        active = true,
+        active = 1,
 
         connection = {
 
@@ -315,7 +315,7 @@ TestSendPulse = {
       {
         name = 'Mock device',
 
-        active = true,
+        active = 1,
 
         connection = {
 
