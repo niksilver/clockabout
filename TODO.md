@@ -8,6 +8,8 @@ To do
 
 Done
 
+- Fix bug where toggling off one vport in multi mode doesn't
+  stop the clock being sent.
 - Allow multiple MIDI out channels.
 - Optimise metro init/start work.
 - Check if we need to free metros (we do).

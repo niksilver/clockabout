@@ -310,6 +310,7 @@ end
 function toggle_vport(i, val)
   local id = vport_active_id(i)
   params:set(id, val)
+  g.devices[i].active = val
 end
 
 
