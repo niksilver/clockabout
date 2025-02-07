@@ -120,14 +120,17 @@ function init()
   params:add_option("clockabout_vport", "Port", short_names, default_vport)
   params:set_action("clockabout_vport", function(i)
     for idx, device in pairs(g.devices) do
-      device.active = as_int(idx == i)
+      local val = as_int(idx == i)
+      device.active = val
+      -- Set the individual param, too, but silently
+      params:set(vport_active_id(idx), val, true)
     end
   end)
 
   -- Parameter for each out vport individually
 
   for i, dev in ipairs(g.devices) do
-    local id = "clockabout_vport_" .. i .. "_active"
+    local id = vport_active_id(i)
     params:add_binary(id, dev.name, "toggle", dev.active)
     params:set_action(id, toggle_vport_fn(i))
   end
@@ -217,6 +220,7 @@ function as_int(b)
   return b and 1 or 0
 end
 
+
 -- Show the parameters for a given pattern, and hide the rest.
 -- @tparam int show_pat  Pattern number whose params we want to show.
 --
@@ -236,6 +240,14 @@ function show_hide_pattern_params(show_pat)
 end
 
 
+-- The param id for whether a given vport is active.
+-- @tparam int i  The vport number (from 1).
+-- @treturn string  The param id.
+--
+function vport_active_id(i)
+  return "clockabout_vport_" .. i .. "_active"
+end
+
 -- Respond to a single vport being toggled on or off for MIDI out.
 -- If we're only selecting one vport at a time then we'll also need
 -- to make sure any others are toggled accordingly.
@@ -243,7 +255,7 @@ end
 -- @tparam int val  The new value, 0 or 1.
 --
 function toggle_vport(i, val)
-  local id = "clockabout_vport_" .. i .. "_active"
+  local id = vport_active_id(i)
   params:set(id, val)
 end
 
