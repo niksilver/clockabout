@@ -1,6 +1,5 @@
 To do
 
-- Allow multiple MIDI out channels.
 - Save/Load params on init/exit.
 - Write readme and add to norns.community.
 - Add credits.
@@ -9,6 +8,7 @@ To do
 
 Done
 
+- Allow multiple MIDI out channels.
 - Optimise metro init/start work.
 - Check if we need to free metros (we do).
 - Remove 'metro_for_testing' param in send_pulse().

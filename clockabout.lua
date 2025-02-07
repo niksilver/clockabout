@@ -174,13 +174,22 @@ function init()
   params:set_action("clockabout_metro_running", function(x)
     g.metro_running = x
     if g.metro_running == 1 then
+
+      -- We need to init the pattern here. It might not have been init'ed if
+      -- this action has been banged when the default paramset is loaded at
+      -- the start of the script.
+
+      g.pattern.init_pattern()
       start_pulses()
       start_active_connections()
+
     else
+
       cancel_both_metros()
       stop_all_connections()
       g.pulse_num = 1
       g.beat_num = 1
+
     end
   end)
 
@@ -223,13 +232,14 @@ function init()
     g.pattern_length = x
   end)
 
-  -- Initialise the current pattern
+  -- Final touches:
+  --   - Load the last paramset, if any. That will also bang all
+  --     the parameters.
+  --   - Initialise the current pattern
+  --   - Set the metronome going, if it should be
 
-  g.pattern.init_pattern()
-
-  -- Set the metronome going
-
-  params:set("clockabout_metro_running", 1)
+  params:default()
+  params:lookup_param("clockabout_metro_running"):bang()
 
 end
 
