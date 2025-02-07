@@ -141,7 +141,9 @@ function init()
     end
   end)
 
-  -- Parameter for each out vport individually
+  -- Parameter for each out vport individually - in a group
+
+  params:add_group("clockabout_vport_group", "Ports", #g.devices)
 
   for i, dev in ipairs(g.devices) do
     local id = vport_active_id(i)
@@ -248,17 +250,13 @@ function show_hide_vport_params()
 
     -- Single selection
     params:show("clockabout_vport")
-    for i = 1, #g.devices do
-      params:hide(vport_active_id(i))
-    end
+    params:hide("clockabout_vport_group")
 
   else
 
     -- Multi selection
     params:hide("clockabout_vport")
-    for i = 1, #g.devices do
-      params:show(vport_active_id(i))
-    end
+    params:show("clockabout_vport_group")
 
   end
 
