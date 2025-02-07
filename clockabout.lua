@@ -115,6 +115,20 @@ function init()
 
   params:add_separator("clockabout", "Clockabout")
 
+  -- Parameter for whether to send to single vport or many
+
+  params:add_option("clockabout_vport_selection", "Port selection", {"Single", "Multi"}, 1)
+  params:set_action("clockabout_vport_selection", function(i)
+
+    -- If we're returning to single selection, set the individual
+    -- vport params accordingly
+    if i == 1 then
+      params:lookup_param("clockabout_vport"):bang()
+    end
+
+    show_hide_vport_params()
+  end)
+
   -- Parameter for the out vport.
 
   params:add_option("clockabout_vport", "Port", short_names, default_vport)
@@ -134,6 +148,10 @@ function init()
     params:add_binary(id, dev.name, "toggle", dev.active)
     params:set_action(id, toggle_vport_fn(i))
   end
+
+  -- Show the correct vport params
+
+  show_hide_vport_params()
 
   -- Our own parameter for the bpm
 
@@ -221,6 +239,33 @@ function as_int(b)
 end
 
 
+-- Show the parameters to select vports.
+--
+function show_hide_vport_params()
+  -- params:set_action("clockabout_vport_selection", function(i))
+  local selection_style = params:get("clockabout_vport_selection")
+  if selection_style == 1 then
+
+    -- Single selection
+    params:show("clockabout_vport")
+    for i = 1, #g.devices do
+      params:hide(vport_active_id(i))
+    end
+
+  else
+
+    -- Multi selection
+    params:hide("clockabout_vport")
+    for i = 1, #g.devices do
+      params:show(vport_active_id(i))
+    end
+
+  end
+
+  _menu.rebuild_params()
+end
+
+
 -- Show the parameters for a given pattern, and hide the rest.
 -- @tparam int show_pat  Pattern number whose params we want to show.
 --
@@ -268,6 +313,14 @@ end
 function toggle_vport_fn(i)
   return function(val)
     toggle_vport(i, val)
+
+    -- If we're toggling on, the single vport param should be
+    -- updated to track that (but silently)
+
+    if val == 1 then
+      params:set("clockabout_vport", i, true)
+    end
+
   end
 end
 
