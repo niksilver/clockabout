@@ -73,7 +73,7 @@ function init_globals(vars)
   g.metro = nil      -- Current metro
   g.metros = {}      -- We'll swap between metros 1 and 2
   g.metro_num = nil  -- Our current metro num - 1 or 2. Not the metro's id
-  g.metro_running = 0  -- Note: 0 or 1. Also a menu parameter
+  g.metro_running = 1  -- Note: 0 or 1. Also a menu parameter
 
   -- Insert any overrides
 
@@ -376,23 +376,22 @@ end
 -- Set up the the first metro only. Doesn't start it.
 --
 function init_first_metro()
-  if g.metro == nil then
-
-    -- Metro 1 starts at the current pulse num
-    g.metros[1] = metro.init(
-      send_pulse,  -- Function to call
-      pulse_interval(g.pulse_num, g.beat_num),  -- Time between pulses
-      g.PULSES_PP  -- Number of pulses to send before we recalculate
-    )
-
-    -- Identify current metro
-
-    g.metro = g.metros[1]
-    g.metro_num = 1
-
-  else
-    error("Attempt to init already-init'ed metro")
+  if g.metro ~= nil then
+    return
   end
+
+  -- Metro 1 starts at the current pulse num
+  g.metros[1] = metro.init(
+    send_pulse,  -- Function to call
+    pulse_interval(g.pulse_num, g.beat_num),  -- Time between pulses
+    g.PULSES_PP  -- Number of pulses to send before we recalculate
+  )
+
+  -- Identify current metro
+
+  g.metro = g.metros[1]
+  g.metro_num = 1
+
 end
 
 
