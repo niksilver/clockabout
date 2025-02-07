@@ -20,10 +20,11 @@ lasts for.
 
 ## Misc notes
 
-- MIDI start/stop happens.
-- It's a quirk that beats come together on the 24th pulse.
+- MIDI start/stop happens only on metro start/stop.
+- Beats sync on the first pulse
 - Graph is probably not what you think it is.
 - It's about 3/1000 of a second out.
+- Will load the last saved pset on startup.
 
 # Development and testing
 
@@ -32,8 +33,10 @@ To run the tests just execute
 ```
 lua lib/test_clockabout.lua
 ```
+or
+```
+make test
+```
 
 The tests are in the lib directory so that they don't show up in norns's
 SELECT menu.
-
-The `push.sh` script is just for pushing this code directly to the norns.

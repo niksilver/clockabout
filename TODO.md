@@ -1,6 +1,5 @@
 To do
 
-- Save/Load params on init/exit.
 - Write readme and add to norns.community.
 - Add credits.
 - Set default MIDI vport to 1.
@@ -8,6 +7,7 @@ To do
 
 Done
 
+- Save/Load params on init/exit.
 - Fix bug where toggling off one vport in multi mode doesn't
   stop the clock being sent.
 - Allow multiple MIDI out channels.
