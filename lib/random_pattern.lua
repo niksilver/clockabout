@@ -165,7 +165,8 @@ random_pattern.transform = function(x)
     prev_alg = alg
   end
 
-  error('No segment found for x = ' .. x)
+  log.s('No segment found for x = %f, using default end value', x)
+  return prev_alg.m * x + prev_alg.c
 end
 
 

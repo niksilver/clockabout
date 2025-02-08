@@ -16,6 +16,10 @@ TestSendPulse = {
 
     TestSendPulse.redraw = redraw
     redraw = function() end
+
+    -- Save the pulse_interval() function if we need to restore it
+
+    TestSendPulse.pulse_interval = pulse_interval
   end,
 
 
@@ -23,6 +27,7 @@ TestSendPulse = {
     -- Restore the redraw() function
 
     redraw = TestSendPulse.redraw
+    pulse_interval = TestSendPulse.pulse_interval
   end,
 
 
@@ -389,6 +394,84 @@ TestSendPulse = {
     for t = 0, 12, 0.001 do
       _norns.set_time(t)
     end
+
+  end,
+
+
+  test_parts_are_at_correct_points = function()
+    -- When we calculate the pulse intervals for each part, those parts
+    -- should be each start at the correct point.
+
+    -- Run the metros as usual, and capture when the first pulse happens.
+
+    _norns.init()
+    metro.init_module()
+
+    g = init_globals({
+      PULSES_PP = 4,  -- We set this to be sure, for calculations further down.
+      pulse_num = 1,
+      beat_num = 1,
+      bpm = 60,
+
+      pattern = random_pattern,
+      pattern_length = 1,
+    })
+
+    random_pattern.init_pattern()
+
+    -- Create a mock connection in a mock MIDI device
+
+    g.devices = {
+      {
+        name = 'Mock device',
+
+        active = 1,
+
+        connection = {
+          clock = function(self) end,
+          start = function(self) end,
+          stop = function(self) end,
+        }
+      }
+    }
+
+    -- Wrap the pulse_interval() function to check that we're making
+    -- our calculations from the correct points. The tearDown() function
+    -- will restore our override.
+
+    local from_pulse = {}
+    local orig_pulse_interval = pulse_interval
+
+    pulse_interval = function(pulse_num, beat_num)
+      from_pulse[#from_pulse+1] = pulse_num
+      return orig_pulse_interval(pulse_num, beat_num)
+    end
+
+    log.s('v v v v v v v v v v')
+    start_pulses()
+
+    for t = 0.0001, 5.1, 0.0001 do
+      _norns.set_time(t)
+    end
+
+    -- Now see what we've got
+
+    -- Initial pulse should be manually sent from start_pulses
+    lu.assertEquals(from_pulse[1],  1)  -- First interval should be calculated from 1 to 5
+    lu.assertEquals(from_pulse[2],  5)  -- Next interval should be calculated from 5 to 9
+    lu.assertEquals(from_pulse[3],  9)  -- Next interval should be calculated from 9 to 13
+    lu.assertEquals(from_pulse[4], 13)  -- Next interval should be calculated from 13 to 17
+    lu.assertEquals(from_pulse[5], 17)  -- Next interval should be calculated from 17 to 21
+    lu.assertEquals(from_pulse[6], 21)  -- Next interval should be calculated from 21 to 25
+
+    -- Then again for the second beat
+    lu.assertEquals(from_pulse[7],   1)  -- First interval should be calculated from 1 to 5
+    lu.assertEquals(from_pulse[8],   5)  -- Next interval should be calculated from 5 to 9
+    lu.assertEquals(from_pulse[9],   9)  -- Next interval should be calculated from 9 to 13
+    lu.assertEquals(from_pulse[10], 13)  -- Next interval should be calculated from 13 to 17
+    lu.assertEquals(from_pulse[11], 17)  -- Next interval should be calculated from 17 to 21
+    lu.assertEquals(from_pulse[12], 21)  -- Next interval should be calculated from 21 to 25
+    log.s('^ ^ ^ ^ ^ ^ ^ ^ ^ ^')
 
   end,
 }

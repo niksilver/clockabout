@@ -568,6 +568,7 @@ function pulse_interval(pulse_num, beat_num)
 
   local curr_scaled_time = curr_pulse / 24
   local end_scaled_time = end_pulse / 24
+  log.s('pulse_interval(%d, %d): %d to %d  /  %f to %f', pulse_num, beat_num, curr_pulse, end_pulse, curr_scaled_time, end_scaled_time)
 
   -- We'll scale it again, according to how many beats in the pattern
   -- (pattern length) and which beat we're in.
