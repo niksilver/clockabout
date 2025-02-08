@@ -48,8 +48,8 @@ send 24 pulses per second, and there will be 96 pulses across the whole pattern
 It's about 3/1000 of a second out each beat. Internally, some processing
 between pulses takes a bit of time and adds this delay. This means that when
 we said above that an example pattern's first pulse was 1 second apart,
-it's really 1.003 seconds on average. I hope that's not to important to
-most people.
+it's really about 1.003 seconds on average. I hope that's not too important
+to most people.
 
 The pattern is not entirely smooth. The on-screen graph might sometimes
 look like a curve, but internally the curve is broken into six linear
@@ -75,4 +75,6 @@ SELECT menu.
 
 ## Thank you!
 
-Thanks to all those who have...
+Thanks to all those who have contributed to the metro module -
+@tehn, @okyeron, @scazan, @catfact -
+and to the norns codebase and documentation generally.
