@@ -447,7 +447,6 @@ TestSendPulse = {
       return orig_pulse_interval(pulse_num, beat_num)
     end
 
-    log.s('v v v v v v v v v v')
     start_pulses()
 
     for t = 0.0001, 5.1, 0.0001 do
@@ -471,7 +470,6 @@ TestSendPulse = {
     lu.assertEquals(from_pulse[10], 13)  -- Next interval should be calculated from 13 to 17
     lu.assertEquals(from_pulse[11], 17)  -- Next interval should be calculated from 17 to 21
     lu.assertEquals(from_pulse[12], 21)  -- Next interval should be calculated from 21 to 25
-    log.s('^ ^ ^ ^ ^ ^ ^ ^ ^ ^')
 
   end,
 }

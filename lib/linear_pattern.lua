@@ -7,7 +7,7 @@
 
 -- name
 --
--- @field name  Short string name of the pattern.
+-- @tfield string name  Short string name of the pattern.
 
 
 -- init_params()
@@ -37,8 +37,8 @@
 -- regenerate()
 --
 -- Called just before the pattern repeats, giving the pattern a change to
--- change. May be nil. If it's not nil then the screen will redraw after
--- it's called.
+-- change. May be nil. If it's not nil then the screen will redraw shortly
+-- after it's called.
 
 
 -- A normal linear clock. Number of beats per bar and param value don't matter.

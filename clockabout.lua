@@ -61,8 +61,9 @@ function init_globals(vars)
     random_pattern,
     linear_pattern,
   }
-  g.pattern_params = {}  --  Map from pattern number to its params. Set up later.
-  g.pattern_length = 1   -- Number of beats in the pattern
+  g.pattern_params = {}          --  Map from pattern number to its params. Set up later.
+  g.pattern_length = 1           -- Number of beats in the pattern
+  g.pattern_needs_redraw = false -- True if the pattern needs to be redrawn.
 
   g.shift = false    -- If K1 is pressed
 
@@ -121,8 +122,6 @@ function init()
 
   params:add_option("clockabout_vport_selection", "Port selection", {"Single", "Multi"}, 1)
   params:set_action("clockabout_vport_selection", function(i)
-    log.s('bang: clockabout_vport_selection')
-
     -- If we're returning to single selection, set the individual
     -- vport params accordingly
     if i == 1 then
@@ -136,7 +135,6 @@ function init()
 
   params:add_option("clockabout_vport", "Port", short_names, default_vport)
   params:set_action("clockabout_vport", function(i)
-    log.s('bang: clockabout_vport')
     for idx, device in pairs(g.devices) do
       local val = as_int(idx == i)
       device.active = val
@@ -168,7 +166,6 @@ function init()
     g.bpm     -- Default
   )
   params:set_action("clockabout_bpm", function(x)
-    log.s('bang: clockabout_bpm')
     -- The metro will update at the next part
     g.bpm = x
   end)
@@ -177,7 +174,6 @@ function init()
 
   params:add_binary("clockabout_metro_running", "Metro running?", "toggle", g.metro_running)
   params:set_action("clockabout_metro_running", function(x)
-    log.s('bang: clockabout_metro_running')
 
     -- If we're still initialising, don't let the initial param loading
     -- action this. We'll do it at the end.
@@ -188,11 +184,6 @@ function init()
     g.metro_running = x
     if g.metro_running == 1 then
 
---[[      -- We need to init the pattern here. It might not have been init'ed if
-      -- this action has been banged when the default paramset is loaded at
-      -- the start of the script.
-
-      g.pattern.init_pattern()--]]
       start_pulses()
       start_active_connections()
 
@@ -215,7 +206,6 @@ function init()
 
   params:add_option("clockabout_pattern", "Pattern", pats, 1)
   params:set_action("clockabout_pattern", function(i)
-    log.s('bang: clockabout_pattern')
     g.pattern = g.patterns[i]
     show_hide_pattern_params(i)
     g.pattern.init_pattern()
@@ -243,7 +233,6 @@ function init()
     false  -- Wrap?
   )
   params:set_action("clockabout_pattern_length", function(x)
-    log.s('bang: clockabout_pattern_length')
     g.pattern_length = x
   end)
 
@@ -336,7 +325,6 @@ end
 --
 function toggle_vport_fn(i)
   return function(val)
-    log.s('bang: %s', vport_active_id(i))
     toggle_vport(i, val)
 
     -- If we're toggling on, the single vport param should be
@@ -383,30 +371,11 @@ end
 -- Send MIDI clock message to active connections.
 --
 function clock_to_active_connections()
-  log_pulse()
   for idx, device in pairs(g.devices) do
     if device.active == 1 then
       device.connection:clock()
     end
   end
-end
-
-
-function log_pulse()
-  if not(g.pulse_times) then
-    g.pulse_times = {}
-  end
-
-  local time = util and util.time() or 0
-
-  local gap = '-'
-  local last_pulse_time = g.pulse_times[g.pulse_num]
-  if last_pulse_time ~= nil then
-    gap = tostring(time - last_pulse_time)
-  end
-
-  log.t('%d,%s', g.pulse_num, gap)
-  g.pulse_times[g.pulse_num] = time
 end
 
 
@@ -549,12 +518,17 @@ function send_pulse(stage)
     local _, _, end_of_pattern = advance_pulse(g.pulse_num + g.PULSES_PP)
     if end_of_pattern and g.pattern.regenerate then
       g.pattern.regenerate()
-      redraw()
+      g.pattern_needs_redraw = true
     end
 
   end
 
   g.pulse_num, g.beat_num, _ = advance_pulse(g.pulse_num + 1)
+
+  if g.pulse_num == 1 and g.pattern_needs_redraw then
+    redraw()
+    g.pattern_needs_redraw = false
+  end
 
 end
 
@@ -604,7 +578,6 @@ function pulse_interval(pulse_num, beat_num)
 
   local curr_scaled_time = curr_pulse / 24
   local end_scaled_time = end_pulse / 24
-  -- log.s('pulse_interval(%d, %d): %d to %d  /  %f to %f', pulse_num, beat_num, curr_pulse, end_pulse, curr_scaled_time, end_scaled_time)
 
   -- We'll scale it again, according to how many beats in the pattern
   -- (pattern length) and which beat we're in.
@@ -685,7 +658,6 @@ end
 
 
 function redraw()
-  log.s('redraw(): Enter')
   screen.clear()
 
   screen.level(2)
