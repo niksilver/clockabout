@@ -258,7 +258,6 @@ end
 -- Show the parameters to select vports.
 --
 function show_hide_vport_params()
-  -- params:set_action("clockabout_vport_selection", function(i))
   local selection_style = params:get("clockabout_vport_selection")
   if selection_style == 1 then
 
