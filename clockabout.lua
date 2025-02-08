@@ -7,7 +7,7 @@
 -- E2: Change BPM
 -- E3: Pattern-specific param
 -- K1+E3: Second pattern param
--- K3: Start/stop metro
+-- K3: Start/stop clock
 
 
 -- Use our own 'include', for when this is tested outside of norns.
@@ -422,8 +422,7 @@ end
 
 -- Send a MIDI clock pulse.
 -- If it's the last in the part, recalculate and reset the metro for the next part.
--- @tparam int stage  The stage of this pulse. Normally counts
---    from 1, but we insert our own 0.
+-- @tparam int stage  The stage of this pulse, from 1.
 --
 --[[
     For simplicity, suppose there are 8 pulses per quarter note, and 4 pulses
@@ -466,7 +465,8 @@ end
       |   |
       |   |_ First metro's first beat
       |
-      |_ Forced (manual) first beat, triggers first metro
+      |_ Forced (manual) first beat, outside of this function.
+         Triggers first metro.
 
 --]]
 function send_pulse(stage)
