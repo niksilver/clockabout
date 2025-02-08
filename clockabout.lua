@@ -383,12 +383,32 @@ end
 -- Send MIDI clock message to active connections.
 --
 function clock_to_active_connections()
+  log_pulse()
   for idx, device in pairs(g.devices) do
     if device.active == 1 then
       device.connection:clock()
     end
   end
 end
+
+
+function log_pulse()
+  if not(g.pulse_times) then
+    g.pulse_times = {}
+  end
+
+  local time = util and util.time() or 0
+
+  local gap = '-'
+  local last_pulse_time = g.pulse_times[g.pulse_num]
+  if last_pulse_time ~= nil then
+    gap = tostring(time - last_pulse_time)
+  end
+
+  log.t('%d,%s', g.pulse_num, gap)
+  g.pulse_times[g.pulse_num] = time
+end
+
 
 -- Set up the the first metro only. Doesn't start it.
 --
@@ -584,7 +604,7 @@ function pulse_interval(pulse_num, beat_num)
 
   local curr_scaled_time = curr_pulse / 24
   local end_scaled_time = end_pulse / 24
-  log.s('pulse_interval(%d, %d): %d to %d  /  %f to %f', pulse_num, beat_num, curr_pulse, end_pulse, curr_scaled_time, end_scaled_time)
+  -- log.s('pulse_interval(%d, %d): %d to %d  /  %f to %f', pulse_num, beat_num, curr_pulse, end_pulse, curr_scaled_time, end_scaled_time)
 
   -- We'll scale it again, according to how many beats in the pattern
   -- (pattern length) and which beat we're in.
@@ -665,6 +685,7 @@ end
 
 
 function redraw()
+  log.s('redraw(): Enter')
   screen.clear()
 
   screen.level(2)
