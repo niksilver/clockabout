@@ -691,7 +691,7 @@ function draw_pattern()
   screen.move(0, 63)
   screen.line_width(1)
 
-  for x = 0.0, 1.025, 0.025 do
+  for x = 0.0, 1.01, 0.01 do
 
     if x > 1 then  -- Deal with arithmetic imprecision
       x = 1

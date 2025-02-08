@@ -3,6 +3,8 @@
 A non-linear MIDI clock for monome norns - why should
 swing be the only non-linear time pattern?
 
+![Cover image](screenshot.png]
+
 
 ## How to use it
 
