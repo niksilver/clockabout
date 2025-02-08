@@ -40,6 +40,8 @@ function init_globals(vars)
 
   -- Variables
 
+  g.initialised = false  -- Used to manage the order of triggering param actions
+
   g.devices = {}  -- Container for connected midi devices and their data.
                   -- A table with keys: connection, name, active (0 or 1)
   g.connection = nil  -- The MIDI connection object to the current device.
@@ -119,6 +121,7 @@ function init()
 
   params:add_option("clockabout_vport_selection", "Port selection", {"Single", "Multi"}, 1)
   params:set_action("clockabout_vport_selection", function(i)
+    log.s('bang: clockabout_vport_selection')
 
     -- If we're returning to single selection, set the individual
     -- vport params accordingly
@@ -133,6 +136,7 @@ function init()
 
   params:add_option("clockabout_vport", "Port", short_names, default_vport)
   params:set_action("clockabout_vport", function(i)
+    log.s('bang: clockabout_vport')
     for idx, device in pairs(g.devices) do
       local val = as_int(idx == i)
       device.active = val
@@ -164,6 +168,7 @@ function init()
     g.bpm     -- Default
   )
   params:set_action("clockabout_bpm", function(x)
+    log.s('bang: clockabout_bpm')
     -- The metro will update at the next part
     g.bpm = x
   end)
@@ -172,14 +177,22 @@ function init()
 
   params:add_binary("clockabout_metro_running", "Metro running?", "toggle", g.metro_running)
   params:set_action("clockabout_metro_running", function(x)
+    log.s('bang: clockabout_metro_running')
+
+    -- If we're still initialising, don't let the initial param loading
+    -- action this. We'll do it at the end.
+    if not(g.initialised) then
+      return
+    end
+
     g.metro_running = x
     if g.metro_running == 1 then
 
-      -- We need to init the pattern here. It might not have been init'ed if
+--[[      -- We need to init the pattern here. It might not have been init'ed if
       -- this action has been banged when the default paramset is loaded at
       -- the start of the script.
 
-      g.pattern.init_pattern()
+      g.pattern.init_pattern()--]]
       start_pulses()
       start_active_connections()
 
@@ -202,6 +215,7 @@ function init()
 
   params:add_option("clockabout_pattern", "Pattern", pats, 1)
   params:set_action("clockabout_pattern", function(i)
+    log.s('bang: clockabout_pattern')
     g.pattern = g.patterns[i]
     show_hide_pattern_params(i)
     g.pattern.init_pattern()
@@ -229,16 +243,17 @@ function init()
     false  -- Wrap?
   )
   params:set_action("clockabout_pattern_length", function(x)
+    log.s('bang: clockabout_pattern_length')
     g.pattern_length = x
   end)
 
   -- Final touches:
   --   - Load the last paramset, if any. That will also bang all
   --     the parameters.
-  --   - Initialise the current pattern
   --   - Set the metronome going, if it should be
 
   params:default()
+  g.initialised = true
   params:lookup_param("clockabout_metro_running"):bang()
 
 end
@@ -321,6 +336,7 @@ end
 --
 function toggle_vport_fn(i)
   return function(val)
+    log.s('bang: %s', vport_active_id(i))
     toggle_vport(i, val)
 
     -- If we're toggling on, the single vport param should be
