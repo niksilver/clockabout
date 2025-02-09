@@ -172,7 +172,7 @@ function init()
 
   -- Our own parameter for whether the metro is running
 
-  params:add_binary("clockabout_metro_running", "Metro running?", "toggle", g.metro_running)
+  params:add_binary("clockabout_metro_running", "Running?", "toggle", g.metro_running)
   params:set_action("clockabout_metro_running", function(x)
 
     -- If we're still initialising, don't let the initial param loading
