@@ -98,7 +98,7 @@ function init()
 
   -- Query MIDI vports, connect, collect info, switch off norns's own clock out.
 
-  local default_vport = 2
+  local default_vport = 1
   local short_names = {}
 
   for i = 1, #midi.vports do

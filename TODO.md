@@ -1,12 +1,13 @@
 To do
 
-- Ensure redraw() for a pattern is called between beats.
-- Write readme and add to norns.community.
-- Set default MIDI vport to 1.
+- Add to norns.community.
 
 
 Done
 
+- Write readme.
+- Set default MIDI vport to 1.
+- Ensure redraw() for a pattern is called between beats.
 - Add credits.
 - Save/Load params on init/exit.
 - Fix bug where toggling off one vport in multi mode doesn't
