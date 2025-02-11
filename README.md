@@ -11,7 +11,8 @@ The current version is 0.9.0.
 ## How to use it
 
 In the norns PARAMS menu select which MIDI device the script will send its
-clock signal to.
+clock signal to. Select a single device, or use the submenu to choose
+multiple devices.
 
 - E1: Select pattern.
 - E2: Change BPM.
