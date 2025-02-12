@@ -1,7 +1,8 @@
 -- Testing the critical function within the main code.
 
 
-local m     = require('mod')
+local m              = require('mod')
+local linear_pattern = require('linear_pattern')
 
 metro = require('mock_metro')
 

@@ -43,7 +43,7 @@
 
 -- A normal linear clock. Number of beats per bar and param value don't matter.
 
-linear_pattern = {
+local linear_pattern = {
   name = "Linear",
 
   transform = function(x)

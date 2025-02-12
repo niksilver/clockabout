@@ -2,7 +2,8 @@
 -- set up the packages correctly.
 
 
-local m = require('mod')
+local m              = require('mod')
+local linear_pattern = require('linear_pattern')
 
 
 g = {}
