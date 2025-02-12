@@ -1,5 +1,6 @@
 To do
 
+- Fix bug: With random pattern, script keeps redrawing in SELECT menu.
 - Add to norns.community.
 
 

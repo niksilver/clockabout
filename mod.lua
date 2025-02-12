@@ -94,9 +94,137 @@ function m.init_globals(vars)
 end
 
 
+-- Express a boolean as an int (0 or 1).
+--
+local as_int = function(b)
+  return b and 1 or 0
+end
+
+
+-- The param id for whether a given vport is active.
+-- @tparam int i  The vport number (from 1).
+-- @treturn string  The param id.
+--
+local vport_active_id = function(i)
+  return "clockabout_vport_" .. i .. "_active"
+end
+
+
+-- Respond to a single vport being toggled on or off for MIDI out.
+-- If we're only selecting one vport at a time then we'll also need
+-- to make sure any others are toggled accordingly.
+-- @tparam int i  The vport number (from 1).
+-- @tparam int val  The new value, 0 or 1.
+--
+local toggle_vport = function(i, val)
+  local id = vport_active_id(i)
+  params:set(id, val)
+  m.g.devices[i].active = val
+end
+
+
+-- Return the a toogle_port function for a given vport.
+-- @tparam int i  The vport (from 1).
+-- @treturn func  A function that will take one value, and set the
+--   vport's value to that.
+--
+local toggle_vport_fn = function(i)
+  return function(val)
+    toggle_vport(i, val)
+
+    -- If we're toggling on, the single vport param should be
+    -- updated to track that (but silently)
+
+    if val == 1 then
+      params:set("clockabout_vport", i, true)
+    end
+
+  end
+end
+
+
+-- Show the parameters to select vports.
+--
+local show_hide_vport_params = function()
+  local selection_style = params:get("clockabout_vport_selection")
+  if selection_style == 1 then
+
+    -- Single selection
+    params:show("clockabout_vport")
+    params:hide("clockabout_vport_group")
+
+  else
+
+    -- Multi selection
+    params:hide("clockabout_vport")
+    params:show("clockabout_vport_group")
+
+  end
+
+  _menu.rebuild_params()
+end
+
+
+-- Show the parameters for a given pattern, and hide the rest.
+-- @tparam int show_pat  Pattern number whose params we want to show.
+--
+local show_hide_pattern_params = function(show_pat)
+
+  for pat = 1, #m.g.patterns do
+    for param, name in pairs(m.g.pattern_params[pat]) do
+      if pat == show_pat then
+        params:show(name)
+      else
+        params:hide(name)
+      end
+    end
+  end
+
+  _menu.rebuild_params()
+end
+
+
+-- Send MIDI start to all active connections.
+--
+local start_active_connections = function()
+  for idx, device in pairs(m.g.devices) do
+    if device.active == 1 then
+      device.connection:start()
+    end
+  end
+end
+
+
+-- Send MIDI stop to all connections, whether marked active or not.
+--
+local stop_all_connections = function()
+  for idx, device in pairs(m.g.devices) do
+    device.connection:stop()
+  end
+end
+
+
+-- Cancel the metronomes.
+--
+local cancel_both_metros = function()
+  local g = m.g
+
+  if g.metros[1] then metro.free(g.metros[1].id) end
+  if g.metros[2] then metro.free(g.metros[2].id) end
+
+  g.metro = nil
+  g.metro_num = nil
+  g.metro_running = 0
+
+  g.pulse_num = 1
+  g.beat_num = 1
+end
+
+
 function m.init()
 
   m.g = m.init_globals()
+  local g = m.g  -- For convenience
 
   -- Query MIDI vports, connect, collect info, switch off norns's own clock out.
 
@@ -252,115 +380,6 @@ function m.init()
 end
 
 
--- Express a boolean as an int (0 or 1).
---
-local as_int = function(b)
-  return b and 1 or 0
-end
-
-
--- Show the parameters to select vports.
---
-local show_hide_vport_params = function()
-  local selection_style = params:get("clockabout_vport_selection")
-  if selection_style == 1 then
-
-    -- Single selection
-    params:show("clockabout_vport")
-    params:hide("clockabout_vport_group")
-
-  else
-
-    -- Multi selection
-    params:hide("clockabout_vport")
-    params:show("clockabout_vport_group")
-
-  end
-
-  _menu.rebuild_params()
-end
-
-
--- Show the parameters for a given pattern, and hide the rest.
--- @tparam int show_pat  Pattern number whose params we want to show.
---
-local show_hide_pattern_params = function(show_pat)
-
-  for pat = 1, #g.patterns do
-    for param, name in pairs(g.pattern_params[pat]) do
-      if pat == show_pat then
-        params:show(name)
-      else
-        params:hide(name)
-      end
-    end
-  end
-
-  _menu.rebuild_params()
-end
-
-
--- The param id for whether a given vport is active.
--- @tparam int i  The vport number (from 1).
--- @treturn string  The param id.
---
-local vport_active_id = function(i)
-  return "clockabout_vport_" .. i .. "_active"
-end
-
--- Respond to a single vport being toggled on or off for MIDI out.
--- If we're only selecting one vport at a time then we'll also need
--- to make sure any others are toggled accordingly.
--- @tparam int i  The vport number (from 1).
--- @tparam int val  The new value, 0 or 1.
---
-local toggle_vport = function(i, val)
-  local id = vport_active_id(i)
-  params:set(id, val)
-  m.g.devices[i].active = val
-end
-
-
--- Return the a toogle_port function for a given vport.
--- @tparam int i  The vport (from 1).
--- @treturn func  A function that will take one value, and set the
---   vport's value to that.
---
-local toggle_vport_fn = function(i)
-  return function(val)
-    toggle_vport(i, val)
-
-    -- If we're toggling on, the single vport param should be
-    -- updated to track that (but silently)
-
-    if val == 1 then
-      params:set("clockabout_vport", i, true)
-    end
-
-  end
-end
-
-
--- Send MIDI stop to all connections, whether marked active or not.
---
-local stop_all_connections = function()
-  for idx, device in pairs(m.g.devices) do
-    device.connection:stop()
-  end
-end
-
-
--- Send MIDI start to all active connections.
---
-local start_active_connections = function()
-  for idx, device in pairs(m.g.devices) do
-    if device.active == 1 then
-      device.connection:start()
-    end
-  end
-end
-
-
 -- Set up the the first metro only. Doesn't start it.
 --
 local init_first_metro = function()
@@ -414,23 +433,6 @@ function m.start_pulses()
   init_first_metro()
   start_active_connections()
   start_metro()
-end
-
-
--- Cancel the metronomes.
---
-local cancel_both_metros = function()
-  local g = m.g
-
-  if g.metros[1] then metro.free(g.metros[1].id) end
-  if g.metros[2] then metro.free(g.metros[2].id) end
-
-  g.metro = nil
-  g.metro_num = nil
-  g.metro_running = 0
-
-  g.pulse_num = 1
-  g.beat_num = 1
 end
 
 
@@ -613,6 +615,15 @@ end
 -- Basic norns functions ------------------------------------------------
 
 
+-- Params for the current pattern.
+-- @treturn table  Table of param names.
+--
+local current_params = function()
+  local pattern_idx = params:get("clockabout_pattern")
+  return m.g.pattern_params[pattern_idx]
+end
+
+
 function m.enc(n, d)
   if n == 1 then
 
@@ -626,7 +637,7 @@ function m.enc(n, d)
     params:delta("clockabout_bpm", d)
     m.redraw()
 
-  elseif n==3 and not(g.shift) and #current_params() >= 1 then
+  elseif n==3 and not(m.g.shift) and #current_params() >= 1 then
 
     -- Change first pattern-specific value
     local param_name = current_params()[1]
@@ -634,7 +645,7 @@ function m.enc(n, d)
     param:delta(d)
     redraw()
 
-  elseif n == 3 and g.shift and #current_params() >= 2 then
+  elseif n == 3 and m.g.shift and #current_params() >= 2 then
 
     -- Change second pattern-specific value
     local param_name = current_params()[2]
@@ -648,23 +659,14 @@ end
 
 function m.key(n, z)
   if n == 1 then
-    g.shift = (z == 1)
+    m.g.shift = (z == 1)
     m.redraw()
   end
 
   if n == 3 and z == 1 then
-    params:set("clockabout_metro_running", 1 - g.metro_running)
+    params:set("clockabout_metro_running", 1 - m.g.metro_running)
     m.redraw()
   end
-end
-
-
--- Params for the current pattern.
--- @treturn table  Table of param names.
---
-local current_params = function()
-  local pattern_idx = params:get("clockabout_pattern")
-  return g.pattern_params[pattern_idx]
 end
 
 
@@ -690,7 +692,7 @@ function m.redraw()
     screen.text(param.name .. ": " .. params:string(param_name))
   end
 
-  if #current_params() >= 2 and g.shift then
+  if #current_params() >= 2 and m.g.shift then
     -- Pattern-specific value
     screen.move(0,40)
     local param_name = current_params()[2]
@@ -698,7 +700,7 @@ function m.redraw()
     screen.text(param.name .. ": " .. params:string(param_name))
   end
 
-  if g.metro_running == 0 then
+  if m.g.metro_running == 0 then
       screen.move(64, 48)
       screen.text_center("STOPPED")
   end
@@ -718,9 +720,9 @@ function draw_pattern()
       x = 1
     end
 
-    local y = g.pattern.transform(x)
+    local y = m.g.pattern.transform(x)
     local screen_x = x * 127
-    local screen_y = 63 - (g.pattern.transform(x) * 48)
+    local screen_y = 63 - (m.g.pattern.transform(x) * 48)
     screen.line(screen_x, screen_y)
 
   end
