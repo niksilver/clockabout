@@ -26,7 +26,7 @@
 --]]
 
 
-random_pattern = {
+local random_pattern = {
   name = "Random",
 
   -- Specific to this pattern

@@ -1,14 +1,12 @@
 To do
 
-- Remove global variables (for being a mod):
-    random, double superellipse.
 - Add to norns.community.
 
 
 Done
 
 - Remove global variables (for being a mod):
-    g, linear, swing, superellipse.
+    g, linear, swing, superellipse, random, double superellipse.
 - Write readme.
 - Set default MIDI vport to 1.
 - Ensure redraw() for a pattern is called between beats.
