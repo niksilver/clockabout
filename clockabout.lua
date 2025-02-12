@@ -15,7 +15,7 @@
 -- Use our own 'include', for when this is tested outside of norns.
 include = include and include or require
 
-local m                           = include('mod')
+local m = include('lib/mod')
 
 
 init = m.init
