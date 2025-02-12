@@ -1,5 +1,7 @@
 To do
 
+- Remove global variables (for being a mod):
+    g, patterns.
 - Add to norns.community.
 
 

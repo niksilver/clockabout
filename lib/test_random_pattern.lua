@@ -2,7 +2,7 @@
 -- set up the packages correctly.
 
 
-require('clockabout')
+local m = require('mod')
 
 
 g = {}
