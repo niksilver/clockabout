@@ -39,7 +39,8 @@ function c.init_globals(vars)
 
   -- Constant
 
-  g.PULSES_PP = 4    -- This many pulses per part before we set another metro
+  g.PULSES_PP = 4  -- This many pulses per part before we set another metro
+  g.ENV = 'test'   -- Where we're running
 
   -- Variables
 
@@ -219,9 +220,13 @@ local cancel_both_metros = function()
 end
 
 
-function c.init()
+-- Initialise all params in the norns environment.
+-- @tparam table vars  Optional table of names/values to set, if not the defaults,
+--     but only for non-norns variables.
+--
+function c.init(vars)
 
-  c.init_globals()
+  c.init_globals(vars)
   local g = c.g  -- For convenience
 
   -- Query MIDI vports, connect, collect info, switch off norns's own clock out.
@@ -367,11 +372,15 @@ function c.init()
   end)
 
   -- Final touches:
-  --   - Load the last paramset, if any. That will also bang all
+  --   - Load the last paramset, if we can. That will also bang all
   --     the parameters.
   --   - Set the metronome going, if it should be
 
-  params:default()
+  if g.ENV == 'script' then
+    params:default()
+  else
+    params:bang()
+  end
   g.initialised = true
   params:lookup_param("clockabout_metro_running"):bang()
 
@@ -566,6 +575,7 @@ function c.send_pulse(stage)
 
   -- Don't redraw if we're in the norns menu
   local in_menu = _menu and _menu.mode
+  if g.pulse_num == 1 then log.s('in_menu = %s, _menu.page = %s', in_menu, _menu.page) end
 
   if g.pulse_num == 1 and g.pattern_needs_redraw and not(in_menu) then
     c.redraw()

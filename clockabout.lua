@@ -12,13 +12,12 @@
 -- Version 0.9.0
 
 
---[[-- Use our own 'include', for when this is tested outside of norns.
-include = include and include or require--]]
-
 local c = require('clockabout/lib/core')
 
 
-init = c.init
+init = function()
+  c.init({ENV = 'script'})
+end
 
 
 -- Basic norns functions ------------------------------------------------

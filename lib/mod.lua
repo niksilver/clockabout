@@ -5,7 +5,13 @@ local mod = require('core/mods')            -- norns' mod functionality
 local c   = require('clockabout/lib/core')  -- Clockabout's core functionality
 
 local m = {
-  init = c.init,
+
+  init = function()
+    c.init({ENV = 'mod'})
+  end,
+
+  deinit = function() end,
+
   key = c.key,
   enc = c.enc,
   redraw = c.redraw,
