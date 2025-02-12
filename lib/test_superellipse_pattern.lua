@@ -13,11 +13,12 @@ g = {}
 
 
 function test_pulse_interval_superellipse_60_bpm_power_2()
-  g = c.init_globals({
+  c.init_globals({
     bpm = 60,
     pattern = superellipse_pattern,
     pattern_length = 1,
   })
+  local g = c.g  -- For convenience
 
   superellipse_pattern.power = 2.00
   superellipse_pattern.init_pattern()
@@ -76,11 +77,12 @@ end
 
 
 function test_pulse_interval_superellipse_60_bpm_power_0_5()
-  g = c.init_globals({
+  c.init_globals({
     bpm = 60,
     pattern = superellipse_pattern,
     pattern_length = 1,
   })
+  local g = c.g  -- For convenience
 
   superellipse_pattern.power = 0.50
   superellipse_pattern.init_pattern()

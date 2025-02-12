@@ -28,14 +28,14 @@ local c = {    -- Our core functions, etc
 }
 
 
--- Define global values and return them as a table. Does not set any global vars.
+-- Initialise global values.
 -- These are in their own function so we can set them up and reset them in unit tests.
 --
 -- @tparam table vars  Optional table of names/values to set, if not the defaults.
--- @treturn table  Names and values.
 --
 function c.init_globals(vars)
-  local g = {}
+  c.g = {}
+  local g = c.g  -- For convenience
 
   -- Constant
 
@@ -89,7 +89,6 @@ function c.init_globals(vars)
     end
   end
 
-  return g
 end
 
 
@@ -222,7 +221,7 @@ end
 
 function c.init()
 
-  c.g = c.init_globals()
+  c.init_globals()
   local g = c.g  -- For convenience
 
   -- Query MIDI vports, connect, collect info, switch off norns's own clock out.
@@ -672,6 +671,29 @@ function c.key(n, z)
 end
 
 
+-- Draw the pattern on the screen
+--
+local draw_pattern = function()
+  screen.move(0, 63)
+  screen.line_width(1)
+
+  for x = 0.0, 1.01, 0.01 do
+
+    if x > 1 then  -- Deal with arithmetic imprecision
+      x = 1
+    end
+
+    local y = c.g.pattern.transform(x)
+    local screen_x = x * 127
+    local screen_y = 63 - (c.g.pattern.transform(x) * 48)
+    screen.line(screen_x, screen_y)
+
+  end
+
+  screen.stroke()
+end
+
+
 function c.redraw()
   screen.clear()
 
@@ -708,28 +730,6 @@ function c.redraw()
   end
 
   screen.update()
-end
-
--- Draw the pattern on the screen
---
-function draw_pattern()
-  screen.move(0, 63)
-  screen.line_width(1)
-
-  for x = 0.0, 1.01, 0.01 do
-
-    if x > 1 then  -- Deal with arithmetic imprecision
-      x = 1
-    end
-
-    local y = c.g.pattern.transform(x)
-    local screen_x = x * 127
-    local screen_y = 63 - (c.g.pattern.transform(x) * 48)
-    screen.line(screen_x, screen_y)
-
-  end
-
-  screen.stroke()
 end
 
 

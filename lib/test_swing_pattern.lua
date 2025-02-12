@@ -71,7 +71,7 @@ end
 
 
 function test_pulse_interval_swing_60_bpm_in_middle_of_bar()
-  c.g = c.init_globals({
+  c.init_globals({
     bpm = 60,
     pattern = swing_pattern,
     pattern_length = 1,
@@ -100,7 +100,7 @@ end
 
 
 function test_pulse_interval_swing_60_bpm_in_middle_of_bar_pattern_length_2()
-  c.g = c.init_globals({
+  c.init_globals({
     bpm = 60,
     pattern = swing_pattern,
     pattern_length = 2,    -- Pattern length 2
@@ -167,7 +167,7 @@ end
 
 
 function test_pulse_interval_swing_60_bpm_pattern_length_3()
-  c.g = c.init_globals({
+  c.init_globals({
     bpm = 60,
     pattern = swing_pattern,
     pattern_length = 3,
@@ -235,7 +235,7 @@ function test_pulse_interval_swing_90_bpm_pattern_length_3()
 
   -- Should be just like bpm 90, but 90/60 faster - only the scale is different
 
-  c.g = c.init_globals({
+  c.init_globals({
     bpm = 90,
     pattern = swing_pattern,
     pattern_length = 3,

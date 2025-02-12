@@ -44,7 +44,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    c.g = c.init_globals({
+    c.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -93,7 +93,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    c.g = c.init_globals({
+    c.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -167,7 +167,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    c.g = c.init_globals({
+    c.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -245,7 +245,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    c.g = c.init_globals({
+    c.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -304,7 +304,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    c.g = c.init_globals({
+    c.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -371,7 +371,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    c.g = c.init_globals({
+    c.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -411,7 +411,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    c.g = c.init_globals({
+    c.init_globals({
       PULSES_PP = 4,  -- We set this to be sure, for calculations further down.
       pulse_num = 1,
       beat_num = 1,
