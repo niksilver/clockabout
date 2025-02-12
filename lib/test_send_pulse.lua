@@ -1,7 +1,7 @@
 -- Testing the critical function within the main code.
 
 
-require('clockabout')
+m     = require('mod')
 metro = require('mock_metro')
 
 
@@ -14,20 +14,20 @@ TestSendPulse = {
   setUp = function()
     -- Replace the redraw() function
 
-    TestSendPulse.redraw = redraw
-    redraw = function() end
+    TestSendPulse.redraw = m.redraw
+    m.redraw = function() end
 
     -- Save the pulse_interval() function if we need to restore it
 
-    TestSendPulse.pulse_interval = pulse_interval
+    TestSendPulse.pulse_interval = m.pulse_interval
   end,
 
 
   tearDown = function()
-    -- Restore the redraw() function
+    -- Restore the saved functions
 
-    redraw = TestSendPulse.redraw
-    pulse_interval = TestSendPulse.pulse_interval
+    m.redraw = TestSendPulse.redraw
+    m.pulse_interval = TestSendPulse.pulse_interval
   end,
 
 
@@ -40,7 +40,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    g = init_globals({
+    g = m.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -75,7 +75,7 @@ TestSendPulse = {
     -- Start the pulses and run the pretend clock for 1 second,
     -- with a resolution of 0.001 seconds.
 
-    start_pulses()
+    m.start_pulses()
 
     for t = 0, 1.005, 0.001 do
       _norns.set_time(t)
@@ -89,7 +89,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    g = init_globals({
+    g = m.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -144,7 +144,7 @@ TestSendPulse = {
     --
     -- Remember: 25 pulses in total, because there's one each at 0.0 and 1.0 seconds.
 
-    start_pulses()
+    m.start_pulses()
 
     for t = 0.0001, 0.2505, 0.0001 do -- Start running time from after second 0.
       _norns.set_time(t)
@@ -163,7 +163,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    g = init_globals({
+    g = m.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -206,7 +206,7 @@ TestSendPulse = {
     --
     -- Remember: 3*24+1 pulses in total, because there's one each at 0.0 and 1.0 seconds.
 
-    start_pulses()
+    m.start_pulses()
 
     for t = 0.0001, 3*0.2502, 0.0001 do -- Start running time from after second 0.
       _norns.set_time(t)
@@ -241,7 +241,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    g = init_globals({
+    g = m.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -277,7 +277,7 @@ TestSendPulse = {
 
     -- Just to be sure, check we get 25 pulses.
 
-    start_pulses()
+    m.start_pulses()
 
     for t = 0.0001, 1.0005, 0.0001 do -- Start running time from after second 0.
       _norns.set_time(t)
@@ -300,7 +300,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    g = init_globals({
+    g = m.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -341,7 +341,7 @@ TestSendPulse = {
     -- Run the metro for a bit over 5 'seconds', which will mean six first-pulses,
     -- at seconds 0, 1, 2, 3, 4, 5.
 
-    start_pulses()
+    m.start_pulses()
 
     for t = 0.0001, 5.1, 0.0001 do
       _norns.set_time(t)
@@ -367,7 +367,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    g = init_globals({
+    g = m.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -389,7 +389,7 @@ TestSendPulse = {
     -- If we assume 4 metros per second (1 beat/sec at 60 bpm)
     -- then 12 seconds takes us through 48 metros.
 
-    start_pulses()
+    m.start_pulses()
 
     for t = 0, 12, 0.001 do
       _norns.set_time(t)
@@ -407,7 +407,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    g = init_globals({
+    g = m.init_globals({
       PULSES_PP = 4,  -- We set this to be sure, for calculations further down.
       pulse_num = 1,
       beat_num = 1,
@@ -440,14 +440,14 @@ TestSendPulse = {
     -- will restore our override.
 
     local from_pulse = {}
-    local orig_pulse_interval = pulse_interval
+    local orig_pulse_interval = m.pulse_interval
 
-    pulse_interval = function(pulse_num, beat_num)
+    m.pulse_interval = function(pulse_num, beat_num)
       from_pulse[#from_pulse+1] = pulse_num
       return orig_pulse_interval(pulse_num, beat_num)
     end
 
-    start_pulses()
+    m.start_pulses()
 
     for t = 0.0001, 5.1, 0.0001 do
       _norns.set_time(t)

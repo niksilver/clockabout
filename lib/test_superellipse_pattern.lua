@@ -12,7 +12,7 @@ g = {}
 
 
 function test_pulse_interval_superellipse_60_bpm_power_2()
-  g = init_globals({
+  g = m.init_globals({
     bpm = 60,
     pattern = superellipse_pattern,
     pattern_length = 1,
@@ -38,7 +38,7 @@ function test_pulse_interval_superellipse_60_bpm_power_2()
   local time = 0
 
   for next_pulse = 1, 24, g.PULSES_PP do
-    local interval = pulse_interval(next_pulse, g.beat_num)
+    local interval = m.pulse_interval(next_pulse, g.beat_num)
     for pulse = next_pulse, (next_pulse + g.PULSES_PP - 1) do
 
       time = time + interval
@@ -75,7 +75,7 @@ end
 
 
 function test_pulse_interval_superellipse_60_bpm_power_0_5()
-  g = init_globals({
+  g = m.init_globals({
     bpm = 60,
     pattern = superellipse_pattern,
     pattern_length = 1,
@@ -101,7 +101,7 @@ function test_pulse_interval_superellipse_60_bpm_power_0_5()
   local time = 0
 
   for next_pulse = 1, 24, g.PULSES_PP do
-    local interval = pulse_interval(next_pulse, g.beat_num)
+    local interval = m.pulse_interval(next_pulse, g.beat_num)
     for pulse = next_pulse, (next_pulse + g.PULSES_PP - 1) do
 
       time = time + interval
