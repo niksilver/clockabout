@@ -566,7 +566,7 @@ function m.send_pulse(stage)
 
   g.pulse_num, g.beat_num, _ = advance_pulse(g.pulse_num + 1)
 
-  if g.pulse_num == 1 and g.pattern_needs_redraw then
+  if g.pulse_num == 1 and g.pattern_needs_redraw and _menu.mode == false then
     m.redraw()
     g.pattern_needs_redraw = false
   end

@@ -1,11 +1,11 @@
 To do
 
-- Fix bug: With random pattern, script keeps redrawing in SELECT menu.
 - Add to norns.community.
 
 
 Done
 
+- Fix bug: With random pattern, script keeps redrawing in SELECT menu.
 - Remove global variables (for being a mod):
     g, linear, swing, superellipse, random, double superellipse.
 - Write readme.
