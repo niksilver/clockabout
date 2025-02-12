@@ -2,7 +2,8 @@
 -- set up the packages correctly.
 
 
-local m = require('mod')
+local m                    = require('mod')
+local superellipse_pattern = require('superellipse_pattern')
 
 
 g = {}

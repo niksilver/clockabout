@@ -2,7 +2,7 @@
 -- See https://en.wikipedia.org/wiki/Superellipse
 
 
-superellipse_pattern = {
+local superellipse_pattern = {
   name = "Superellipse",
 
   -- Specific to this pattern
