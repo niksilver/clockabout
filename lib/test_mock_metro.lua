@@ -28,8 +28,8 @@ TestMockNorns = {
     end
 
     -- Init the metro, but don't start it for a while
-    local m = metro.init(record_tick, 0.5, 3)
-    m.name = 'MockMeetro'
+    local c = metro.init(record_tick, 0.5, 3)
+    c.name = 'MockMeetro'
 
     _norns.inc_time(0.25)
     _norns.inc_time(0.25)
@@ -39,7 +39,7 @@ TestMockNorns = {
     lu.assertEquals(ticks, { 0, 0, 0 })
 
     -- Now start the metro
-    m:start()
+    c:start()
     lu.assertEquals(ticks, { 0, 0, 0 })
 
     _norns.inc_time(0.25)
@@ -170,7 +170,7 @@ TestMockNorns = {
     end
 
     -- Init the metro, but don't start it for a while
-    local m = metro.init(record_tick, 0.5, 5)
+    local c = metro.init(record_tick, 0.5, 5)
 
     _norns.inc_time(0.25)
     _norns.inc_time(0.25)
@@ -180,7 +180,7 @@ TestMockNorns = {
     lu.assertEquals(ticks, { 0, 0, 0, 0, 0 })
 
     -- Now start the metro at stage 4
-    m:start(m.time, m.count, 4)
+    c:start(c.time, c.count, 4)
     lu.assertEquals(ticks, { 0, 0, 0, 0, 0 })
 
     _norns.inc_time(0.25)

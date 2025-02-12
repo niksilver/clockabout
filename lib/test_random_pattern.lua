@@ -2,7 +2,6 @@
 -- set up the packages correctly.
 
 
-local m               = require('mod')
 local random_pattern  = require('random_pattern')
 
 

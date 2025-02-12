@@ -1,4 +1,4 @@
--- Clockabout - mod code
+-- Clockabout - Core code
 --
 -- Why should swing be the
 -- only non-linear clock pattern?
@@ -24,7 +24,7 @@ local double_superellipse_pattern = include('lib/double_superellipse_pattern')
 local random_pattern              = include('lib/random_pattern')
 
 
-local m = {    -- Our mode
+local c = {    -- Our core functions, etc
   g = {},      -- Global (general) variables
 }
 
@@ -35,7 +35,7 @@ local m = {    -- Our mode
 -- @tparam table vars  Optional table of names/values to set, if not the defaults.
 -- @treturn table  Names and values.
 --
-function m.init_globals(vars)
+function c.init_globals(vars)
   local g = {}
 
   -- Constant
@@ -119,7 +119,7 @@ end
 local toggle_vport = function(i, val)
   local id = vport_active_id(i)
   params:set(id, val)
-  m.g.devices[i].active = val
+  c.g.devices[i].active = val
 end
 
 
@@ -170,8 +170,8 @@ end
 --
 local show_hide_pattern_params = function(show_pat)
 
-  for pat = 1, #m.g.patterns do
-    for param, name in pairs(m.g.pattern_params[pat]) do
+  for pat = 1, #c.g.patterns do
+    for param, name in pairs(c.g.pattern_params[pat]) do
       if pat == show_pat then
         params:show(name)
       else
@@ -187,7 +187,7 @@ end
 -- Send MIDI start to all active connections.
 --
 local start_active_connections = function()
-  for idx, device in pairs(m.g.devices) do
+  for idx, device in pairs(c.g.devices) do
     if device.active == 1 then
       device.connection:start()
     end
@@ -198,7 +198,7 @@ end
 -- Send MIDI stop to all connections, whether marked active or not.
 --
 local stop_all_connections = function()
-  for idx, device in pairs(m.g.devices) do
+  for idx, device in pairs(c.g.devices) do
     device.connection:stop()
   end
 end
@@ -207,7 +207,7 @@ end
 -- Cancel the metronomes.
 --
 local cancel_both_metros = function()
-  local g = m.g
+  local g = c.g
 
   if g.metros[1] then metro.free(g.metros[1].id) end
   if g.metros[2] then metro.free(g.metros[2].id) end
@@ -221,10 +221,10 @@ local cancel_both_metros = function()
 end
 
 
-function m.init()
+function c.init()
 
-  m.g = m.init_globals()
-  local g = m.g  -- For convenience
+  c.g = c.init_globals()
+  local g = c.g  -- For convenience
 
   -- Query MIDI vports, connect, collect info, switch off norns's own clock out.
 
@@ -316,7 +316,7 @@ function m.init()
     g.metro_running = x
     if g.metro_running == 1 then
 
-      m.start_pulses()
+      c.start_pulses()
       start_active_connections()
 
     else
@@ -383,7 +383,7 @@ end
 -- Set up the the first metro only. Doesn't start it.
 --
 local init_first_metro = function()
-  local g = m.g
+  local g = c.g
 
   if g.metro ~= nil then
     return
@@ -391,8 +391,8 @@ local init_first_metro = function()
 
   -- Metro 1 starts at the current pulse num
   g.metros[1] = metro.init(
-    m.send_pulse,  -- Function to call
-    m.pulse_interval(g.pulse_num, g.beat_num),  -- Time between pulses
+    c.send_pulse,  -- Function to call
+    c.pulse_interval(g.pulse_num, g.beat_num),  -- Time between pulses
     g.PULSES_PP  -- Number of pulses to send before we recalculate
   )
 
@@ -407,7 +407,7 @@ end
 -- Send MIDI clock message to active connections.
 --
 local clock_to_active_connections = function()
-  for idx, device in pairs(m.g.devices) do
+  for idx, device in pairs(c.g.devices) do
     if device.active == 1 then
       device.connection:clock()
     end
@@ -418,7 +418,7 @@ end
 -- Start the first metro running.
 --
 local start_metro = function()
-  local g = m.g
+  local g = c.g
 
   g.metro:start()
   clock_to_active_connections()
@@ -429,7 +429,7 @@ end
 -- Start sending the pulses. Uses global g.connection to know where
 -- to send to.
 --
-function m.start_pulses()
+function c.start_pulses()
   init_first_metro()
   start_active_connections()
   start_metro()
@@ -440,12 +440,12 @@ end
 -- @tparam int pulse_num  The new pulse number. It may be more than 24.
 -- @treturn int  The new pulse number, wrapped if it was more than 24.
 -- @treturn int  The new beat number, which may have wrapped back to 1.
---     This reads from `m.g.beat_num`.
+--     This reads from `c.g.beat_num`.
 -- @treturn bool  If it was the end of the pattern and we wrapped the beat num.
---     This reads from `m.g.pattern_length`.
+--     This reads from `c.g.pattern_length`.
 --
 local advance_pulse = function(pulse_num)
-  local beat_num = m.g.beat_num
+  local beat_num = c.g.beat_num
   local wrapped = false
 
   if (pulse_num > 24) then
@@ -453,8 +453,8 @@ local advance_pulse = function(pulse_num)
 
     pulse_num = 1
 
-    beat_num = m.g.beat_num + 1
-    if beat_num > m.g.pattern_length then
+    beat_num = c.g.beat_num + 1
+    if beat_num > c.g.pattern_length then
       -- At the end of the pattern
       beat_num = 1
       wrapped = true
@@ -514,8 +514,8 @@ end
          Triggers first metro.
 
 --]]
-function m.send_pulse(stage)
-  local g = m.g
+function c.send_pulse(stage)
+  local g = c.g
 
   clock_to_active_connections()
 
@@ -537,10 +537,10 @@ function m.send_pulse(stage)
 
     local next_metro_num = 3 - g.metro_num
     local next_pulse_num, next_beat_num, _ = advance_pulse(g.pulse_num + 1)
-    local interval = m.pulse_interval(next_pulse_num, next_beat_num)
+    local interval = c.pulse_interval(next_pulse_num, next_beat_num)
 
     g.metros[next_metro_num] = metro.init(
-      m.send_pulse,
+      c.send_pulse,
       interval,
       g.PULSES_PP
     )
@@ -570,7 +570,7 @@ function m.send_pulse(stage)
   local in_menu = _menu and _menu.mode
 
   if g.pulse_num == 1 and g.pattern_needs_redraw and not(in_menu) then
-    m.redraw()
+    c.redraw()
     g.pattern_needs_redraw = false
   end
 
@@ -582,8 +582,8 @@ end
 -- @tparam beat_num  The beat number of the pulse.
 -- @treturn number  Seconds duration of interval.
 --
-function m.pulse_interval(pulse_num, beat_num)
-  local g = m.g
+function c.pulse_interval(pulse_num, beat_num)
+  local g = c.g
 
   -- Initially, we assume the pattern is just one beat (24 pulses) long
 
@@ -623,24 +623,24 @@ end
 --
 local current_params = function()
   local pattern_idx = params:get("clockabout_pattern")
-  return m.g.pattern_params[pattern_idx]
+  return c.g.pattern_params[pattern_idx]
 end
 
 
-function m.enc(n, d)
+function c.enc(n, d)
   if n == 1 then
 
     -- Change the pattern
     params:delta("clockabout_pattern", d)
-    m.redraw()
+    c.redraw()
 
   elseif n == 2 then
 
     -- Change MIDI tempo
     params:delta("clockabout_bpm", d)
-    m.redraw()
+    c.redraw()
 
-  elseif n==3 and not(m.g.shift) and #current_params() >= 1 then
+  elseif n==3 and not(c.g.shift) and #current_params() >= 1 then
 
     -- Change first pattern-specific value
     local param_name = current_params()[1]
@@ -648,7 +648,7 @@ function m.enc(n, d)
     param:delta(d)
     redraw()
 
-  elseif n == 3 and m.g.shift and #current_params() >= 2 then
+  elseif n == 3 and c.g.shift and #current_params() >= 2 then
 
     -- Change second pattern-specific value
     local param_name = current_params()[2]
@@ -660,20 +660,20 @@ function m.enc(n, d)
 end
 
 
-function m.key(n, z)
+function c.key(n, z)
   if n == 1 then
-    m.g.shift = (z == 1)
-    m.redraw()
+    c.g.shift = (z == 1)
+    c.redraw()
   end
 
   if n == 3 and z == 1 then
-    params:set("clockabout_metro_running", 1 - m.g.metro_running)
-    m.redraw()
+    params:set("clockabout_metro_running", 1 - c.g.metro_running)
+    c.redraw()
   end
 end
 
 
-function m.redraw()
+function c.redraw()
   screen.clear()
 
   screen.level(2)
@@ -695,7 +695,7 @@ function m.redraw()
     screen.text(param.name .. ": " .. params:string(param_name))
   end
 
-  if #current_params() >= 2 and m.g.shift then
+  if #current_params() >= 2 and c.g.shift then
     -- Pattern-specific value
     screen.move(0,40)
     local param_name = current_params()[2]
@@ -703,7 +703,7 @@ function m.redraw()
     screen.text(param.name .. ": " .. params:string(param_name))
   end
 
-  if m.g.metro_running == 0 then
+  if c.g.metro_running == 0 then
       screen.move(64, 48)
       screen.text_center("STOPPED")
   end
@@ -723,9 +723,9 @@ function draw_pattern()
       x = 1
     end
 
-    local y = m.g.pattern.transform(x)
+    local y = c.g.pattern.transform(x)
     local screen_x = x * 127
-    local screen_y = 63 - (m.g.pattern.transform(x) * 48)
+    local screen_y = 63 - (c.g.pattern.transform(x) * 48)
     screen.line(screen_x, screen_y)
 
   end
@@ -734,4 +734,4 @@ function draw_pattern()
 end
 
 
-return m
+return c

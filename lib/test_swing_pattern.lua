@@ -2,7 +2,7 @@
 -- set up the packages correctly.
 
 
-local m              = require('mod')
+local c              = require('core')
 local swing_pattern  = require('swing_pattern')
 
 
@@ -71,12 +71,12 @@ end
 
 
 function test_pulse_interval_swing_60_bpm_in_middle_of_bar()
-  m.g = m.init_globals({
+  c.g = c.init_globals({
     bpm = 60,
     pattern = swing_pattern,
     pattern_length = 1,
   })
-  local g = m.g  -- For convenience
+  local g = c.g  -- For convenience
 
   -- Assume we're on pulse 14 of 24 (so over halfway) on the 5th beat.
   -- So pulse 15 is the next one.
@@ -95,17 +95,17 @@ function test_pulse_interval_swing_60_bpm_in_middle_of_bar()
 
   local expected_pulse_duration = (y_end - y_start) / g.PULSES_PP * beat_duration
 
-  lu.assertAlmostEquals( m.pulse_interval(g.pulse_num, g.beat_num), expected_pulse_duration, 0.001 )
+  lu.assertAlmostEquals( c.pulse_interval(g.pulse_num, g.beat_num), expected_pulse_duration, 0.001 )
 end
 
 
 function test_pulse_interval_swing_60_bpm_in_middle_of_bar_pattern_length_2()
-  m.g = m.init_globals({
+  c.g = c.init_globals({
     bpm = 60,
     pattern = swing_pattern,
     pattern_length = 2,    -- Pattern length 2
   })
-  local g = m.g  -- For convenience
+  local g = c.g  -- For convenience
 
   swing_pattern.swing = 0.10
   swing_pattern.init_pattern()
@@ -133,7 +133,7 @@ function test_pulse_interval_swing_60_bpm_in_middle_of_bar_pattern_length_2()
   -- Scale up for multi-beat pattern
   local expected_pulse_duration_scaled = expected_pulse_duration * g.pattern_length
 
-  lu.assertAlmostEquals( m.pulse_interval(g.pulse_num, g.beat_num), expected_pulse_duration_scaled, 0.001 )
+  lu.assertAlmostEquals( c.pulse_interval(g.pulse_num, g.beat_num), expected_pulse_duration_scaled, 0.001 )
 
   -- Now let's do similar, but for the 2nd beat in a two-beat pattern.
   -- This is just like the last one, but the x start and end are further along.
@@ -161,18 +161,18 @@ function test_pulse_interval_swing_60_bpm_in_middle_of_bar_pattern_length_2()
   -- Scale up for multi-beat pattern
   local expected_pulse_duration_scaled = expected_pulse_duration * g.pattern_length
 
-  lu.assertAlmostEquals( m.pulse_interval(g.pulse_num, g.beat_num), expected_pulse_duration_scaled, 0.001 )
+  lu.assertAlmostEquals( c.pulse_interval(g.pulse_num, g.beat_num), expected_pulse_duration_scaled, 0.001 )
 
 end
 
 
 function test_pulse_interval_swing_60_bpm_pattern_length_3()
-  m.g = m.init_globals({
+  c.g = c.init_globals({
     bpm = 60,
     pattern = swing_pattern,
     pattern_length = 3,
   })
-  local g = m.g  -- For convenience
+  local g = c.g  -- For convenience
 
   swing_pattern.swing = 0.79
   swing_pattern.init_pattern()
@@ -193,7 +193,7 @@ function test_pulse_interval_swing_60_bpm_pattern_length_3()
   for beat = 1, g.pattern_length do
 
     for next_pulse = 1, 24, g.PULSES_PP do
-      local interval = m.pulse_interval(next_pulse, beat)
+      local interval = c.pulse_interval(next_pulse, beat)
       for pulse = next_pulse, (next_pulse + g.PULSES_PP - 1) do
 
         time = time + interval
@@ -235,12 +235,12 @@ function test_pulse_interval_swing_90_bpm_pattern_length_3()
 
   -- Should be just like bpm 90, but 90/60 faster - only the scale is different
 
-  m.g = m.init_globals({
+  c.g = c.init_globals({
     bpm = 90,
     pattern = swing_pattern,
     pattern_length = 3,
   })
-  local g = m.g  -- For convenience
+  local g = c.g  -- For convenience
 
   swing_pattern.swing = 0.79
   swing_pattern.init_pattern()
@@ -261,7 +261,7 @@ function test_pulse_interval_swing_90_bpm_pattern_length_3()
   for beat = 1, g.pattern_length do
 
     for next_pulse = 1, 24, g.PULSES_PP do
-      local interval = m.pulse_interval(next_pulse, beat)
+      local interval = c.pulse_interval(next_pulse, beat)
       for pulse = next_pulse, (next_pulse + g.PULSES_PP - 1) do
 
         time = time + interval

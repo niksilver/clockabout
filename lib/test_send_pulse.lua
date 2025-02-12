@@ -1,7 +1,7 @@
 -- Testing the critical function within the main code.
 
 
-local m               = require('mod')
+local c               = require('core')
 local linear_pattern  = require('linear_pattern')
 local swing_pattern   = require('swing_pattern')
 local random_pattern  = require('random_pattern')
@@ -18,20 +18,20 @@ TestSendPulse = {
   setUp = function()
     -- Replace the redraw() function
 
-    TestSendPulse.redraw = m.redraw
-    m.redraw = function() end
+    TestSendPulse.redraw = c.redraw
+    c.redraw = function() end
 
     -- Save the pulse_interval() function if we need to restore it
 
-    TestSendPulse.pulse_interval = m.pulse_interval
+    TestSendPulse.pulse_interval = c.pulse_interval
   end,
 
 
   tearDown = function()
     -- Restore the saved functions
 
-    m.redraw = TestSendPulse.redraw
-    m.pulse_interval = TestSendPulse.pulse_interval
+    c.redraw = TestSendPulse.redraw
+    c.pulse_interval = TestSendPulse.pulse_interval
   end,
 
 
@@ -44,7 +44,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    m.g = m.init_globals({
+    c.g = c.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -57,7 +57,7 @@ TestSendPulse = {
 
     -- Create a mock connection in a mock MIDI device
 
-    m.g.devices = {
+    c.g.devices = {
       {
         name = 'Mock device',
 
@@ -79,7 +79,7 @@ TestSendPulse = {
     -- Start the pulses and run the pretend clock for 1 second,
     -- with a resolution of 0.001 seconds.
 
-    m.start_pulses()
+    c.start_pulses()
 
     for t = 0, 1.005, 0.001 do
       _norns.set_time(t)
@@ -93,7 +93,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    m.g = m.init_globals({
+    c.g = c.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -110,7 +110,7 @@ TestSendPulse = {
 
     -- Create a mock connection in a mock MIDI device
 
-    m.g.devices = {
+    c.g.devices = {
       {
         name = 'Mock device',
 
@@ -131,7 +131,7 @@ TestSendPulse = {
 
     -- Override the basic connection object
 
-    m.g.connection = {
+    c.g.connection = {
       clock = function(self)
         pulses = pulses + 1
       end,
@@ -148,7 +148,7 @@ TestSendPulse = {
     --
     -- Remember: 25 pulses in total, because there's one each at 0.0 and 1.0 seconds.
 
-    m.start_pulses()
+    c.start_pulses()
 
     for t = 0.0001, 0.2505, 0.0001 do -- Start running time from after second 0.
       _norns.set_time(t)
@@ -167,7 +167,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    m.g = m.init_globals({
+    c.g = c.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -184,7 +184,7 @@ TestSendPulse = {
 
     -- Create a mock connection in a mock MIDI device
 
-    m.g.devices = {
+    c.g.devices = {
       {
         name = 'Mock device',
 
@@ -210,7 +210,7 @@ TestSendPulse = {
     --
     -- Remember: 3*24+1 pulses in total, because there's one each at 0.0 and 1.0 seconds.
 
-    m.start_pulses()
+    c.start_pulses()
 
     for t = 0.0001, 3*0.2502, 0.0001 do -- Start running time from after second 0.
       _norns.set_time(t)
@@ -245,7 +245,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    m.g = m.init_globals({
+    c.g = c.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -260,7 +260,7 @@ TestSendPulse = {
 
     -- Create a mock connection in a mock MIDI device
 
-    m.g.devices = {
+    c.g.devices = {
       {
         name = 'Mock device',
 
@@ -281,7 +281,7 @@ TestSendPulse = {
 
     -- Just to be sure, check we get 25 pulses.
 
-    m.start_pulses()
+    c.start_pulses()
 
     for t = 0.0001, 1.0005, 0.0001 do -- Start running time from after second 0.
       _norns.set_time(t)
@@ -304,7 +304,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    m.g = m.init_globals({
+    c.g = c.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -320,7 +320,7 @@ TestSendPulse = {
 
     -- Create a mock connection in a mock MIDI device
 
-    m.g.devices = {
+    c.g.devices = {
       {
         name = 'Mock device',
 
@@ -345,7 +345,7 @@ TestSendPulse = {
     -- Run the metro for a bit over 5 'seconds', which will mean six first-pulses,
     -- at seconds 0, 1, 2, 3, 4, 5.
 
-    m.start_pulses()
+    c.start_pulses()
 
     for t = 0.0001, 5.1, 0.0001 do
       _norns.set_time(t)
@@ -371,7 +371,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    m.g = m.init_globals({
+    c.g = c.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -384,7 +384,7 @@ TestSendPulse = {
 
     -- Override the basic connection object
 
-    m.g.connection = {
+    c.g.connection = {
       clock = function(self) end,
       start = function(self) end,
       stop = function(self) end,
@@ -393,7 +393,7 @@ TestSendPulse = {
     -- If we assume 4 metros per second (1 beat/sec at 60 bpm)
     -- then 12 seconds takes us through 48 metros.
 
-    m.start_pulses()
+    c.start_pulses()
 
     for t = 0, 12, 0.001 do
       _norns.set_time(t)
@@ -411,7 +411,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    m.g = m.init_globals({
+    c.g = c.init_globals({
       PULSES_PP = 4,  -- We set this to be sure, for calculations further down.
       pulse_num = 1,
       beat_num = 1,
@@ -425,7 +425,7 @@ TestSendPulse = {
 
     -- Create a mock connection in a mock MIDI device
 
-    m.g.devices = {
+    c.g.devices = {
       {
         name = 'Mock device',
 
@@ -444,14 +444,14 @@ TestSendPulse = {
     -- will restore our override.
 
     local from_pulse = {}
-    local orig_pulse_interval = m.pulse_interval
+    local orig_pulse_interval = c.pulse_interval
 
-    m.pulse_interval = function(pulse_num, beat_num)
+    c.pulse_interval = function(pulse_num, beat_num)
       from_pulse[#from_pulse+1] = pulse_num
       return orig_pulse_interval(pulse_num, beat_num)
     end
 
-    m.start_pulses()
+    c.start_pulses()
 
     for t = 0.0001, 5.1, 0.0001 do
       _norns.set_time(t)
