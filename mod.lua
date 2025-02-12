@@ -24,9 +24,9 @@ local double_superellipse_pattern = include('lib/double_superellipse_pattern')
 local random_pattern              = include('lib/random_pattern')
 
 
-local m = {}    -- Our mod
-
-g = {}    -- Global values
+local m = {    -- Our mode
+  g = {},      -- Global (general) variables
+}
 
 
 -- Define global values and return them as a table. Does not set any global vars.
@@ -96,7 +96,7 @@ end
 
 function m.init()
 
-  g = m.init_globals()
+  m.g = m.init_globals()
 
   -- Query MIDI vports, connect, collect info, switch off norns's own clock out.
 
@@ -317,7 +317,7 @@ end
 local toggle_vport = function(i, val)
   local id = vport_active_id(i)
   params:set(id, val)
-  g.devices[i].active = val
+  m.g.devices[i].active = val
 end
 
 
@@ -344,7 +344,7 @@ end
 -- Send MIDI stop to all connections, whether marked active or not.
 --
 local stop_all_connections = function()
-  for idx, device in pairs(g.devices) do
+  for idx, device in pairs(m.g.devices) do
     device.connection:stop()
   end
 end
@@ -353,7 +353,7 @@ end
 -- Send MIDI start to all active connections.
 --
 local start_active_connections = function()
-  for idx, device in pairs(g.devices) do
+  for idx, device in pairs(m.g.devices) do
     if device.active == 1 then
       device.connection:start()
     end
@@ -364,6 +364,8 @@ end
 -- Set up the the first metro only. Doesn't start it.
 --
 local init_first_metro = function()
+  local g = m.g
+
   if g.metro ~= nil then
     return
   end
@@ -386,7 +388,7 @@ end
 -- Send MIDI clock message to active connections.
 --
 local clock_to_active_connections = function()
-  for idx, device in pairs(g.devices) do
+  for idx, device in pairs(m.g.devices) do
     if device.active == 1 then
       device.connection:clock()
     end
@@ -397,6 +399,8 @@ end
 -- Start the first metro running.
 --
 local start_metro = function()
+  local g = m.g
+
   g.metro:start()
   clock_to_active_connections()
   g.pulse_num = g.pulse_num + 1
@@ -416,6 +420,8 @@ end
 -- Cancel the metronomes.
 --
 local cancel_both_metros = function()
+  local g = m.g
+
   if g.metros[1] then metro.free(g.metros[1].id) end
   if g.metros[2] then metro.free(g.metros[2].id) end
 
@@ -432,12 +438,12 @@ end
 -- @tparam int pulse_num  The new pulse number. It may be more than 24.
 -- @treturn int  The new pulse number, wrapped if it was more than 24.
 -- @treturn int  The new beat number, which may have wrapped back to 1.
---     This reads from `g.beat_num`.
+--     This reads from `m.g.beat_num`.
 -- @treturn bool  If it was the end of the pattern and we wrapped the beat num.
---     This reads from `g.pattern_length`.
+--     This reads from `m.g.pattern_length`.
 --
 local advance_pulse = function(pulse_num)
-  local beat_num = g.beat_num
+  local beat_num = m.g.beat_num
   local wrapped = false
 
   if (pulse_num > 24) then
@@ -445,8 +451,8 @@ local advance_pulse = function(pulse_num)
 
     pulse_num = 1
 
-    beat_num = g.beat_num + 1
-    if beat_num > g.pattern_length then
+    beat_num = m.g.beat_num + 1
+    if beat_num > m.g.pattern_length then
       -- At the end of the pattern
       beat_num = 1
       wrapped = true
@@ -507,6 +513,7 @@ end
 
 --]]
 function m.send_pulse(stage)
+  local g = m.g
 
   clock_to_active_connections()
 
@@ -571,6 +578,7 @@ end
 -- @treturn number  Seconds duration of interval.
 --
 function m.pulse_interval(pulse_num, beat_num)
+  local g = m.g
 
   -- Initially, we assume the pattern is just one beat (24 pulses) long
 

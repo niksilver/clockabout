@@ -2,6 +2,7 @@
 
 
 local m     = require('mod')
+
 metro = require('mock_metro')
 
 
@@ -40,7 +41,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    g = m.init_globals({
+    m.g = m.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -53,7 +54,7 @@ TestSendPulse = {
 
     -- Create a mock connection in a mock MIDI device
 
-    g.devices = {
+    m.g.devices = {
       {
         name = 'Mock device',
 
@@ -89,7 +90,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    g = m.init_globals({
+    m.g = m.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -106,7 +107,7 @@ TestSendPulse = {
 
     -- Create a mock connection in a mock MIDI device
 
-    g.devices = {
+    m.g.devices = {
       {
         name = 'Mock device',
 
@@ -127,7 +128,7 @@ TestSendPulse = {
 
     -- Override the basic connection object
 
-    g.connection = {
+    m.g.connection = {
       clock = function(self)
         pulses = pulses + 1
       end,
@@ -163,7 +164,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    g = m.init_globals({
+    m.g = m.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -180,7 +181,7 @@ TestSendPulse = {
 
     -- Create a mock connection in a mock MIDI device
 
-    g.devices = {
+    m.g.devices = {
       {
         name = 'Mock device',
 
@@ -241,7 +242,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    g = m.init_globals({
+    m.g = m.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -256,7 +257,7 @@ TestSendPulse = {
 
     -- Create a mock connection in a mock MIDI device
 
-    g.devices = {
+    m.g.devices = {
       {
         name = 'Mock device',
 
@@ -300,7 +301,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    g = m.init_globals({
+    m.g = m.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -316,7 +317,7 @@ TestSendPulse = {
 
     -- Create a mock connection in a mock MIDI device
 
-    g.devices = {
+    m.g.devices = {
       {
         name = 'Mock device',
 
@@ -367,7 +368,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    g = m.init_globals({
+    m.g = m.init_globals({
       pulse_num = 1,
       beat_num = 1,
       bpm = 60,
@@ -380,7 +381,7 @@ TestSendPulse = {
 
     -- Override the basic connection object
 
-    g.connection = {
+    m.g.connection = {
       clock = function(self) end,
       start = function(self) end,
       stop = function(self) end,
@@ -407,7 +408,7 @@ TestSendPulse = {
     _norns.init()
     metro.init_module()
 
-    g = m.init_globals({
+    m.g = m.init_globals({
       PULSES_PP = 4,  -- We set this to be sure, for calculations further down.
       pulse_num = 1,
       beat_num = 1,
@@ -421,7 +422,7 @@ TestSendPulse = {
 
     -- Create a mock connection in a mock MIDI device
 
-    g.devices = {
+    m.g.devices = {
       {
         name = 'Mock device',
 

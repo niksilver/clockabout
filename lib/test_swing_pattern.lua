@@ -70,11 +70,12 @@ end
 
 
 function test_pulse_interval_swing_60_bpm_in_middle_of_bar()
-  g = m.init_globals({
+  m.g = m.init_globals({
     bpm = 60,
     pattern = swing_pattern,
     pattern_length = 1,
   })
+  local g = m.g  -- For convenience
 
   -- Assume we're on pulse 14 of 24 (so over halfway) on the 5th beat.
   -- So pulse 15 is the next one.
@@ -98,11 +99,12 @@ end
 
 
 function test_pulse_interval_swing_60_bpm_in_middle_of_bar_pattern_length_2()
-  g = m.init_globals({
+  m.g = m.init_globals({
     bpm = 60,
     pattern = swing_pattern,
     pattern_length = 2,    -- Pattern length 2
   })
+  local g = m.g  -- For convenience
 
   swing_pattern.swing = 0.10
   swing_pattern.init_pattern()
@@ -164,11 +166,12 @@ end
 
 
 function test_pulse_interval_swing_60_bpm_pattern_length_3()
-  g = m.init_globals({
+  m.g = m.init_globals({
     bpm = 60,
     pattern = swing_pattern,
     pattern_length = 3,
   })
+  local g = m.g  -- For convenience
 
   swing_pattern.swing = 0.79
   swing_pattern.init_pattern()
@@ -231,11 +234,12 @@ function test_pulse_interval_swing_90_bpm_pattern_length_3()
 
   -- Should be just like bpm 90, but 90/60 faster - only the scale is different
 
-  g = m.init_globals({
+  m.g = m.init_globals({
     bpm = 90,
     pattern = swing_pattern,
     pattern_length = 3,
   })
+  local g = m.g  -- For convenience
 
   swing_pattern.swing = 0.79
   swing_pattern.init_pattern()

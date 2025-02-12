@@ -12,13 +12,14 @@ g = {}
 
 
 function test_pulse_interval_60_bpm()
-  g = m.init_globals({
+  m.g = m.init_globals({
     bpm = 60,
     pulse_num = 1,
     beat_num = 1,
     pattern_length = 1,
     pattern = linear_pattern,
   })
+  local g = m.g  -- For convenience
 
   local beat_dur_sec = 60 / g.bpm
   local expected_interval = beat_dur_sec / 24
