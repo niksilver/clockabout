@@ -12,16 +12,15 @@
 -- Version 0.9.0
 
 
--- Use our own 'include', for when this is tested outside of norns.
-include = include and include or require
+-- We use require() and full(ish) paths, because that's needed if it's a mod.
 
-local log                         = include('lib/log')
+local log                         = require('clockabout/lib/log')
 
-local linear_pattern              = include('lib/linear_pattern')
-local swing_pattern               = include('lib/swing_pattern')
-local superellipse_pattern        = include('lib/superellipse_pattern')
-local double_superellipse_pattern = include('lib/double_superellipse_pattern')
-local random_pattern              = include('lib/random_pattern')
+local linear_pattern              = require('clockabout/lib/linear_pattern')
+local swing_pattern               = require('clockabout/lib/swing_pattern')
+local superellipse_pattern        = require('clockabout/lib/superellipse_pattern')
+local double_superellipse_pattern = require('clockabout/lib/double_superellipse_pattern')
+local random_pattern              = require('clockabout/lib/random_pattern')
 
 
 local c = {    -- Our core functions, etc

@@ -1,5 +1,6 @@
 To do
 
+- Add deinit() to the mod script.
 - Add to norns.community.
 
 
