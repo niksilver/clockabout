@@ -20,7 +20,7 @@
 
 --]]
 
-swing_pattern = {
+local swing_pattern = {
   name = "Swing",
 
   -- Specific to this pattern

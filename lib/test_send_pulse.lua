@@ -3,6 +3,7 @@
 
 local m              = require('mod')
 local linear_pattern = require('linear_pattern')
+local swing_pattern  = require('swing_pattern')
 
 metro = require('mock_metro')
 
