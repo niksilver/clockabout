@@ -575,7 +575,6 @@ function c.send_pulse(stage)
 
   -- Don't redraw if we're in the norns menu
   local in_menu = _menu and _menu.mode
-  if g.pulse_num == 1 then log.s('in_menu = %s, _menu.page = %s', in_menu, _menu.page) end
 
   if g.pulse_num == 1 and g.pattern_needs_redraw and not(in_menu) then
     c.redraw()

@@ -1,11 +1,18 @@
 To do
 
-- Add deinit() to the mod script.
+- Refresh screen with metro/dirty.
+- For mod, add K2 to exit.
+- For mod, don't start the metro (or stop MIDI out).
+- For the mod part of README:
+  - Use shift-E1.
+  - Doesn't start automatically.
+  - Use K2 to exit.
 - Add to norns.community.
 
 
 Done
 
+- Add deinit() to the mod script.
 - Fix bug: With random pattern, script keeps redrawing in SELECT menu.
 - Remove global variables (for being a mod):
     g, linear, swing, superellipse, random, double superellipse.
