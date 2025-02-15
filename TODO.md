@@ -1,12 +1,9 @@
 To do
 
 - Refresh screen with metro/dirty.
-- For mod, put the params in a submenu.
 - Prevent script and mod from both running.
 - For the mod part of README:
-  - Needs to be set up and activated by entering the mod screen.
-  - Use shift-E1.
-  - Use K2 to exit.
+  - Mod needs to be initialised after a script.
 
 
 Done
