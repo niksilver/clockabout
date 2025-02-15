@@ -1,17 +1,18 @@
 To do
 
 - Refresh screen with metro/dirty.
-- For mod, add K2 to exit.
-- For mod, don't start the metro (or stop MIDI out).
+- For mod, put the params in a submenu.
+- Prevent script and mod from both running.
 - For the mod part of README:
+  - Needs to be set up and activated by entering the mod screen.
   - Use shift-E1.
-  - Doesn't start automatically.
   - Use K2 to exit.
-- Add to norns.community.
 
 
 Done
 
+- For mod, add K2 to exit.
+- Add to norns.community.
 - Add deinit() to the mod script.
 - Fix bug: With random pattern, script keeps redrawing in SELECT menu.
 - Remove global variables (for being a mod):
