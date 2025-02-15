@@ -1,9 +1,10 @@
 To do
 
-- Refresh screen with metro/dirty.
+- Fix bug with random mode in menus.
 - Prevent script and mod from both running.
+- Save and load mod params.
 - For the mod part of README:
-  - Mod needs to be initialised after a script.
+  - Mod attaches to the end of any script.
 
 
 Done
