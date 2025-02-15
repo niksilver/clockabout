@@ -5,16 +5,19 @@ local mod = require('core/mods')            -- norns' mod functionality
 local c   = require('clockabout/lib/core')  -- Clockabout's core functionality
 local log = require('clockabout/lib/log')
 
-local run_once = false
+
+local api = {
+  -- If this file is executed as a mod (rather than just required) then
+  -- there will be a key/value pair here of
+  -- mod_running = true
+}
+
 
 local m = {
 
   -- Called when we enter the mod's own screen
   init = function()
     log.s('Clockabout init: Enter  - - - - - - - - - - - - - - - - -')
-    if not(run_once) then
-      run_once = true
-    end
   end,
 
 
@@ -53,25 +56,36 @@ local m = {
   end
 }
 
-mod.menu.register(mod.this_name, m)
 
-mod.hook.register("system_post_startup", "Clockabout post-startup", function()
-  log.s('Clockabout post-startup: Enter  - - - - - - - - - - - - - - - - -')
-  params:print()
-end)
+-- Only try to register things if this file is beign executed as
+-- a mod (rather than required by the main script)
 
-mod.hook.register("script_pre_init", "Clockabout pre-init", function()
-  log.s('Clockabout pre-init: Enter  - - - - - - - - - - - - - - - - -')
-end)
+if mod.this_name then
+
+  mod.menu.register(mod.this_name, m)
+
+  mod.hook.register("system_post_startup", "Clockabout post-startup", function()
+    log.s('Clockabout post-startup: Enter  - - - - - - - - - - - - - - - - -')
+    api.mod_running = true
+  end)
+
+  mod.hook.register("script_pre_init", "Clockabout pre-init", function()
+    log.s('Clockabout pre-init: Enter  - - - - - - - - - - - - - - - - -')
+  end)
 
 
--- When a scipt finishes its initialisation, but before it starts
---
-mod.hook.register("script_post_init", "Clockabout post-init", function()
-  log.s('Clockabout post-init: Enter  - - - - - - - - - - - - - - - - -')
-  c.init({ENV = 'mod'})
-end)
+  -- When a scipt finishes its initialisation, but before it starts
+  --
+  mod.hook.register("script_post_init", "Clockabout post-init", function()
+    log.s('Clockabout post-init: Enter  - - - - - - - - - - - - - - - - -')
+    c.init({ENV = 'mod'})
+  end)
 
-mod.hook.register("script_post_cleanup", "Clockabout post-cleanup", function()
-  log.s('Clockabout post-cleanup: Enter  - - - - - - - - - - - - - - - - -')
-end)
+  mod.hook.register("script_post_cleanup", "Clockabout post-cleanup", function()
+    log.s('Clockabout post-cleanup: Enter  - - - - - - - - - - - - - - - - -')
+  end)
+
+end
+
+
+return api

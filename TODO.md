@@ -1,14 +1,20 @@
 To do
 
 - Fix bug with random mode in menus.
-- Prevent script and mod from both running.
+- Fix bug with cheatcodes_2 (run out of metros).
 - Save and load mod params.
+- Don't start the clock when loaded as a mod.
+- Maybe remove mod screen.
 - For the mod part of README:
+  - Use the script with a MIDI device and feed back in.
   - Mod attaches to the end of any script.
+  - Use the script as a screen.
+  - Will it start automatically?
 
 
 Done
 
+- Allow script to run when mod runs.
 - For mod, add K2 to exit.
 - Add to norns.community.
 - Add deinit() to the mod script.

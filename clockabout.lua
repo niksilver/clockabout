@@ -12,11 +12,20 @@
 -- Version 0.9.0
 
 
-local c = require('clockabout/lib/core')
+local c       = require('clockabout/lib/core')
+local log     = require('clockabout/lib/log')
+local mod_api = require('clockabout/lib/mod')
+log.s('Clockabout script mod_api = %s  - - - - - - - - - - - - -', tostring(mod_api))
 
 
 init = function()
-  c.init({ENV = 'script'})
+  if mod_api.mod_running then
+    log.s('Clockabout.init() using mod\'s globals  - - - - - - - - - - - - -')
+    c.g = mod_api.g
+  else
+    log.s('Clockabout.init() will run as a script  - - - - - - - - - - - - -')
+    c.init({ENV = 'script'})
+  end
 end
 
 
