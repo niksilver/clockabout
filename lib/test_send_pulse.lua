@@ -486,7 +486,7 @@ TestSendPulse = {
   end,
 
 
-  test_send_pulse_can_handle_no_metros = function()
+  test_send_pulse_can_handle_no_metros_available = function()
 
     -- Some basic initialisation.
 
@@ -542,4 +542,71 @@ TestSendPulse = {
     lu.assertEquals(metro_running_action_value, 0)
 
   end,
+
+
+  test_send_pulse_can_handle_only_one_metro_available = function()
+    log.s('v v v v v v v v v v v')
+
+    -- Some basic initialisation.
+
+    _norns.init()
+    metro.init_module()
+
+    c.init_globals({
+      pulse_num = 1,
+      beat_num = 1,
+      bpm = 60,
+
+      pattern = linear_pattern,
+      pattern_length = 1,
+
+      metro_running = 1,
+    })
+
+    -- Create a mock connection in a mock MIDI device
+
+    c.g.devices = {
+      {
+        name = 'Mock device',
+
+        active = 1,
+
+        connection = {
+          clock = function(self) end,
+          start = function(self) end,
+          stop = function(self) end,
+        }
+      }
+    }
+
+    -- Let's mock the action to stop the metros, so we can check it's called correctly
+
+    local metro_running_action_value = 'Not called yet!'
+    c.metro_running_action = function(x)
+      metro_running_action_value = x
+    end
+
+    -- Exhaust our metros but one
+
+    local m = nil
+    for i = 1, #metro.available do
+      m = metro.init(nil, 1, -1)
+    end
+    metro.free(m.id)
+
+    -- Now we should start our pulses, send some, and fail gracefully
+
+    c.start_pulses()
+
+    for t = 0, 1.005, 0.001 do
+      log.s('Setting time t = %f', t)
+      _norns.set_time(t)
+    end
+
+    -- Check we've taken action to stop the metro
+
+    lu.assertEquals(metro_running_action_value, 0)
+
+  end,
+
 }

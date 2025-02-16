@@ -493,6 +493,7 @@ end
 
 -- Send a MIDI clock pulse.
 -- If it's the last in the part, recalculate and reset the metro for the next part.
+-- Will stop the clock if no metro is available.
 -- @tparam int stage  The stage of this pulse, from 1.
 --
 --[[
@@ -567,18 +568,17 @@ function c.send_pulse(stage)
 
     -- Initialise the metro... although none may be available
 
+    if not(metro_available()) then
+      log.s('Clockabout: No next metro available, stopping the clock')
+      c.metro_running_action(0)
+      return
+    end
+
     g.metros[next_metro_num] = metro.init(
       c.send_pulse,
       interval,
       g.PULSES_PP
     )
---[[    if maybe_metro == nil then
-      log.s('Clockabout: No metros available; stopping the clock')
-      c.metro_running_action(0)
-      return
-    else
-      g.metros[next_metro_num] = maybe_metro
-    end--]]
 
   elseif stage == g.PULSES_PP then
 
