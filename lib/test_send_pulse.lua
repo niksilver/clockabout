@@ -16,22 +16,25 @@ TestSendPulse = {
 
 
   setUp = function()
-    -- Replace the redraw() function
+    -- Save various functions which may be mocked and which will
+    -- need to be restored
 
-    TestSendPulse.redraw = c.redraw
+    TestSendPulse.redraw               = c.redraw
+    TestSendPulse.pulse_interval       = c.pulse_interval
+    TestSendPulse.metro_running_action = c.metro_running_action
+
+    -- We don't want to be redrawing in our tests
+
     c.redraw = function() end
-
-    -- Save the pulse_interval() function if we need to restore it
-
-    TestSendPulse.pulse_interval = c.pulse_interval
   end,
 
 
   tearDown = function()
     -- Restore the saved functions
 
-    c.redraw = TestSendPulse.redraw
-    c.pulse_interval = TestSendPulse.pulse_interval
+    c.redraw               = TestSendPulse.redraw
+    c.pulse_interval       = TestSendPulse.pulse_interval
+    c.metro_running_action = TestSendPulse.metro_running_action
   end,
 
 
@@ -474,6 +477,65 @@ TestSendPulse = {
     lu.assertEquals(from_pulse[10], 13)  -- Next interval should be calculated from 13 to 17
     lu.assertEquals(from_pulse[11], 17)  -- Next interval should be calculated from 17 to 21
     lu.assertEquals(from_pulse[12], 21)  -- Next interval should be calculated from 21 to 25
+
+  end,
+
+
+  test_send_pulse_can_handle_no_metros = function()
+
+    -- Some basic initialisation.
+
+    _norns.init()
+    metro.init_module()
+
+    c.init_globals({
+      pulse_num = 1,
+      beat_num = 1,
+      bpm = 60,
+
+      pattern = linear_pattern,
+      pattern_length = 1,
+
+      metro_running = 1,
+    })
+
+    -- Create a mock connection in a mock MIDI device
+
+    c.g.devices = {
+      {
+        name = 'Mock device',
+
+        active = 1,
+
+        connection = {
+          clock = function(self) end,
+          start = function(self) end,
+          stop = function(self) end,
+        }
+      }
+    }
+
+    -- Let's mock the action to stop the metros, so we can check it's called correctly
+
+    local metro_running_action_value = 'Not called yet!'
+    c.metro_running_action = function(x)
+      metro_running_action_value = x
+    end
+
+    -- Exhaust our metros
+
+    local m = nil
+    repeat
+      m = metro.init(nil, 1, -1)
+    until m == nil
+
+    -- Now we should start our pulses and fail gracefully
+
+    c.start_pulses()
+
+    -- Check we've taken action to stop the metro
+
+    lu.assertEquals(metro_running_action_value, 0)
 
   end,
 }

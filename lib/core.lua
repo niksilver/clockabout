@@ -219,6 +219,35 @@ local cancel_both_metros = function()
 end
 
 
+-- The action to take when we set/toggle the 'metro running' parameter.
+-- We expose because we want to mock it in our tests.
+-- @tparam int x  0 or 1 to stop/start the metro.
+--
+c.metro_running_action = function(x)
+
+  -- If we're still initialising, don't let the initial param loading
+  -- action this. We'll do it at the end.
+  if not(g.initialised) then
+    return
+  end
+
+  g.metro_running = x
+  if g.metro_running == 1 then
+
+    c.start_pulses()
+    start_active_connections()
+
+  else
+
+    cancel_both_metros()
+    stop_all_connections()
+    g.pulse_num = 1
+    g.beat_num = 1
+
+  end
+end
+
+
 -- Initialise all params in the norns environment.
 -- @tparam table vars  Table of names/values to set, if not the defaults,
 --     but only for non-norns (i.e. global) variables.
@@ -308,29 +337,7 @@ function c.init_norns_params(vars)
   -- action last, after all the other params have been initialised.
 
   params:add_binary("clockabout_metro_running", "Running?", "toggle", g.metro_running)
-  params:set_action("clockabout_metro_running", function(x)
-
-    -- If we're still initialising, don't let the initial param loading
-    -- action this. We'll do it at the end.
-    if not(g.initialised) then
-      return
-    end
-
-    g.metro_running = x
-    if g.metro_running == 1 then
-
-      c.start_pulses()
-      start_active_connections()
-
-    else
-
-      cancel_both_metros()
-      stop_all_connections()
-      g.pulse_num = 1
-      g.beat_num = 1
-
-    end
-  end)
+  params:set_action("clockabout_metro_running", c.metro_running_action)
 
   -- Parameter for the selected pattern
 
@@ -375,6 +382,8 @@ end
 
 
 -- Set up the the first metro only. Doesn't start it.
+-- If there are no metros available, will also stop the metros from running.
+-- @treturn bool  Whether there was a metro available (and therefore initialised).
 --
 local init_first_metro = function()
   local g = c.g
@@ -383,18 +392,26 @@ local init_first_metro = function()
     return
   end
 
-  -- Metro 1 starts at the current pulse num
-  g.metros[1] = metro.init(
+  -- Metro 1 starts at the current pulse num, but we have to handle
+  -- no metros being available
+
+  local maybe_metro = metro.init(
     c.send_pulse,  -- Function to call
     c.pulse_interval(g.pulse_num, g.beat_num),  -- Time between pulses
     g.PULSES_PP  -- Number of pulses to send before we recalculate
   )
+  if maybe_metro == nil then
+    c.metro_running_action(0)
+    return false
+  end
 
-  -- Identify current metro
+  -- Set and identify current metro
 
+  g.metros[1] = maybe_metro
   g.metro = g.metros[1]
   g.metro_num = 1
 
+  return true
 end
 
 
@@ -424,7 +441,11 @@ end
 -- to send to.
 --
 function c.start_pulses()
-  init_first_metro()
+  local success = init_first_metro()
+  if not(success) then
+    return
+  end
+
   start_active_connections()
   start_metro()
 end
@@ -533,11 +554,20 @@ function c.send_pulse(stage)
     local next_pulse_num, next_beat_num, _ = advance_pulse(g.pulse_num + 1)
     local interval = c.pulse_interval(next_pulse_num, next_beat_num)
 
+    -- Initialise the metro... although none may be available
+
     g.metros[next_metro_num] = metro.init(
       c.send_pulse,
       interval,
       g.PULSES_PP
     )
+--[[    if maybe_metro == nil then
+      log.s('Clockabout: No metros available; stopping the clock')
+      c.metro_running_action(0)
+      return
+    else
+      g.metros[next_metro_num] = maybe_metro
+    end--]]
 
   elseif stage == g.PULSES_PP then
 
