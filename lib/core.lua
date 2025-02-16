@@ -221,10 +221,10 @@ end
 
 
 -- Initialise all params in the norns environment.
--- @tparam table vars  Optional table of names/values to set, if not the defaults,
---     but only for non-norns variables.
+-- @tparam table vars  Table of names/values to set, if not the defaults,
+--     but only for non-norns (i.e. global) variables.
 --
-function c.init(vars)
+function c.init_norns_params(vars)
 
   c.init_globals(vars)
   local g = c.g  -- For convenience
@@ -305,7 +305,8 @@ function c.init(vars)
     g.bpm = x
   end)
 
-  -- Our own parameter for whether the metro is running
+  -- Our own parameter for whether the metro is running. We must take its
+  -- action last, after all the other params have been initialised.
 
   params:add_binary("clockabout_metro_running", "Running?", "toggle", g.metro_running)
   params:set_action("clockabout_metro_running", function(x)
@@ -370,19 +371,6 @@ function c.init(vars)
   params:set_action("clockabout_pattern_length", function(x)
     g.pattern_length = x
   end)
-
-  -- Final touches:
-  --   - Load the last paramset, if we can. That will also bang all
-  --     the parameters.
-  --   - Set the metronome going, if it should be
-
-  if g.ENV == 'script' then
-    params:default()
-  else
-    params:bang()
-  end
-  g.initialised = true
-  params:lookup_param("clockabout_metro_running"):bang()
 
 end
 

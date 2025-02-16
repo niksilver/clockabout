@@ -24,8 +24,17 @@ init = function()
     c.g = mod_api.g
   else
     log.s('Clockabout.init() will run as a script  - - - - - - - - - - - - -')
-    c.init({ENV = 'script'})
+    c.init_norns_params({})
   end
+
+  -- Final touches:
+  --   - Load the last paramset. That will also bang all the parameters, except
+  --     the metronome.
+  --   - Set the metronome going, if it should be.
+
+  params:default()
+  c.g.initialised = true
+  params:lookup_param("clockabout_metro_running"):bang()
 end
 
 

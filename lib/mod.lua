@@ -10,6 +10,8 @@ local api = {
   -- If this file is executed as a mod (rather than just required) then
   -- there will be a key/value pair here of
   -- mod_running = true
+
+  -- We will also make the globals c.g available here in field g.
 }
 
 
@@ -71,6 +73,19 @@ if mod.this_name then
 
   mod.hook.register("script_pre_init", "Clockabout pre-init", function()
     log.s('Clockabout pre-init: Enter  - - - - - - - - - - - - - - - - -')
+    c.init_norns_params({})
+
+    -- Make the globals available to the clockabout script, if it runs
+    api.g = c.g
+
+    -- Final touches:
+    --   - Bang all the params (except the metronome, which is last).
+    --   - Set the metronome going, if it should be.
+
+    params:bang()
+    c.g.initialised = true
+    params:lookup_param("clockabout_metro_running"):bang()
+
   end)
 
 
@@ -78,7 +93,6 @@ if mod.this_name then
   --
   mod.hook.register("script_post_init", "Clockabout post-init", function()
     log.s('Clockabout post-init: Enter  - - - - - - - - - - - - - - - - -')
-    c.init({ENV = 'mod'})
   end)
 
   mod.hook.register("script_post_cleanup", "Clockabout post-cleanup", function()
