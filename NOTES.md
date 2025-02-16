@@ -20,8 +20,8 @@ Tests
     - Clockabout picks up its own saved params.
   - With mod, from a restart:
     - Awake picks up saved params.
-    - Clockabout picks up its own saved params.
     - Awake, then Clockabout - Clockabout picks up its own saved params.
+    - Clockabout picks up its own saved params.
     - Clockabout, then Awake - Awake picks up its own saved params.
 
 

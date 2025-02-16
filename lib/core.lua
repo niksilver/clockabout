@@ -40,7 +40,6 @@ function c.init_globals(vars)
   -- Constant
 
   g.PULSES_PP = 4  -- This many pulses per part before we set another metro
-  g.ENV = 'test'   -- Where we're running
 
   -- Variables
 
