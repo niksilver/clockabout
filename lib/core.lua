@@ -381,6 +381,16 @@ function c.init_norns_params(vars)
 end
 
 
+-- Is some metro available?
+--
+function metro_available()
+  for id, avail in pairs(metro.available) do
+    if avail then return true end
+  end
+
+  return false
+end
+
 -- Set up the the first metro only. Doesn't start it.
 -- If there are no metros available, will also stop the metros from running.
 -- @treturn bool  Whether there was a metro available (and therefore initialised).
@@ -395,19 +405,20 @@ local init_first_metro = function()
   -- Metro 1 starts at the current pulse num, but we have to handle
   -- no metros being available
 
-  local maybe_metro = metro.init(
-    c.send_pulse,  -- Function to call
-    c.pulse_interval(g.pulse_num, g.beat_num),  -- Time between pulses
-    g.PULSES_PP  -- Number of pulses to send before we recalculate
-  )
-  if maybe_metro == nil then
+  if not(metro_available()) then
+    log.s('Clockabout: No initial metro available, stopping the clock')
     c.metro_running_action(0)
     return false
   end
 
+  g.metros[1] = metro.init(
+    c.send_pulse,  -- Function to call
+    c.pulse_interval(g.pulse_num, g.beat_num),  -- Time between pulses
+    g.PULSES_PP  -- Number of pulses to send before we recalculate
+  )
+
   -- Set and identify current metro
 
-  g.metros[1] = maybe_metro
   g.metro = g.metros[1]
   g.metro_num = 1
 
@@ -438,7 +449,7 @@ end
 
 
 -- Start sending the pulses. Uses global g.connection to know where
--- to send to.
+-- to send to. Won't do anything if no initial metro is available.
 --
 function c.start_pulses()
   local success = init_first_metro()

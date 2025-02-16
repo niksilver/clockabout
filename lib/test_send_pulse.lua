@@ -5,6 +5,7 @@ local c               = require('core')
 local linear_pattern  = require('linear_pattern')
 local swing_pattern   = require('swing_pattern')
 local random_pattern  = require('random_pattern')
+local log             = require('log')
 
 metro = require('mock_metro')
 
@@ -26,6 +27,10 @@ TestSendPulse = {
     -- We don't want to be redrawing in our tests
 
     c.redraw = function() end
+
+    -- Free up all the metros
+
+    metro.free_all()
   end,
 
 
@@ -524,10 +529,9 @@ TestSendPulse = {
 
     -- Exhaust our metros
 
-    local m = nil
-    repeat
-      m = metro.init(nil, 1, -1)
-    until m == nil
+    for i = 1, #metro.available do
+      metro.init(nil, 1, -1)
+    end
 
     -- Now we should start our pulses and fail gracefully
 
