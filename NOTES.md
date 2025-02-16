@@ -1,18 +1,3 @@
-To do
-
-- Fix bug with random mode in menus.
-- Fix bug with cheatcodes_2 (run out of metros).
-- Don't start the clock when loaded as a mod.
-- Maybe remove mod screen.
-- For mod, stop metros on cleanup.
-- For the mod part of README:
-  - Use the script with a MIDI device and feed back in.
-  - Mod attaches to the end of any script.
-  - Use the script as a screen.
-  - Will it start automatically?
-  - Explain saving and loading params.
-
-
 Tests
 
 - Startup test cases:
@@ -25,8 +10,24 @@ Tests
     - Clockabout, then Awake - Awake picks up its own saved params.
 
 
+To do
+
+- Fix bug with random mode in menus.
+- Create logging for norns-only output.
+- Don't start the clock when loaded as a mod.
+- Maybe remove mod screen.
+- For mod, stop metros on cleanup.
+- For the mod part of README:
+  - Use the script with a MIDI device and feed back in.
+  - Mod attaches to the end of any script.
+  - Use the script as a screen.
+  - Will it start automatically?
+  - Explain saving and loading params.
+
+
 Done
 
+- Fix bug with cheatcodes_2 (run out of metros).
 - Save and load mod params.
 - Allow script to run when mod runs.
 - For mod, add K2 to exit.

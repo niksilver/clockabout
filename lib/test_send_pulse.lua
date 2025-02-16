@@ -545,7 +545,6 @@ TestSendPulse = {
 
 
   test_send_pulse_can_handle_only_one_metro_available = function()
-    log.s('v v v v v v v v v v v')
 
     -- Some basic initialisation.
 
@@ -584,6 +583,7 @@ TestSendPulse = {
     local metro_running_action_value = 'Not called yet!'
     c.metro_running_action = function(x)
       metro_running_action_value = x
+      if x == 0 then metro.free_all() end
     end
 
     -- Exhaust our metros but one
@@ -599,7 +599,6 @@ TestSendPulse = {
     c.start_pulses()
 
     for t = 0, 1.005, 0.001 do
-      log.s('Setting time t = %f', t)
       _norns.set_time(t)
     end
 

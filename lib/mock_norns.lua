@@ -84,7 +84,7 @@ _norns.init = function()
     for id, m in ipairs(_norns.metros) do
       local ext_metro = _norns.metros_to_trigger[id]
 
-      if s >= m.next_event_time then
+      if m.is_running and s >= m.next_event_time then
         _norns.metro(id, m.stage)
         m.stage = m.stage + 1
         m.next_event_time = m.next_event_time + m.time
