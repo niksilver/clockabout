@@ -251,6 +251,16 @@ c.metro_running_action = function(x)
 end
 
 
+-- Set the metro_running param. We would normally do this with a call
+-- params:set(...), but for testing we need to override this. It will
+-- in turn call c.metro_running_action
+-- @tparam int x  0 or 1 to stop/start the metro.
+--
+c.set_metro_running_param = function(x)
+  params:set("clockabout_metro_running", x)
+end
+
+
 -- Initialise all params in the norns environment.
 -- @tparam table vars  Table of names/values to set, if not the defaults,
 --     but only for non-norns (i.e. global) variables.
@@ -410,7 +420,7 @@ local init_first_metro = function()
 
   if not(metro_available()) then
     log.n('Clockabout: No initial metro available, stopping the clock')
-    c.metro_running_action(0)
+    c.set_metro_running_param(0)
     return false
   end
 
@@ -573,7 +583,7 @@ function c.send_pulse(stage)
 
     if not(metro_available()) then
       log.n('Clockabout: No next metro available, stopping the clock')
-      c.metro_running_action(0)
+      c.set_metro_running_param(0)
       return
     end
 

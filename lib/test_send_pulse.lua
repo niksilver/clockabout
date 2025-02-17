@@ -24,6 +24,7 @@ TestSendPulse = {
 
     TestSendPulse.redraw               = c.redraw
     TestSendPulse.pulse_interval       = c.pulse_interval
+    TestSendPulse.set_metro_running_param = c.set_metro_running_param
     TestSendPulse.metro_running_action = c.metro_running_action
 
     -- We don't want to be redrawing in our tests
@@ -41,6 +42,7 @@ TestSendPulse = {
 
     c.redraw               = TestSendPulse.redraw
     c.pulse_interval       = TestSendPulse.pulse_interval
+    c.set_metro_running_param = TestSendPulse.set_metro_running_param
     c.metro_running_action = TestSendPulse.metro_running_action
   end,
 
@@ -528,6 +530,7 @@ TestSendPulse = {
     c.metro_running_action = function(x)
       metro_running_action_value = x
     end
+    c.set_metro_running_param = c.metro_running_action
 
     -- Exhaust our metros
 
@@ -587,6 +590,7 @@ TestSendPulse = {
       metro_running_action_value = x
       if x == 0 then metro.free_all() end
     end
+    c.set_metro_running_param = c.metro_running_action
 
     -- Exhaust our metros but one
 
