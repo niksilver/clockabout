@@ -25,6 +25,8 @@ local random_pattern              = require('clockabout/lib/random_pattern')
 
 local c = {    -- Our core functions, etc
   g = {},      -- Global (general) variables
+  log = log,   -- Expose our log module so warning messages can be
+               -- suppressed in our tests.
 }
 
 
@@ -406,7 +408,7 @@ local init_first_metro = function()
   -- no metros being available
 
   if not(metro_available()) then
-    log.s('Clockabout: No initial metro available, stopping the clock')
+    log.n('Clockabout: No initial metro available, stopping the clock')
     c.metro_running_action(0)
     return false
   end
@@ -569,7 +571,7 @@ function c.send_pulse(stage)
     -- Initialise the metro... although none may be available
 
     if not(metro_available()) then
-      log.s('Clockabout: No next metro available, stopping the clock')
+      log.n('Clockabout: No next metro available, stopping the clock')
       c.metro_running_action(0)
       return
     end

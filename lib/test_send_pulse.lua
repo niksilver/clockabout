@@ -9,6 +9,8 @@ local log             = require('log')
 
 metro = require('mock_metro')
 
+c.log.suppress_n = true
+
 
 -- We'll put these tests in a table to be able to use setUp() / tearDown()
 

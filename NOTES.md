@@ -13,7 +13,6 @@ Tests
 To do
 
 - Fix bug with random mode in menus.
-- Create logging for norns-only output.
 - Don't start the clock when loaded as a mod.
 - Maybe remove mod screen.
 - For mod, stop metros on cleanup.
@@ -23,10 +22,12 @@ To do
   - Use the script as a screen.
   - Will it start automatically?
   - Explain saving and loading params.
+  - If no metros it will show up in the log output.
 
 
 Done
 
+- Create logging for norns-only output.
 - Fix bug with cheatcodes_2 (run out of metros).
 - Save and load mod params.
 - Allow script to run when mod runs.
