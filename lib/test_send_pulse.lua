@@ -25,7 +25,6 @@ TestSendPulse = {
     TestSendPulse.redraw               = c.redraw
     TestSendPulse.pulse_interval       = c.pulse_interval
     TestSendPulse.set_metro_running_param = c.set_metro_running_param
-    TestSendPulse.metro_running_action = c.metro_running_action
 
     -- We don't want to be redrawing in our tests
 
@@ -43,7 +42,6 @@ TestSendPulse = {
     c.redraw               = TestSendPulse.redraw
     c.pulse_interval       = TestSendPulse.pulse_interval
     c.set_metro_running_param = TestSendPulse.set_metro_running_param
-    c.metro_running_action = TestSendPulse.metro_running_action
   end,
 
 
@@ -526,11 +524,10 @@ TestSendPulse = {
 
     -- Let's mock the action to stop the metros, so we can check it's called correctly
 
-    local metro_running_action_value = 'Not called yet!'
-    c.metro_running_action = function(x)
-      metro_running_action_value = x
+    local metro_running_value = 'Not called yet!'
+    c.set_metro_running_param = function(x)
+      metro_running_value = x
     end
-    c.set_metro_running_param = c.metro_running_action
 
     -- Exhaust our metros
 
@@ -544,7 +541,7 @@ TestSendPulse = {
 
     -- Check we've taken action to stop the metro
 
-    lu.assertEquals(metro_running_action_value, 0)
+    lu.assertEquals(metro_running_value, 0)
 
   end,
 
@@ -585,12 +582,11 @@ TestSendPulse = {
 
     -- Let's mock the action to stop the metros, so we can check it's called correctly
 
-    local metro_running_action_value = 'Not called yet!'
-    c.metro_running_action = function(x)
-      metro_running_action_value = x
+    local metro_running_value = 'Not called yet!'
+    c.set_metro_running_param = function(x)
+      metro_running_value = x
       if x == 0 then metro.free_all() end
     end
-    c.set_metro_running_param = c.metro_running_action
 
     -- Exhaust our metros but one
 
@@ -610,7 +606,7 @@ TestSendPulse = {
 
     -- Check we've taken action to stop the metro
 
-    lu.assertEquals(metro_running_action_value, 0)
+    lu.assertEquals(metro_running_value, 0)
 
   end,
 

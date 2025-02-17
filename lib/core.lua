@@ -221,39 +221,8 @@ local cancel_both_metros = function()
 end
 
 
--- The action to take when we set/toggle the 'metro running' parameter.
--- We expose because we want to mock it in our tests.
--- @tparam int x  0 or 1 to stop/start the metro.
---
-c.metro_running_action = function(x)
-  local g = c.g  -- For convenience
-
-  -- If we're still initialising, don't let the initial param loading
-  -- action this. We'll do it at the end.
-  if not(g.initialised) then
-    return
-  end
-
-  g.metro_running = x
-  if g.metro_running == 1 then
-
-    c.start_pulses()
-    start_active_connections()
-
-  else
-
-    cancel_both_metros()
-    stop_all_connections()
-    g.pulse_num = 1
-    g.beat_num = 1
-
-  end
-end
-
-
 -- Set the metro_running param. We would normally do this with a call
--- params:set(...), but for testing we need to override this. It will
--- in turn call c.metro_running_action
+-- params:set(...), but when testing we need to override this.
 -- @tparam int x  0 or 1 to stop/start the metro.
 --
 c.set_metro_running_param = function(x)
@@ -350,7 +319,30 @@ function c.init_norns_params(vars)
   -- action last, after all the other params have been initialised.
 
   params:add_binary("clockabout_metro_running", "Running?", "toggle", g.metro_running)
-  params:set_action("clockabout_metro_running", c.metro_running_action)
+  params:set_action("clockabout_metro_running", function(x)
+    local g = c.g  -- For convenience
+
+    -- If we're still initialising, don't let the initial param loading
+    -- action this. We'll do it at the end.
+    if not(g.initialised) then
+      return
+    end
+
+    g.metro_running = x
+    if g.metro_running == 1 then
+
+      c.start_pulses()
+      start_active_connections()
+
+    else
+
+      cancel_both_metros()
+      stop_all_connections()
+      g.pulse_num = 1
+      g.beat_num = 1
+
+    end
+  end)
 
   -- Parameter for the selected pattern
 
