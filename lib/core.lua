@@ -226,6 +226,7 @@ end
 -- @tparam int x  0 or 1 to stop/start the metro.
 --
 c.metro_running_action = function(x)
+  local g = c.g  -- For convenience
 
   -- If we're still initialising, don't let the initial param loading
   -- action this. We'll do it at the end.

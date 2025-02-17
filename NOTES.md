@@ -13,6 +13,7 @@ Tests
 To do
 
 - Fix bug with random mode in menus.
+- Remove '- - - -' debug logging.
 - Don't start the clock when loaded as a mod.
 - Maybe remove mod screen.
 - For mod, stop metros on cleanup.
