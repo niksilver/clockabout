@@ -320,8 +320,6 @@ function c.init_norns_params(vars)
 
   params:add_binary("clockabout_metro_running", "Running?", "toggle", g.metro_running)
   params:set_action("clockabout_metro_running", function(x)
-    local g = c.g  -- For convenience
-
     -- If we're still initialising, don't let the initial param loading
     -- action this. We'll do it at the end.
     if not(g.initialised) then
