@@ -610,4 +610,62 @@ TestSendPulse = {
 
   end,
 
+
+  test_send_pulse_can_handle_pattern_length_being_reduced = function()
+    -- The bug being tested here is that as pattern length is reduced,
+    -- if the pulse is towards the end of the beat then the x value
+    -- sent to the transform() function will given as > 1.
+    -- The random pattern in particular will throw an error.
+
+    _norns.init()
+    metro.init_module()
+
+    c.init_globals({
+      pulse_num = 1,
+      beat_num = 1,
+      bpm = 60,
+
+      pattern = random_pattern,
+      pattern_length = 4,
+    })
+
+    random_pattern.init_pattern()
+
+    local pulses = 0
+
+    -- Create a mock connection in a mock MIDI device
+
+    c.g.devices = {
+      {
+        name = 'Mock device',
+
+        active = 1,
+
+        connection = {
+          clock = function(self) end,
+          start = function(self) end,
+          stop = function(self) end,
+        }
+      }
+    }
+
+    -- We'll start the pattern, which is intended to run over 4 seconds (4 beats).
+    -- Then after two seconds we'll reduce the pattern length to 1 beat.
+
+    c.start_pulses()
+
+    for t = 0.001, 2.000, 0.001 do
+      _norns.set_time(t)
+    end
+
+    c.g.pattern_length = 1
+
+    for t = 2.000, 3.000, 0.001 do
+      _norns.set_time(t)
+    end
+
+    lu.fail("We expected an error before here if we're correctly testing for the bug")
+
+  end,
+
 }
