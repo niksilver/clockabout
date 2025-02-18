@@ -664,13 +664,71 @@ TestSendPulse = {
       _norns.set_time(t)
     end
 
-    c.g.pattern_length = 1
+    c.set_pattern_length(1)
 
     for t = 15.000, 16.000, 0.001 do
       _norns.set_time(t)
     end
 
-    lu.fail("We expected an error before here if we're correctly testing for the bug")
+    -- All is well if we reach this point without an error
+
+  end,
+
+
+  test_set_pattern_length = function()
+
+    c.init_globals({
+      pulse_num = 1,
+      beat_num = 1,
+      bpm = 60,
+
+      pattern = linear_pattern,
+      pattern_length = 4,
+    })
+
+    -- If we're at beat 3 out 4, and we reduce our pattern length
+    -- then we should be within the new pattern length.
+
+    c.g.pattern_length = 4
+    c.g.beat_num       = 3
+    c.g.pulse_num      = 11  -- Some arbitrary value which shouldn't change
+    c.set_pattern_length(1)
+    lu.assertEquals(c.g.pattern_length, 1)
+    lu.assertEquals(c.g.beat_num      , 1)
+    lu.assertEquals(c.g.pulse_num     , 11)
+
+    -- If we're at beat 6 out 6, and we reduce our pattern length
+    -- then we should be within the new pattern length.
+
+    c.g.pattern_length = 6
+    c.g.beat_num       = 6
+    c.g.pulse_num      = 8  -- Some arbitrary value which shouldn't change
+    c.set_pattern_length(4)
+    lu.assertEquals(c.g.pattern_length, 4)
+    lu.assertEquals(c.g.beat_num      , 4)
+    lu.assertEquals(c.g.pulse_num     , 8)
+
+    -- If we keep our pattern length the same then the beat number
+    -- shouldn't change either.
+
+    c.g.pattern_length = 3
+    c.g.beat_num       = 3
+    c.g.pulse_num      = 7  -- Some arbitrary value which shouldn't change
+    c.set_pattern_length(3)
+    lu.assertEquals(c.g.pattern_length, 3)
+    lu.assertEquals(c.g.beat_num      , 3)
+    lu.assertEquals(c.g.pulse_num     , 7)
+
+    -- If we increase our pattern length the same then the beat number
+    -- shouldn't change.
+
+    c.g.pattern_length = 8
+    c.g.beat_num       = 3
+    c.g.pulse_num      = 10  -- Some arbitrary value which shouldn't change
+    c.set_pattern_length(8)
+    lu.assertEquals(c.g.pattern_length, 8)
+    lu.assertEquals(c.g.beat_num      , 3)
+    lu.assertEquals(c.g.pulse_num     , 10)
 
   end,
 

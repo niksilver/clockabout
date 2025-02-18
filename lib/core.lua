@@ -237,6 +237,9 @@ end
 --
 c.set_pattern_length = function(x)
   c.g.pattern_length = x
+  if c.g.beat_num > x then
+    c.g.beat_num = x
+  end
 end
 
 
