@@ -616,6 +616,9 @@ TestSendPulse = {
     -- if the pulse is towards the end of the beat then the x value
     -- sent to the transform() function will given as > 1.
     -- The random pattern in particular will throw an error.
+    -- We'll have a random pattern of 16 points over 16 beats so that
+    -- we're more likely to get an error when we're almost at the end
+    -- of the 16 beats and then reduce the pattern length back to 1.
 
     _norns.init()
     metro.init_module()
@@ -626,10 +629,13 @@ TestSendPulse = {
       bpm = 60,
 
       pattern = random_pattern,
-      pattern_length = 4,
+      pattern_length = 16,
     })
 
+    local saved_points = random_pattern.points
+    random_pattern.points = 16
     random_pattern.init_pattern()
+    random_pattern.points = saved_points
 
     local pulses = 0
 
@@ -649,18 +655,18 @@ TestSendPulse = {
       }
     }
 
-    -- We'll start the pattern, which is intended to run over 4 seconds (4 beats).
-    -- Then after two seconds we'll reduce the pattern length to 1 beat.
+    -- We'll start the pattern, which is intended to run over 16 seconds (16 beats).
+    -- Then after 15 seconds we'll reduce the pattern length to 1 beat.
 
     c.start_pulses()
 
-    for t = 0.001, 2.000, 0.001 do
+    for t = 0.001, 15.000, 0.001 do
       _norns.set_time(t)
     end
 
     c.g.pattern_length = 1
 
-    for t = 2.000, 3.000, 0.001 do
+    for t = 15.000, 16.000, 0.001 do
       _norns.set_time(t)
     end
 

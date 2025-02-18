@@ -230,6 +230,16 @@ c.set_metro_running_param = function(x)
 end
 
 
+-- Set the value of pattern_length. We would normally do this from the
+-- action of the clockabout_pattern_length parameter, but we want to
+-- expose it in a separate function here to be able to test it.
+-- @tparam int x  The new pattern length.
+--
+c.set_pattern_length = function(x)
+  c.g.pattern_length = x
+end
+
+
 -- Initialise all params in the norns environment.
 -- @tparam table vars  Table of names/values to set, if not the defaults,
 --     but only for non-norns (i.e. global) variables.
@@ -377,9 +387,7 @@ function c.init_norns_params(vars)
     end,
     false  -- Wrap?
   )
-  params:set_action("clockabout_pattern_length", function(x)
-    g.pattern_length = x
-  end)
+  params:set_action("clockabout_pattern_length", c.set_pattern_length)
 
 end
 
