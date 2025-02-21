@@ -12,16 +12,6 @@ Tests
 
 To do
 
-- Fix bug with random mode in menus.
-- Fix bug with random mode (changing pattern length quickly down a lot)
-    lua: /home/we/dust/code/clockabout/lib/random_pattern.lua:168: No segment found for x = 1.5
-    stack traceback:
-    in function 'error'
-            /home/we/dust/code/clockabout/lib/random_pattern.lua:168: in function 'clockabout/lib/random_pattern.transform'
-            /home/we/dust/code/clockabout/lib/core.lua:645: in function 'clockabout/lib/core.pulse_interval'
-            /home/we/dust/code/clockabout/lib/core.lua:570: in function 'clockabout/lib/core.send_pulse'
-            /home/we/norns/lua/core/metro.lua:169: in function </home/we/norns/lua/core/metro.lua:165>
-    lua: /home/we/dust/code/clockabout/lib/random_pattern.lua:168: No segment found for x = 1.5625
 - Remove '- - - -' debug logging.
 - Don't start the clock when loaded as a mod.
 - Maybe remove mod screen.
@@ -37,6 +27,8 @@ To do
 
 Done
 
+- Fix bug with random mode in menus.
+- Fix bug with random mode (changing pattern length quickly down a lot)
 - Create logging for norns-only output.
 - Fix bug with cheatcodes_2 (run out of metros).
 - Save and load mod params.

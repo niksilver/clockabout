@@ -615,11 +615,10 @@ function c.send_pulse(stage)
 
   g.pulse_num, g.beat_num, _ = advance_pulse(g.pulse_num + 1)
 
-  -- Don't redraw if we're in the norns menu
-  local in_menu = _menu and _menu.mode
+  -- Redraw at the right point, if needed
 
-  if g.pulse_num == 1 and g.pattern_needs_redraw and not(in_menu) then
-    c.redraw()
+  if g.pulse_num == 1 and g.pattern_needs_redraw then
+    redraw()
     g.pattern_needs_redraw = false
   end
 
