@@ -11,6 +11,11 @@ metro = require('mock_metro')
 
 c.log.suppress_n = true
 
+-- Dummy function to cover for global redraw() which needs to be
+-- referenced in the main code.
+--
+function redraw() end
+
 
 -- We'll put these tests in a table to be able to use setUp() / tearDown()
 

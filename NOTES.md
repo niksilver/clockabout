@@ -13,20 +13,20 @@ Tests
 To do
 
 - Remove '- - - -' debug logging.
-- Don't start the clock when loaded as a mod.
 - Maybe remove mod screen.
 - For mod, stop metros on cleanup.
 - For the mod part of README:
   - Use the script with a MIDI device and feed back in.
   - Mod attaches to the end of any script.
   - Use the script as a screen.
-  - Will it start automatically?
+  - Clock won't start if mod only running.
   - Explain saving and loading params.
   - If no metros it will show up in the log output.
 
 
 Done
 
+- Don't start the clock when loaded as a mod.
 - Fix bug with random mode in menus.
 - Fix bug with random mode (changing pattern length quickly down a lot)
 - Create logging for norns-only output.

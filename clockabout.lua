@@ -20,11 +20,12 @@ log.s('Clockabout script mod_api = %s  - - - - - - - - - - - - -', tostring(mod_
 
 init = function()
   if mod_api.mod_running then
-    log.s('Clockabout.init() using mod\'s globals  - - - - - - - - - - - - -')
+    log.s('Clockabout.init() using mod\'s globals (+ start metro)  - - - - -')
     c.g = mod_api.g
+    c.set_metro_running_param(1)
   else
     log.s('Clockabout.init() will run as a script  - - - - - - - - - - - - -')
-    c.init_norns_params({})
+    c.init_norns_params({metro_running = 1})
   end
 
   -- Final touches:

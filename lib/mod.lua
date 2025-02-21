@@ -73,7 +73,7 @@ if mod.this_name then
 
   mod.hook.register("script_pre_init", "Clockabout pre-init", function()
     log.s('Clockabout pre-init: Enter  - - - - - - - - - - - - - - - - -')
-    c.init_norns_params({})
+    c.init_norns_params({metro_running = 0})
 
     -- Make the globals available to the clockabout script, if it runs
     api.g = c.g
