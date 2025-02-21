@@ -15,16 +15,16 @@
 local c       = require('clockabout/lib/core')
 local log     = require('clockabout/lib/log')
 local mod_api = require('clockabout/lib/mod')
-log.s('Clockabout script mod_api = %s  - - - - - - - - - - - - -', tostring(mod_api))
 
 
 init = function()
   if mod_api.mod_running then
-    log.s('Clockabout.init() using mod\'s globals (+ start metro)  - - - - -')
+    -- Use globals set in the mod... but also start the metro by default,
+    -- because this is the script.
     c.g = mod_api.g
     c.set_metro_running_param(1)
   else
-    log.s('Clockabout.init() will run as a script  - - - - - - - - - - - - -')
+    -- Use script default params, but also make sure the metro starts by default
     c.init_norns_params({metro_running = 1})
   end
 

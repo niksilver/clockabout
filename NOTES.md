@@ -12,8 +12,7 @@ Tests
 
 To do
 
-- Remove '- - - -' debug logging.
-- For mod, stop metros on cleanup.
+- Maybe: For mod, stop metros on cleanup.
 - For the mod part of README:
   - Use the script with a MIDI device and feed back in.
   - Mod attaches to the end of any script.
@@ -25,6 +24,7 @@ To do
 
 Done
 
+- Remove '- - - -' debug logging.
 - Remove mod screen.
 - Don't start the clock when loaded as a mod.
 - Fix bug with random mode in menus.
