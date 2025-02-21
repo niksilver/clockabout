@@ -13,6 +13,10 @@ Tests
 To do
 
 - Maybe: For mod, stop metros on cleanup.
+
+
+Done
+
 - For the mod part of README:
   - Use the script with a MIDI device and feed back in.
   - Mod attaches to the end of any script.
@@ -20,10 +24,6 @@ To do
   - Clock won't start if mod only running.
   - Explain saving and loading params.
   - If no metros it will show up in the log output.
-
-
-Done
-
 - Remove '- - - -' debug logging.
 - Remove mod screen.
 - Don't start the clock when loaded as a mod.

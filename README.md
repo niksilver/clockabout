@@ -23,6 +23,9 @@ multiple devices.
 The PARAMS menu also allows you to change how many beats the pattern
 lasts for.
 
+If you like the script, you may also want to run it as a mod. See further
+below.
+
 
 ## Installation
 
@@ -32,10 +35,10 @@ In maiden, use
 ```
 
 
-## Miscellaneous notes
+## General notes
 
 A MIDI start/stop message is sent when, and only when, the clock starts and stops
-(K3, or via the PARAMS menu).
+(K3, or via the PARAMETERS > EDIT menu).
 Just changing which MIDI device receives the clock
 will route (or stop routing) the clock messages to that device,
 but won't send a MIDI start/stop message.
@@ -69,6 +72,55 @@ The pattern is not entirely smooth. The on-screen graph might
 look like a curve, but internally that curve is broken into six linear
 segments and pulses are sent according to that. I am assuming that the
 difference will be inaudible... or at least excusable.
+
+
+# Running as a mod
+
+Once installed, you can enable this as a mod. This way, you can run
+a norns script and send Clockabout MIDI pulses to external devices.
+You can also route those MIDI pulses back into the norns, so that the
+script responds to the non-linear clock. But note that do this you
+do need an external device - Clockabout sends MIDI pulses out, and
+cannot control norns' own internal clock.
+
+See the [documentation on
+installing and enabling mods](https://monome.org/docs/norns/mods/).
+
+When it is enabled as a mod things are slightly different, as follows...
+
+The mod attaches itself to any script that starts up. It puts its
+parameters in the usual PARAMETERS > EDIT menu, and they will appear before
+the script's own parameters. So you'll need to scroll down to see those
+script parameters.
+
+The mod does not use the Clockabout graphical input. Instead, you'll need
+to adjust the parameters via the PARAMETERS > EDIT menu.
+
+If you do want to use Clockabout's graphical input then you can also
+run it as a script. Of course, in this case you can't run another norns
+script.
+
+As usual in norns, you can save and load a script's parameters via the
+PARAMETERS > PSET menu. If you save a script's parameters with
+Clockabout enabled as a mod, then you will save Clockabout's parameters,
+too. Then you can load them next time for that script and the Clockabout
+mod. But note that parameters are saved per script; you can't save
+the mod's parameters alone. However, since you can run Clockabout as
+a script, even with the mod enabled, then you can save the Clockabout
+script's parameters and load them back when you run the script again.
+
+If a script runs without and Clockabout parameters being loaded, then
+Clockabout's clock will not start by default. This is different
+to running Clockabout as script (with or without the mod), when its
+default is to start its clock as soon as it loads.
+
+Internally, Clockabout uses two of norns' own metronomes, and there is
+a limited number of these. So it's possible that a script will take
+all the available metronomes, leaving none for Clockabout. If this
+happens then there will be a warning message in the matron log and
+Clockabout will stop its clock. You can toggle it back on in the usual
+way. Of course, when you do this there may or may not be metronomes
+available again.
 
 
 ## Development and testing
