@@ -15,48 +15,7 @@ local api = {
 }
 
 
-local m = {
-
-  -- Called when we enter the mod's own screen
-  init = function()
-    log.s('Clockabout init: Enter  - - - - - - - - - - - - - - - - -')
-  end,
-
-
-  -- Called when we exit the mod's own screen
-  deinit = function()
-    log.s('Clockabout deinit: Enter  - - - - - - - - - - - - - - - - -')
-  end,
-
-
-  key = function(n, z)
-    log.s('Clockabout key: Enter  - - - - - - - - - - - - - - - - -')
-    -- For the mod, K2 will exit the screen
-    if n == 2 and z == 1 then
-      mod.menu.exit()
-    end
-  end,
-
-
-  enc = function() end,
-
-
-  redraw = function()
-    screen.clear()
-    screen.level(15)
-
-    screen.move(64, 8)
-    screen.text_center("Clockabout will start with")
-    screen.move(64, 16)
-    screen.text_center("any script, then use the")
-    screen.move(64, 24)
-    screen.text_center("the PARAMETERS menu.")
-    screen.move(64, 48)
-    screen.text_center("Please press K2")
-
-    screen.update()
-  end
-}
+-- There's no menu screen for the mod, so no init, deinit, key, enc or redraw.
 
 
 -- Only try to register things if this file is beign executed as
