@@ -9,7 +9,7 @@
 -- K1+E3: Second pattern param
 -- K3: Start/stop clock
 --
--- Version 0.9.0
+-- Version 0.10.0
 
 
 local c       = require('clockabout/lib/core')
