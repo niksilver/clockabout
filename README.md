@@ -76,15 +76,18 @@ difference will be inaudible... or at least excusable.
 
 # Running as a mod
 
-Once installed, you can enable this as a mod. This way, you can run
-a norns script and send Clockabout MIDI pulses to external devices.
-You can also route those MIDI pulses back into the norns, so that the
-script responds to the non-linear clock. But note that do this you
-do need an external device - Clockabout sends MIDI pulses out, and
-cannot control norns' own internal clock.
-
+Once installed, you can enable this as a mod.
 See the [documentation on
 installing and enabling mods](https://monome.org/docs/norns/mods/).
+Then you can run
+a norns script and send Clockabout MIDI pulses to external devices.
+
+You can also route those MIDI pulses back into the norns, so that your
+script responds to the non-linear clock. Set this up using the
+PARAMETERS > EDIT > CLOCK menu to receive MIDI clock input.
+But note that to do this you
+do need an external device - Clockabout sends MIDI pulses out, and
+cannot control norns' own internal clock directly.
 
 When it is enabled as a mod things are slightly different, as follows...
 
@@ -94,7 +97,7 @@ the script's own parameters. So you'll need to scroll down to see those
 script parameters.
 
 The mod does not use the Clockabout graphical input. Instead, you'll need
-to adjust the parameters via the PARAMETERS > EDIT menu.
+to adjust its parameters via the PARAMETERS > EDIT menu.
 
 If you do want to use Clockabout's graphical input then you can also
 run it as a script. Of course, in this case you can't run another norns
@@ -109,7 +112,8 @@ the mod's parameters alone. However, since you can run Clockabout as
 a script, even with the mod enabled, then you can save the Clockabout
 script's parameters and load them back when you run the script again.
 
-If a script runs without and Clockabout parameters being loaded, then
+If a script runs without any Clockabout parameters being loaded from
+a PSET, then
 Clockabout's clock will not start by default. This is different
 to running Clockabout as script (with or without the mod), when its
 default is to start its clock as soon as it loads.
